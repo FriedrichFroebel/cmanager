@@ -67,16 +67,17 @@ test {
 }
 
 // Check if we are running on Travis CI.
-def isTravis() {
-    if (!System.getProperty('user.name').equals('travis')) return false
-    if (!System.getProperty('HAS_JOSH_K_SEAL_OF_APPROVAL').equals('true')) return false
+static def isTravis() {
+    if (System.getProperty('user.name') != 'travis') return false
+    if (System.getProperty('HAS_JOSH_K_SEAL_OF_APPROVAL') != 'true') return false
     return true
 }
 
 // Allow retrieving the configuration values from environment variables as well.
 def retrieveOcOkapiProperties() {
-    // Use dummy values as secret environment variables are not available on Travis CI for external pull requests.
-    if (isTravis() && !System.getProperty('TRAVIS_PULL_REQUEST').equals('false')) {
+    // Use dummy values as secret environment variables are not available on Travis CI for external
+    // pull requests.
+    if (isTravis() && System.getProperty('TRAVIS_PULL_REQUEST') != 'false') {
         ext.oc_okapi_de_consumer_key = 'DUMMY'
         ext.oc_okapi_de_consumer_secret = 'DUMMY'
         ext.oc_test_client_username = 'DUMMY'
@@ -157,7 +158,7 @@ clean.doFirst {
 
 jar {
     archiveBaseName = 'cm'
-    if (isTravis()) version = 'ci'
+    if (isTravis()) project.version = 'ci'
     manifest {
         attributes 'Main-Class': mainClassName
     }
@@ -206,8 +207,8 @@ runtime {
 }
 
 // Retrieve the system string for indicating the package content.
-def getSystemString() {
-    def osName = System.properties['os.name'].toLowerCase()
+static def getSystemString() {
+    def osName = System.getProperty('os.name').toLowerCase()
     if (osName.contains('windows')) return 'windows';
     return osName;
 }
