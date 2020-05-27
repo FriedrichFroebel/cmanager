@@ -66,8 +66,25 @@ test {
     useJUnitPlatform()
 }
 
+// Check if we are running on Travis CI.
+def isTravis() {
+    if (!System.getProperty('user.name').equals('travis')) return false
+    if (!System.getProperty('HAS_JOSH_K_SEAL_OF_APPROVAL').equals('true')) return false
+    return true
+}
+
 // Allow retrieving the configuration values from environment variables as well.
 def retrieveOcOkapiProperties() {
+    // Use dummy values as secret environment variables are not available on Travis CI for external pull requests.
+    if (isTravis() && !System.getProperty('TRAVIS_PULL_REQUEST').equals('false')) {
+        ext.oc_okapi_de_consumer_key = 'DUMMY'
+        ext.oc_okapi_de_consumer_secret = 'DUMMY'
+        ext.oc_test_client_username = 'DUMMY'
+        ext.oc_test_client_password = 'DUMMY'
+        logger.quiet('Detected pull request. Falling back to dummy values.')
+        return
+    }
+    
     if (file(project.ocOkapiPropertiesFile).exists()) {
         Properties properties = new Properties()
         File propertiesFile = new File(project.ocOkapiPropertiesFile)
@@ -140,7 +157,7 @@ clean.doFirst {
 
 jar {
     archiveBaseName = 'cm'
-    if (System.getProperty('user.name').equals('travis')) version = 'ci'
+    if (isTravis()) version = 'ci'
     manifest {
         attributes 'Main-Class': mainClassName
     }
