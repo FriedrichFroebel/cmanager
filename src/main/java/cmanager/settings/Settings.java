@@ -1,7 +1,7 @@
 package cmanager.settings;
 
-import cmanager.FileHelper;
 import cmanager.global.Constants;
+import cmanager.util.FileHelper;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

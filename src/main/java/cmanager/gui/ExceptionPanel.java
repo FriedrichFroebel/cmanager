@@ -56,12 +56,7 @@ public class ExceptionPanel extends JPanel {
 
         final JButton buttonClose = new JButton("x");
         panelMessage.add(buttonClose);
-        buttonClose.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        hideUs();
-                    }
-                });
+        buttonClose.addActionListener(actionEvent -> hideUs());
 
         panelDetails = new JPanel();
         add(panelDetails, BorderLayout.CENTER);

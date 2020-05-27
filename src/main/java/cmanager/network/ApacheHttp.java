@@ -34,25 +34,6 @@ public class ApacheHttp {
         }
     }
 
-    public static class HttpResponse {
-
-        private final Integer statusCode;
-        private final String body;
-
-        public HttpResponse(final Integer statusCode, final String body) {
-            this.body = body;
-            this.statusCode = statusCode;
-        }
-
-        public String getBody() {
-            return body;
-        }
-
-        public Integer getStatusCode() {
-            return statusCode;
-        }
-    }
-
     // HTTP GET request
     public HttpResponse get(String url) throws IOException {
         final HttpGet httpGet = new HttpGet(url);
@@ -81,10 +62,10 @@ public class ApacheHttp {
     }
 
     // HTTP POST request
-    public HttpResponse post(String url, List<NameValuePair> nvps) throws IOException {
+    public HttpResponse post(String url, List<NameValuePair> nameValuePairs) throws IOException {
         final HttpPost httpPost = new HttpPost(url);
         httpPost.setHeader(HttpHeaders.USER_AGENT, Constants.HTTP_USER_AGENT);
-        httpPost.setEntity(new UrlEncodedFormEntity(nvps, "UTF-8"));
+        httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
         final CloseableHttpResponse response = httpClient.execute(httpPost);
 
         int statusCode;

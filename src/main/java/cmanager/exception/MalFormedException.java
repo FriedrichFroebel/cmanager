@@ -1,4 +1,6 @@
-package cmanager;
+package cmanager.exception;
 
-@SuppressWarnings("serial")
-public class MalFormedException extends Exception {}
+public class MalFormedException extends Exception {
+
+    private static final long serialVersionUID = 2840891538043452994L;
+}

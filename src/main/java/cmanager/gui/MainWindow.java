@@ -1,22 +1,29 @@
 package cmanager.gui;
 
-import cmanager.CacheListController;
-import cmanager.CacheListFilterCacheName;
-import cmanager.CacheListFilterDifficulty;
-import cmanager.CacheListFilterDistance;
-import cmanager.CacheListFilterNotFoundBy;
-import cmanager.CacheListFilterTerrain;
-import cmanager.FileHelper;
 import cmanager.geo.Geocache;
 import cmanager.geo.Location;
 import cmanager.geo.LocationList;
 import cmanager.global.Compatibility;
 import cmanager.global.Constants;
+import cmanager.gui.components.Logo;
+import cmanager.gui.dialogs.AboutDialog;
+import cmanager.gui.dialogs.DuplicateDialog;
+import cmanager.gui.dialogs.LocationDialog;
+import cmanager.gui.dialogs.SettingsDialog;
+import cmanager.gui.dialogs.WaitDialog;
+import cmanager.gui.interfaces.RunLocationDialogI;
+import cmanager.list.CacheListController;
+import cmanager.list.filter.CacheNameFilter;
+import cmanager.list.filter.DifficultyFilter;
+import cmanager.list.filter.DistanceFilter;
+import cmanager.list.filter.NotFoundByFilter;
+import cmanager.list.filter.TerrainFilter;
 import cmanager.network.Updates;
 import cmanager.okapi.Okapi;
 import cmanager.okapi.User;
 import cmanager.settings.Settings;
 import cmanager.util.DesktopUtil;
+import cmanager.util.FileHelper;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dialog;
@@ -79,12 +86,7 @@ public class MainWindow extends JFrame {
 
         final JMenuItem menuItemOpen = new JMenuItem("Open");
         menuItemOpen.setAccelerator(KeyStroke.getKeyStroke('O', Compatibility.SHORTCUT_KEY_MASK));
-        menuItemOpen.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        openFile(true);
-                    }
-                });
+        menuItemOpen.addActionListener(actionEvent -> openFile(true));
 
         final JMenuItem menuItemNew = new JMenuItem("New");
         menuItemNew.setAccelerator(KeyStroke.getKeyStroke('N', Compatibility.SHORTCUT_KEY_MASK));
@@ -107,41 +109,26 @@ public class MainWindow extends JFrame {
 
         final JMenuItem menuItemExit = new JMenuItem("Exit");
         menuItemExit.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        THIS.dispatchEvent(new WindowEvent(THIS, WindowEvent.WINDOW_CLOSING));
-                    }
-                });
+                actionEvent ->
+                        THIS.dispatchEvent(new WindowEvent(THIS, WindowEvent.WINDOW_CLOSING)));
 
         final JMenuItem menuItemSettings = new JMenuItem("Settings");
         menuItemSettings.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        final SettingsDialog settingsDialog = new SettingsDialog(THIS);
-                        settingsDialog.setModalityType(ModalityType.APPLICATION_MODAL);
-                        settingsDialog.setLocationRelativeTo(THIS);
-                        settingsDialog.setVisible(true);
-                    }
+                actionEvent -> {
+                    final SettingsDialog settingsDialog = new SettingsDialog(THIS);
+                    settingsDialog.setModalityType(ModalityType.APPLICATION_MODAL);
+                    settingsDialog.setLocationRelativeTo(THIS);
+                    settingsDialog.setVisible(true);
                 });
 
         final JMenuItem menuItemSave = new JMenuItem("Save");
         menuItemSave.setAccelerator(KeyStroke.getKeyStroke('S', Compatibility.SHORTCUT_KEY_MASK));
-        menuItemSave.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        saveFile(false);
-                    }
-                });
+        menuItemSave.addActionListener(actionEvent -> saveFile(false));
         menuItemSave.setEnabled(false);
         menu.add(menuItemSave);
 
         final JMenuItem menuItemSaveAs = new JMenuItem("Save As");
-        menuItemSaveAs.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        saveFile(true);
-                    }
-                });
+        menuItemSaveAs.addActionListener(actionEvent -> saveFile(true));
         menuItemSaveAs.setEnabled(false);
         menu.add(menuItemSaveAs);
 
@@ -158,42 +145,11 @@ public class MainWindow extends JFrame {
         menuBar.add(menuList);
 
         final JMenuItem menuItemFindOnOc = new JMenuItem("Find on OC");
-        menuItemFindOnOc.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        findOnOc(null, null);
-                    }
-                });
+        menuItemFindOnOc.addActionListener(actionEvent -> findOnOc(null, null));
         menuList.add(menuItemFindOnOc);
 
         final JMenuItem menuItemSyncWithOc = new JMenuItem("Sync with OC");
-        menuItemSyncWithOc.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        try {
-                            User user;
-                            String uuid;
-                            try {
-                                user = User.getOKAPIUser();
-                                uuid = Okapi.getUuid(user);
-                                if (uuid == null) {
-                                    throw new NullPointerException();
-                                }
-                            } catch (Exception exception) {
-                                JOptionPane.showMessageDialog(
-                                        THIS,
-                                        "Testing the OKAPI token failed. Check your settings!",
-                                        "Error",
-                                        JOptionPane.ERROR_MESSAGE);
-                                return;
-                            }
-
-                            findOnOc(user, uuid);
-                        } catch (Throwable throwable) {
-                            ExceptionPanel.showErrorDialog(THIS, throwable);
-                        }
-                    }
-                });
+        menuItemSyncWithOc.addActionListener(actionEvent -> syncWithOc());
         menuList.add(menuItemSyncWithOc);
 
         final JSeparator separator2 = new JSeparator();
@@ -302,12 +258,7 @@ public class MainWindow extends JFrame {
         menuList.add(separator4);
 
         final JMenuItem menuItemAddFromFile = new JMenuItem("Add from File");
-        menuItemAddFromFile.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        openFile(false);
-                    }
-                });
+        menuItemAddFromFile.addActionListener(actionEvent -> openFile(false));
         menuList.add(menuItemAddFromFile);
 
         final JMenu menuFilter = new JMenu("Filter");
@@ -322,7 +273,7 @@ public class MainWindow extends JFrame {
                 new ActionListener() {
                     public void actionPerformed(ActionEvent actionEvent) {
                         CacheListController.getTopViewCacheController(desktopPane)
-                                .addFilter(new CacheListFilterTerrain());
+                                .addFilter(new TerrainFilter());
                     }
                 });
         menuItemFilterAdd.add(menuItemFilterTerrain);
@@ -332,7 +283,7 @@ public class MainWindow extends JFrame {
                 new ActionListener() {
                     public void actionPerformed(ActionEvent actionEvent) {
                         CacheListController.getTopViewCacheController(desktopPane)
-                                .addFilter(new CacheListFilterCacheName());
+                                .addFilter(new CacheNameFilter());
                     }
                 });
         menuItemFilterAdd.add(menuItemFilterName);
@@ -342,7 +293,7 @@ public class MainWindow extends JFrame {
                 new ActionListener() {
                     public void actionPerformed(ActionEvent actionEvent) {
                         CacheListController.getTopViewCacheController(desktopPane)
-                                .addFilter(new CacheListFilterDifficulty());
+                                .addFilter(new DifficultyFilter());
                     }
                 });
         menuItemFilterAdd.add(menuItemFilterDifficulty);
@@ -352,7 +303,7 @@ public class MainWindow extends JFrame {
                 new ActionListener() {
                     public void actionPerformed(ActionEvent actionEvent) {
                         CacheListController.getTopViewCacheController(desktopPane)
-                                .addFilter(new CacheListFilterNotFoundBy());
+                                .addFilter(new NotFoundByFilter());
                     }
                 });
         menuItemFilterAdd.add(menuItemFilterNotFoundBy);
@@ -372,34 +323,7 @@ public class MainWindow extends JFrame {
         menuFilter.add(menuItemDeleteCachesNotInFilter);
 
         final JMenuItem menuItemFilterDistance = new JMenuItem("Distance");
-        menuItemFilterDistance.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        final CacheListFilterDistance filter = new CacheListFilterDistance();
-                        CacheListController.getTopViewCacheController(desktopPane)
-                                .addFilter(filter);
-
-                        // Set current location.
-                        filter.setLocation((Location) comboBox.getSelectedItem());
-
-                        // Update filter on location change.
-                        final ActionListener actionListener =
-                                new ActionListener() {
-                                    public void actionPerformed(ActionEvent actionEvent1) {
-                                        filter.setLocation((Location) comboBox.getSelectedItem());
-                                    }
-                                };
-                        comboBox.addActionListener(actionListener);
-
-                        // Remove update hook on removal.
-                        filter.addRemoveAction(
-                                new Runnable() {
-                                    public void run() {
-                                        comboBox.removeActionListener(actionListener);
-                                    }
-                                });
-                    }
-                });
+        menuItemFilterDistance.addActionListener(actionEvent -> handleDistanceFilterAction());
         menuItemFilterAdd.add(menuItemFilterDistance);
 
         menuWindows.setEnabled(false);
@@ -407,15 +331,7 @@ public class MainWindow extends JFrame {
 
         final JMenu menuInfo = new JMenu("Information");
         final JMenuItem menuItemAbout = new JMenuItem("About");
-        menuItemAbout.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        final AboutDialog dialog = new AboutDialog();
-                        dialog.setLocationRelativeTo(THIS);
-                        dialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
-                        dialog.setVisible(true);
-                    }
-                });
+        menuItemAbout.addActionListener(actionEvent -> showAboutDialog());
         menuInfo.add(menuItemAbout);
         menuBar.add(menuInfo);
 
@@ -462,40 +378,12 @@ public class MainWindow extends JFrame {
         buttonUpdate.setOpaque(false);
         buttonUpdate.setContentAreaFilled(false);
         buttonUpdate.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent actionEvent) {
+                actionEvent ->
                         DesktopUtil.openUrl(
-                                "https://github.com/FriedrichFroebel/cmanager/releases");
-                    }
-                });
+                                "https://github.com/FriedrichFroebel/cmanager/releases"));
         panelUpdate.add(buttonUpdate);
 
-        new SwingWorker<Void, Boolean>() {
-            @Override
-            protected Void doInBackground() {
-                publish(Updates.updateAvailable_block());
-                return null;
-            }
-
-            @Override
-            protected void process(List<Boolean> chunks) {
-                // Display update message if there is another version available.
-                if (chunks.get(0)) {
-                    setText(
-                            "Version "
-                                    + Updates.getNewVersion()
-                                    + " of "
-                                    + Constants.APP_NAME
-                                    + " is available. Click here for updates!");
-                    buttonUpdate.setVisible(true);
-                }
-            }
-
-            private void setText(String text) {
-                buttonUpdate.setText(
-                        "<HTML><FONT color=\"#008000\"><U>" + text + "</U></FONT></HTML>");
-            }
-        }.execute();
+        checkForUpdates(buttonUpdate);
 
         final JPanel panelNorth = new JPanel();
         contentPane.add(panelNorth, BorderLayout.NORTH);
@@ -509,26 +397,16 @@ public class MainWindow extends JFrame {
         panel.add(labelLocation);
 
         comboBox = new JComboBox<>();
-        comboBox.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        propagateSelectedLocationComboboxEntry();
-                    }
-                });
+        comboBox.addActionListener(actionEvent -> propagateSelectedLocationComboboxEntry());
         comboBox.setFont(new Font("Dialog", Font.BOLD, 10));
         panel.add(comboBox);
 
         final JButton buttonEdit = new JButton("Edit");
-        buttonEdit.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        openLocationDialog(null);
-                    }
-                });
+        buttonEdit.addActionListener(actionEvent -> openLocationDialog(null));
         buttonEdit.setFont(new Font("Dialog", Font.BOLD, 10));
         panel.add(buttonEdit);
 
-        updateLocationCombobox();
+        updateLocationComboBox();
         propagateSelectedLocationComboboxEntry();
 
         // Store and reopen cache lists.
@@ -545,29 +423,19 @@ public class MainWindow extends JFrame {
                 });
 
         SwingUtilities.invokeLater(
-                new Runnable() {
-                    public void run() {
+                () ->
                         actionWithWaitDialog(
-                                new Runnable() {
-                                    public void run() {
-                                        CacheListController.reopenPersistantCacheListControllers(
+                                () ->
+                                        CacheListController.reopenPersistentCacheListControllers(
                                                 desktopPane,
                                                 menuWindows,
                                                 (Location) comboBox.getSelectedItem(),
-                                                new CacheListView.RunLocationDialogI() {
-                                                    public void openDialog(Geocache geocache) {
-                                                        openLocationDialog(geocache);
-                                                    }
-                                                });
-                                    }
-                                },
-                                THIS);
-                    }
-                });
+                                                this::openLocationDialog),
+                                THIS));
     }
 
-    private void updateLocationCombobox() {
-        List<Location> locations = LocationList.getList().getLocations();
+    private void updateLocationComboBox() {
+        final List<Location> locations = LocationList.getList().getLocations();
 
         comboBox.removeAllItems();
         for (final Location location : locations) {
@@ -585,7 +453,7 @@ public class MainWindow extends JFrame {
         locationDialog.setVisible(true);
 
         if (locationDialog.modified) {
-            updateLocationCombobox();
+            updateLocationComboBox();
             propagateSelectedLocationComboboxEntry();
         }
     }
@@ -676,28 +544,25 @@ public class MainWindow extends JFrame {
                     Settings.Key.FILE_CHOOSER_LOAD_GPX, Paths.get(lastPath).getParent().toString());
 
             actionWithWaitDialog(
-                    new Runnable() {
-                        public void run() {
-                            try {
-                                if (createNewList) {
-                                    CacheListController.newCacheListController(
-                                            desktopPane,
-                                            menuWindows,
-                                            (Location) comboBox.getSelectedItem(),
-                                            chooser.getSelectedFile().getAbsolutePath(),
-                                            new CacheListView.RunLocationDialogI() {
-                                                public void openDialog(Geocache geocache) {
-                                                    openLocationDialog(geocache);
-                                                }
-                                            });
-                                } else {
-                                    CacheListController.getTopViewCacheController(desktopPane)
-                                            .addFromFile(
-                                                    chooser.getSelectedFile().getAbsolutePath());
-                                }
-                            } catch (Throwable throwable) {
-                                ExceptionPanel.showErrorDialog(THIS, throwable);
+                    () -> {
+                        try {
+                            if (createNewList) {
+                                CacheListController.newCacheListController(
+                                        desktopPane,
+                                        menuWindows,
+                                        (Location) comboBox.getSelectedItem(),
+                                        chooser.getSelectedFile().getAbsolutePath(),
+                                        new RunLocationDialogI() {
+                                            public void openDialog(Geocache geocache) {
+                                                openLocationDialog(geocache);
+                                            }
+                                        });
+                            } else {
+                                CacheListController.getTopViewCacheController(desktopPane)
+                                        .addFromFile(chooser.getSelectedFile().getAbsolutePath());
                             }
+                        } catch (Throwable throwable) {
+                            ExceptionPanel.showErrorDialog(THIS, throwable);
                         }
                     },
                     THIS);
@@ -730,18 +595,16 @@ public class MainWindow extends JFrame {
         wait.setLocationRelativeTo(parent);
 
         new Thread(
-                        new Runnable() {
-                            public void run() {
-                                while (!wait.isVisible()) {
-                                    try {
-                                        Thread.sleep(delayMilliseconds);
-                                    } catch (InterruptedException ignored) {
-                                    }
+                        () -> {
+                            while (!wait.isVisible()) {
+                                try {
+                                    Thread.sleep(delayMilliseconds);
+                                } catch (InterruptedException ignored) {
                                 }
-
-                                task.run();
-                                wait.setVisible(false);
                             }
+
+                            task.run();
+                            wait.setVisible(false);
                         })
                 .start();
 
@@ -757,5 +620,82 @@ public class MainWindow extends JFrame {
                         uuid);
 
         FrameHelper.showModalFrame(duplicateDialog, THIS);
+    }
+
+    private void syncWithOc() {
+        try {
+            User user;
+            String uuid;
+            try {
+                user = User.getOKAPIUser();
+                uuid = Okapi.getUuid(user);
+                if (uuid == null) {
+                    throw new NullPointerException();
+                }
+            } catch (Exception exception) {
+                JOptionPane.showMessageDialog(
+                        THIS,
+                        "Testing the OKAPI token failed. Check your settings!",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            findOnOc(user, uuid);
+        } catch (Throwable throwable) {
+            ExceptionPanel.showErrorDialog(THIS, throwable);
+        }
+    }
+
+    private void handleDistanceFilterAction() {
+        final DistanceFilter filter = new DistanceFilter();
+        CacheListController.getTopViewCacheController(desktopPane).addFilter(filter);
+
+        // Set current location.
+        filter.setLocation((Location) comboBox.getSelectedItem());
+
+        // Update filter on location change.
+        final ActionListener actionListener =
+                actionEvent1 -> filter.setLocation((Location) comboBox.getSelectedItem());
+        comboBox.addActionListener(actionListener);
+
+        // Remove update hook on removal.
+        filter.addRemoveAction(() -> comboBox.removeActionListener(actionListener));
+    }
+
+    private void showAboutDialog() {
+        final AboutDialog dialog = new AboutDialog();
+        dialog.setLocationRelativeTo(THIS);
+        dialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+        dialog.setVisible(true);
+    }
+
+    private void checkForUpdates(final JButton buttonUpdate) {
+        new SwingWorker<Void, Boolean>() {
+            @Override
+            protected Void doInBackground() {
+                publish(Updates.updateAvailable_block());
+                return null;
+            }
+
+            @Override
+            protected void process(List<Boolean> chunks) {
+                // Display update message if there is another version available.
+                if (chunks.get(0)) {
+                    setText(
+                            "Version "
+                                    + Updates.getNewVersion()
+                                    + " of "
+                                    + Constants.APP_NAME
+                                    + " is available. Click here for updates!");
+                    buttonUpdate.setVisible(true);
+                }
+            }
+
+            private void setText(String text) {
+                buttonUpdate.setText(
+                        "<HTML><FONT color=\"#008000\"><U>" + text + "</U></FONT></HTML>");
+            }
+        }.execute();
     }
 }

@@ -7,13 +7,13 @@ import java.util.List;
 
 public class LocationList {
 
-    private static LocationList theList;
+    private static LocationList locationList;
 
     public static LocationList getList() {
-        if (theList == null) {
-            theList = new LocationList();
+        if (locationList == null) {
+            locationList = new LocationList();
         }
-        return theList;
+        return locationList;
     }
 
     private List<Location> locations = null;

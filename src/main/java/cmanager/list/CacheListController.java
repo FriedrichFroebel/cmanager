@@ -1,19 +1,17 @@
-package cmanager;
+package cmanager.list;
 
-import cmanager.CacheListModel.CacheListTableModel;
 import cmanager.geo.Geocache;
 import cmanager.geo.Location;
-import cmanager.gui.CacheListView;
 import cmanager.gui.ExceptionPanel;
+import cmanager.gui.components.CacheListView;
+import cmanager.gui.interfaces.RunLocationDialogI;
+import cmanager.list.filter.FilterModel;
 import cmanager.settings.Settings;
 import cmanager.util.ObjectHelper;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -36,7 +34,7 @@ public class CacheListController {
             JMenu menuWindows,
             Location relativeLocation,
             String path,
-            CacheListView.RunLocationDialogI runLocationDialog)
+            RunLocationDialogI runLocationDialog)
             throws Throwable {
         final CacheListController cacheListController =
                 new CacheListController(
@@ -49,9 +47,9 @@ public class CacheListController {
         controllerList.remove(cacheListController);
     }
 
-    private static CacheListController getCacheListController(JInternalFrame jInternalFrame) {
+    private static CacheListController getCacheListController(JInternalFrame internalFrame) {
         for (final CacheListController cacheListController : controllerList) {
-            if (cacheListController.view == jInternalFrame) {
+            if (cacheListController.view == internalFrame) {
                 return cacheListController;
             }
         }
@@ -85,24 +83,24 @@ public class CacheListController {
             if (cacheListController == top) {
                 continue;
             }
-            persistenceInfos.add(cacheListController.getPersistenceO());
+            persistenceInfos.add(cacheListController.getPersistenceInfo());
         }
         if (top != null) {
-            persistenceInfos.add(top.getPersistenceO());
+            persistenceInfos.add(top.getPersistenceInfo());
         }
 
         Settings.setSerialized(Settings.Key.CLC_LIST, persistenceInfos);
     }
 
-    public static void reopenPersistantCacheListControllers(
+    public static void reopenPersistentCacheListControllers(
             JDesktopPane desktop,
             JMenu menuWindows,
             Location relativeLocation,
-            CacheListView.RunLocationDialogI runLocationDialog) {
-        List<PersistenceInfo> persistenceInfos;
+            RunLocationDialogI runLocationDialog) {
+        List<PersistenceInfo> persistenceInfoList;
         try {
-            persistenceInfos = Settings.getSerialized(Settings.Key.CLC_LIST);
-            if (persistenceInfos == null) {
+            persistenceInfoList = Settings.getSerialized(Settings.Key.CLC_LIST);
+            if (persistenceInfoList == null) {
                 return;
             }
         } catch (Throwable throwable) {
@@ -110,7 +108,7 @@ public class CacheListController {
             return;
         }
 
-        for (final PersistenceInfo persistenceInfo : persistenceInfos) {
+        for (final PersistenceInfo persistenceInfo : persistenceInfoList) {
             try {
                 if (new File(persistenceInfo.getPath()).exists()) {
                     newCacheListController(
@@ -141,7 +139,7 @@ public class CacheListController {
             final JMenu menuWindows,
             Location relativeLocation,
             String path,
-            CacheListView.RunLocationDialogI runLocationDialog)
+            RunLocationDialogI runLocationDialog)
             throws Throwable {
         if (path != null) {
             cacheListModel.load(path);
@@ -189,12 +187,7 @@ public class CacheListController {
 
         this.menuWindow = new JMenuItem("");
         menuWindows.add(this.menuWindow);
-        this.menuWindow.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent arg0) {
-                        desktop.moveToFront(view);
-                    }
-                });
+        this.menuWindow.addActionListener(actionEvent -> desktop.moveToFront(view));
 
         updateOverallOptics();
     }
@@ -255,13 +248,13 @@ public class CacheListController {
         view.updateMapMarkers();
     }
 
-    public void addFilter(CacheListFilterModel filter) {
+    public void addFilter(FilterModel filter) {
         cacheListModel.addFilter(filter);
         view.addFilter(filter);
         updateOverallOptics();
     }
 
-    public void removeFilter(CacheListFilterModel filter) {
+    public void removeFilter(FilterModel filter) {
         cacheListModel.removeFilter(filter);
         updateOverallOptics();
     }
@@ -343,22 +336,7 @@ public class CacheListController {
         return cacheListModel.getUndoActionCount();
     }
 
-    private PersistenceInfo getPersistenceO() {
+    private PersistenceInfo getPersistenceInfo() {
         return new PersistenceInfo(path.toString());
-    }
-
-    public static class PersistenceInfo implements Serializable {
-
-        private static final long serialVersionUID = 1L;
-
-        private final String path;
-
-        public PersistenceInfo(String path) {
-            this.path = path;
-        }
-
-        public String getPath() {
-            return path;
-        }
     }
 }

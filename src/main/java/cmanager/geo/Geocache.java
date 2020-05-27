@@ -35,8 +35,8 @@ public class Geocache implements Serializable, Comparable<String> {
     private Boolean isFound = null;
 
     private List<GeocacheAttribute> attributes = new ArrayList<>();
-    private List<GeocacheLog> logs = new ArrayList<>();
-    private List<Waypoint> waypoints = new ArrayList<>();
+    private final List<GeocacheLog> logs = new ArrayList<>();
+    private final List<Waypoint> waypoints = new ArrayList<>();
 
     public Geocache(
             String code,
@@ -187,6 +187,10 @@ public class Geocache implements Serializable, Comparable<String> {
         return mostRecentLog == null ? null : mostRecentLog.getDate();
     }
 
+    public List<Waypoint> getWaypoints() {
+        return waypoints;
+    }
+
     public void addWaypoint(Waypoint waypoint) {
         waypoint.setParent(code);
         waypoints.add(waypoint);
@@ -206,10 +210,6 @@ public class Geocache implements Serializable, Comparable<String> {
 
     public void addAttribute(GeocacheAttribute attribute) {
         attributes.add(attribute);
-    }
-
-    public List<Waypoint> getWaypoints() {
-        return waypoints;
     }
 
     public void setId(Integer id) {
@@ -333,8 +333,8 @@ public class Geocache implements Serializable, Comparable<String> {
     }
 
     @Override
-    public int compareTo(String s) {
-        return code.compareTo(s);
+    public int compareTo(String string) {
+        return code.compareTo(string);
     }
 
     public void setRequiresPassword(Boolean requiresPassword) {

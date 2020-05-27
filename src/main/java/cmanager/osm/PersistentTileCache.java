@@ -36,35 +36,34 @@ public class PersistentTileCache implements TileCache {
             memoryTileCache.clear();
         }
 
-        service.submit(
-                new Runnable() {
-                    public void run() {
-                        // Wait for tile to load.
-                        while (!tile.isLoaded() && !tile.hasError()) {
-                            try {
-                                Thread.sleep(500);
-                            } catch (InterruptedException ignored) {
-                            }
-                        }
-
-                        // Skip tile on error.
-                        if (tile.hasError()) {
-                            return;
-                        }
-
-                        // Store tile to disk.
-                        final String fileName = getFileName(tile);
-                        final File outputfile = new File(fileName);
-                        try {
-                            outputfile.mkdirs();
-                            ImageIO.write(tile.getImage(), "png", outputfile);
-                        } catch (Exception e) {
-                            ExceptionPanel.showErrorDialog(null, e);
-                        }
-                    }
-                });
+        service.submit(() -> loadTile(tile));
 
         memoryTileCache.addTile(tile);
+    }
+
+    private void loadTile(final Tile tile) {
+        // Wait for tile to load.
+        while (!tile.isLoaded() && !tile.hasError()) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ignored) {
+            }
+        }
+
+        // Skip tile on error.
+        if (tile.hasError()) {
+            return;
+        }
+
+        // Store tile to disk.
+        final String fileName = getFileName(tile);
+        final File outputFile = new File(fileName);
+        try {
+            outputFile.mkdirs();
+            ImageIO.write(tile.getImage(), "png", outputFile);
+        } catch (Exception exception) {
+            ExceptionPanel.showErrorDialog(null, exception);
+        }
     }
 
     @Override

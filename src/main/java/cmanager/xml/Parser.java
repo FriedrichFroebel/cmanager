@@ -1,8 +1,7 @@
 package cmanager.xml;
 
-import cmanager.MalFormedException;
-import cmanager.ThreadStore;
-import cmanager.xml.Element.XmlAttribute;
+import cmanager.exception.MalFormedException;
+import cmanager.util.ThreadStore;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,12 +16,12 @@ public class Parser {
         return parse(new BufferReadAbstraction(element), null);
     }
 
-    public static Element parse(InputStream inputStream, XMLParserCallbackI callback)
+    public static Element parse(InputStream inputStream, XmlParserCallbackI callback)
             throws MalFormedException, IOException {
         return parse(new BufferReadAbstraction(inputStream), callback);
     }
 
-    private static Element parse(BufferReadAbstraction element, XMLParserCallbackI callback)
+    private static Element parse(BufferReadAbstraction element, XmlParserCallbackI callback)
             throws MalFormedException, IOException {
         final Element root = new Element();
         do {
@@ -44,7 +43,7 @@ public class Parser {
     }
 
     private static void parse(
-            BufferReadAbstraction element, Element root, XMLParserCallbackI callback)
+            BufferReadAbstraction element, Element root, XmlParserCallbackI callback)
             throws MalFormedException, IOException {
         removeDelimiter(element);
         if (element.charAt(0) != '<') {
@@ -189,7 +188,7 @@ public class Parser {
         BufferedWriter bufferedWriter =
                 new BufferedWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
         BufferWriteAbstraction bufferWriteAbstraction =
-                new BufferWriteAbstraction.BufferedWriterWriteAbstraction(bufferedWriter);
+                new BufferedWriterWriteAbstraction(bufferedWriter);
 
         bufferWriteAbstraction.append("<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>\n");
         for (final Element child : root.getChildren()) {
@@ -219,21 +218,7 @@ public class Parser {
                 }
                 final int end = temp;
 
-                threadStore.addAndRun(
-                        new Thread(
-                                new Runnable() {
-                                    public void run() {
-                                        try {
-                                            for (int i = start; i < end; i++) {
-                                                shrinkXmlTree(element.getChildren().get(i));
-                                            }
-                                        } catch (Throwable throwable) {
-                                            Thread thread = Thread.currentThread();
-                                            thread.getUncaughtExceptionHandler()
-                                                    .uncaughtException(thread, throwable);
-                                        }
-                                    }
-                                }));
+                threadStore.addAndRun(new Thread(() -> shrinkXmlElement(element, start, end)));
             }
             threadStore.joinAndThrow();
         }
@@ -244,6 +229,17 @@ public class Parser {
                                 child.getUnescapedBody() == null
                                         && child.getAttributes().size() == 0
                                         && child.getChildren().size() == 0);
+    }
+
+    private static void shrinkXmlElement(final Element element, int start, int end) {
+        try {
+            for (int i = start; i < end; i++) {
+                shrinkXmlTree(element.getChildren().get(i));
+            }
+        } catch (Throwable throwable) {
+            final Thread thread = Thread.currentThread();
+            thread.getUncaughtExceptionHandler().uncaughtException(thread, throwable);
+        }
     }
 
     private static void xmlToBuffer(
@@ -291,38 +287,12 @@ public class Parser {
                             new Thread(
                                     new Runnable() {
                                         public void run() {
-                                            try {
-                                                BufferWriteAbstraction.StringBufferWriteAbstraction
-                                                        bwaThread =
-                                                                new BufferWriteAbstraction
-                                                                        .StringBufferWriteAbstraction(
-                                                                        new StringBuilder());
-                                                for (int i = start; i < end; i++) {
-                                                    final Element child =
-                                                            element.getChildren().get(i);
-                                                    xmlToBuffer(child, bwaThread, level + 1);
-
-                                                    // Flush each n elements
-                                                    if (i % 100 == 0) {
-                                                        synchronized (bufferWriteAbstraction) {
-                                                            bufferWriteAbstraction.append(
-                                                                    bwaThread);
-                                                        }
-                                                        bwaThread =
-                                                                new BufferWriteAbstraction
-                                                                        .StringBufferWriteAbstraction(
-                                                                        new StringBuilder());
-                                                    }
-                                                }
-
-                                                synchronized (bufferWriteAbstraction) {
-                                                    bufferWriteAbstraction.append(bwaThread);
-                                                }
-                                            } catch (Throwable throwable) {
-                                                Thread thread = Thread.currentThread();
-                                                thread.getUncaughtExceptionHandler()
-                                                        .uncaughtException(thread, throwable);
-                                            }
+                                            xmlElementToBuffer(
+                                                    element,
+                                                    start,
+                                                    end,
+                                                    level,
+                                                    bufferWriteAbstraction);
                                         }
                                     }));
                 }
@@ -342,16 +312,42 @@ public class Parser {
         }
     }
 
+    private static void xmlElementToBuffer(
+            final Element element,
+            int start,
+            int end,
+            int level,
+            final BufferWriteAbstraction bufferWriteAbstraction) {
+        try {
+            StringBufferWriteAbstraction bufferWriteAbstractionThread =
+                    new StringBufferWriteAbstraction(new StringBuilder());
+            for (int i = start; i < end; i++) {
+                final Element child = element.getChildren().get(i);
+                xmlToBuffer(child, bufferWriteAbstractionThread, level + 1);
+
+                // Flush each n elements
+                if (i % 100 == 0) {
+                    synchronized (bufferWriteAbstraction) {
+                        bufferWriteAbstraction.append(bufferWriteAbstraction);
+                    }
+                    bufferWriteAbstractionThread =
+                            new StringBufferWriteAbstraction(new StringBuilder());
+                }
+            }
+
+            synchronized (bufferWriteAbstraction) {
+                bufferWriteAbstraction.append(bufferWriteAbstraction);
+            }
+        } catch (Throwable throwable) {
+            final Thread thread = Thread.currentThread();
+            thread.getUncaughtExceptionHandler().uncaughtException(thread, throwable);
+        }
+    }
+
     private static void appendSpaces(BufferWriteAbstraction bufferWriteAbstraction, int factor)
             throws IOException {
         for (int i = 0; i < factor * 2; i++) {
             bufferWriteAbstraction.append(" ");
         }
-    }
-
-    public interface XMLParserCallbackI {
-        boolean elementLocatedCorrectly(Element element, Element parent);
-
-        boolean elementFinished(Element element);
     }
 }

@@ -1,4 +1,4 @@
-package cmanager;
+package cmanager.util;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ public class ThreadStore implements UncaughtExceptionHandler {
     }
 
     public void joinAndThrow() throws Throwable {
-        for (Thread thread : threads)
+        for (final Thread thread : threads)
             try {
                 thread.join();
             } catch (InterruptedException ignored) {

@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import cmanager.geo.Coordinate.UnparsableException;
+import cmanager.exception.CoordinateUnparsableException;
 import java.util.Arrays;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -56,7 +56,7 @@ public class CoordinateTest {
             final Coordinate coordinate = new Coordinate(string);
             assertEquals(latitude, coordinate.getLatitude(), 0.0);
             assertEquals(lonigtude, coordinate.getLongitude(), 0.00009);
-        } catch (UnparsableException exception) {
+        } catch (CoordinateUnparsableException exception) {
             fail(Arrays.toString(exception.getStackTrace()));
         }
     }

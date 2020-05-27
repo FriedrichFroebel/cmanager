@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class GeocacheAttribute implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 7108209620393435595L;
 
     private final int id;
     private final int inc; // 1 = positive, 0 = negative.

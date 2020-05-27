@@ -3,7 +3,7 @@ package cmanager.geo;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import cmanager.geo.Coordinate.UnparsableException;
+import cmanager.exception.CoordinateUnparsableException;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -380,7 +380,7 @@ public class GeocacheComparatorTest {
             geocache2.setCodeGC(code_gc);
 
             list.add(new Geocache[] {geocache1, geocache2});
-        } catch (NullPointerException | UnparsableException exception) {
+        } catch (NullPointerException | CoordinateUnparsableException exception) {
             exception.printStackTrace();
             fail("Unable to initialize list.");
         }
@@ -698,7 +698,7 @@ public class GeocacheComparatorTest {
         for (final Geocache[] tuple : matching) {
             final Geocache gc = tuple[0];
             final Geocache oc = tuple[1];
-            if (!GeocacheComparator.similar(gc, oc)) {
+            if (!GeocacheComparator.areSimilar(gc, oc)) {
                 fail("No match: " + gc.toString() + " " + oc.toString());
             }
         }
@@ -711,7 +711,7 @@ public class GeocacheComparatorTest {
 
                 final Geocache gc = tuple1[0];
                 final Geocache oc = tuple2[1];
-                final boolean similar = GeocacheComparator.similar(gc, oc);
+                final boolean similar = GeocacheComparator.areSimilar(gc, oc);
                 assertFalse(similar, "Unexpected match: " + gc.toString() + " " + oc.toString());
             }
         }
@@ -800,7 +800,7 @@ public class GeocacheComparatorTest {
         for (final Geocache[] tuple : notMatching) {
             final Geocache gc = tuple[0];
             final Geocache oc = tuple[1];
-            final boolean similar = GeocacheComparator.similar(gc, oc);
+            final boolean similar = GeocacheComparator.areSimilar(gc, oc);
             assertFalse(similar, "Match: " + gc.toString() + " " + oc.toString());
         }
     }

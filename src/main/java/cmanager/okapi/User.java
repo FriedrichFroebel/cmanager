@@ -1,6 +1,5 @@
 package cmanager.okapi;
 
-import cmanager.okapi.Okapi.RequestAuthorizationCallbackI;
 import cmanager.okapi.Okapi.TokenProviderI;
 import cmanager.settings.Settings;
 import com.github.scribejava.core.model.OAuth1AccessToken;

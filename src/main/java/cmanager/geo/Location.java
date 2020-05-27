@@ -14,7 +14,7 @@ public class Location extends Coordinate {
     public void setName(String name) throws Exception {
         name = name.trim();
         if (name.equals("")) {
-            throw new Exception("Name must not be empty.");
+            throw new IllegalArgumentException("Name must not be empty.");
         }
 
         this.name = name;

@@ -11,7 +11,7 @@ class BufferReadAbstraction {
 
     private final int LIMIT = 1024 * 1024 * 10;
     private final char[] characterBuffer = new char[LIMIT];
-    private BufferedReader bufferedReader;
+    private final BufferedReader bufferedReader;
 
     public BufferReadAbstraction(InputStream inputStream) {
         bufferedReader =

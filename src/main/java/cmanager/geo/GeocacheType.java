@@ -45,7 +45,7 @@ public class GeocacheType implements Serializable {
         return new GeocacheType("Mystery");
     }
 
-    private int type;
+    private final int type;
 
     public GeocacheType(int type) {
         this.type = type;

@@ -31,20 +31,18 @@ public class FrameHelper {
 
         Thread thread =
                 new Thread(
-                        new Runnable() {
-                            public void run() {
-                                while (newFrame.isVisible() || !isFirstInQueue(owner)) {
-                                    try {
-                                        Thread.sleep(200);
-                                    } catch (InterruptedException ignored) {
-                                    }
+                        () -> {
+                            while (newFrame.isVisible() || !isFirstInQueue(owner)) {
+                                try {
+                                    Thread.sleep(200);
+                                } catch (InterruptedException ignored) {
                                 }
-
-                                owner.setVisible(true);
-                                owner.setEnabled(true);
-                                owner.toFront();
-                                removeFromQueue(owner);
                             }
+
+                            owner.setVisible(true);
+                            owner.setEnabled(true);
+                            owner.toFront();
+                            removeFromQueue(owner);
                         });
         thread.start();
     }

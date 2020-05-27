@@ -1,5 +1,6 @@
 package cmanager.geo;
 
+import cmanager.exception.CoordinateUnparsableException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -8,13 +9,7 @@ import java.util.regex.Pattern;
 
 public class Coordinate implements Serializable {
 
-    private static final long serialVersionUID = -2526305963690482539L;
-
-    public static class UnparsableException extends Exception {
-        private static final long serialVersionUID = -3199033370349089535L;
-
-        public UnparsableException() {}
-    }
+    private static final long serialVersionUID = -3296100424111532545L;
 
     private final double latitude;
     private final double longitude;
@@ -23,7 +18,7 @@ public class Coordinate implements Serializable {
         this(Double.parseDouble(latitude), Double.parseDouble(longitude));
     }
 
-    public Coordinate(String input) throws UnparsableException {
+    public Coordinate(String input) throws CoordinateUnparsableException {
         final Pattern pattern =
                 Pattern.compile(
                         "N\\s*(\\d+)[\\s|°]\\s*((?:\\d+\\.\\d+)|(?:\\d+))'*\\s*"
@@ -31,7 +26,7 @@ public class Coordinate implements Serializable {
         final Matcher matcher = pattern.matcher(input);
 
         if (!matcher.find()) {
-            throw new UnparsableException();
+            throw new CoordinateUnparsableException();
         }
 
         latitude = Double.parseDouble(matcher.group(1)) + Double.parseDouble(matcher.group(2)) / 60;
@@ -39,7 +34,7 @@ public class Coordinate implements Serializable {
                 Double.parseDouble(matcher.group(3)) + Double.parseDouble(matcher.group(4)) / 60;
 
         if (matcher.find()) {
-            throw new UnparsableException();
+            throw new CoordinateUnparsableException();
         }
     }
 

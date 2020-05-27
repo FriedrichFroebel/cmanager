@@ -25,24 +25,15 @@ public class SearchCache {
         final String filename = searchToFileName(geocache, excludeUuid);
         final File file = new File(filename);
         if (file.exists()) {
-            final boolean success = file.delete();
-            if (!success) {
-                // System.out.println("Error deleting file " + filename + ".");
-            }
+            file.delete();
         }
 
-        final boolean success = file.createNewFile();
-        if (!success) {
-            // System.out.println("Error creating file " + filename + ".");
-        }
+        file.createNewFile();
     }
 
     public static synchronized boolean isEmptySearch(Geocache geocache, String excludeUuid) {
         if (!initDone) {
-            final boolean success = new File(OKAPI_CACHE_FOLDER).mkdirs();
-            if (!success) {
-                // System.out.println("Error creating directory " + OKAPI_CACHE_FOLDER + ".");
-            }
+            new File(OKAPI_CACHE_FOLDER).mkdirs();
 
             // If there are files in the legacy folder, move them into the new folder.
             final File[] legacyFiles = new File(LEGACY_CACHE_FOLDER).listFiles();

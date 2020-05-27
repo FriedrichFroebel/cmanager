@@ -10,11 +10,11 @@ public class Waypoint implements Serializable {
 
     private static final long serialVersionUID = 3154357724453317729L;
 
-    private Coordinate coordinate;
-    private String code;
-    private String description;
-    private String symbol;
-    private String type;
+    private final Coordinate coordinate;
+    private final String code;
+    private final String description;
+    private final String symbol;
+    private final String type;
     private String parent;
     private DateTime date;
 

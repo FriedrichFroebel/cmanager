@@ -37,9 +37,9 @@ public class ForkUtil {
             return;
         }
 
-        // Run new vm
-        ProcessBuilder pb = new ProcessBuilder("java", "-jar", jarPath);
-        pb.start();
+        // Run new VM.
+        ProcessBuilder processBuilder = new ProcessBuilder("java", "-jar", jarPath);
+        processBuilder.start();
 
         System.exit(0);
     }
@@ -70,9 +70,9 @@ public class ForkUtil {
             return;
         }
 
-        // Run new vm
+        // Run new VM.
         final String originalArguments = String.join(" ", args);
-        ProcessBuilder pb =
+        final ProcessBuilder processBuilder =
                 new ProcessBuilder()
                         .inheritIO()
                         .command(
@@ -82,10 +82,10 @@ public class ForkUtil {
                                 jarPath,
                                 PARAM_HEAP_RESIZED,
                                 originalArguments);
-        Process p = pb.start();
+        final Process process = processBuilder.start();
         int retval = -1;
         try {
-            retval = p.waitFor();
+            retval = process.waitFor();
         } catch (InterruptedException ignored) {
         }
 

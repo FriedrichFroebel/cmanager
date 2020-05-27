@@ -1,24 +1,21 @@
 package cmanager.okapi;
 
-import cmanager.MalFormedException;
+import cmanager.exception.CoordinateUnparsableException;
+import cmanager.exception.MalFormedException;
+import cmanager.exception.UnexpectedLogStatus;
 import cmanager.geo.Coordinate;
 import cmanager.geo.Geocache;
 import cmanager.geo.GeocacheLog;
 import cmanager.global.Constants;
 import cmanager.gui.ExceptionPanel;
 import cmanager.network.ApacheHttp;
-import cmanager.network.ApacheHttp.HttpResponse;
+import cmanager.network.HttpResponse;
 import cmanager.network.UnexpectedStatusCode;
-import cmanager.okapi.responses.CacheDetailsDocument;
-import cmanager.okapi.responses.CacheDocument;
-import cmanager.okapi.responses.CachesAroundDocument;
+import cmanager.okapi.responses.CachesSearchNearestDocument;
 import cmanager.okapi.responses.ErrorDocument;
-import cmanager.okapi.responses.FoundStatusDocument;
-import cmanager.okapi.responses.HomeLocationDocument;
+import cmanager.okapi.responses.GeocacheDocument;
 import cmanager.okapi.responses.LogSubmissionDocument;
-import cmanager.okapi.responses.UnexpectedLogStatus;
-import cmanager.okapi.responses.UsernameDocument;
-import cmanager.okapi.responses.UuidDocument;
+import cmanager.okapi.responses.UserDocument;
 import com.github.scribejava.core.builder.ServiceBuilder;
 import com.github.scribejava.core.model.OAuth1AccessToken;
 import com.github.scribejava.core.model.OAuth1RequestToken;
@@ -65,7 +62,7 @@ public class Okapi {
             }
         }
 
-        final UuidDocument document = new Gson().fromJson(responseBody, UuidDocument.class);
+        final UserDocument document = new Gson().fromJson(responseBody, UserDocument.class);
         return document.getUuid();
     }
 
@@ -94,7 +91,7 @@ public class Okapi {
             }
         }
 
-        final CacheDocument document = new Gson().fromJson(responseBody, CacheDocument.class);
+        final GeocacheDocument document = new Gson().fromJson(responseBody, GeocacheDocument.class);
         if (document == null) {
             return null;
         }
@@ -180,8 +177,7 @@ public class Okapi {
             }
         }
 
-        final CacheDetailsDocument document =
-                new Gson().fromJson(responseBody, CacheDetailsDocument.class);
+        final GeocacheDocument document = new Gson().fromJson(responseBody, GeocacheDocument.class);
 
         geocache.setContainer(document.getSize());
         geocache.setListingShort(document.getShortDescription());
@@ -191,12 +187,6 @@ public class Okapi {
         geocache.setRequiresPassword(document.doesRequirePassword());
 
         return geocache;
-    }
-
-    public interface RequestAuthorizationCallbackI {
-        void redirectUrlToUser(String authUrl);
-
-        String getPin();
     }
 
     private static OAuth10aService getOAuthService() {
@@ -234,7 +224,8 @@ public class Okapi {
             throws InterruptedException, ExecutionException, IOException {
         final OAuth10aService service = getOAuthService();
         final OAuthRequest request = new OAuthRequest(Verb.GET, url);
-        service.signRequest(tokenProvider.getOkapiToken(), request); // the access token from step 4
+        // The access token from step 4.
+        service.signRequest(tokenProvider.getOkapiToken(), request);
         final Response response = service.execute(request);
         return response.getBody();
     }
@@ -293,8 +284,8 @@ public class Okapi {
             }
         }
 
-        final CachesAroundDocument document =
-                new Gson().fromJson(responseBody, CachesAroundDocument.class);
+        final CachesSearchNearestDocument document =
+                new Gson().fromJson(responseBody, CachesSearchNearestDocument.class);
         if (document == null) {
             return null;
         }
@@ -329,8 +320,7 @@ public class Okapi {
                         + "&fields=is_found";
         final String responseBody = authedHttpGet(tokenProvider, url);
 
-        final FoundStatusDocument document =
-                new Gson().fromJson(responseBody, FoundStatusDocument.class);
+        final GeocacheDocument document = new Gson().fromJson(responseBody, GeocacheDocument.class);
 
         oc.setIsFound(document.isFound());
     }
@@ -340,7 +330,7 @@ public class Okapi {
         final String url = BASE_URL + "/users/user" + "?fields=uuid";
         final String responseBody = authedHttpGet(tokenProvider, url);
 
-        final UuidDocument document = new Gson().fromJson(responseBody, UuidDocument.class);
+        final UserDocument document = new Gson().fromJson(responseBody, UserDocument.class);
         if (document == null) {
             return null;
         }
@@ -352,7 +342,7 @@ public class Okapi {
         final String url = BASE_URL + "/users/user" + "?fields=username";
         final String responseBody = authedHttpGet(tokenProvider, url);
 
-        final UsernameDocument document = new Gson().fromJson(responseBody, UsernameDocument.class);
+        final UserDocument document = new Gson().fromJson(responseBody, UserDocument.class);
         if (document == null) {
             return null;
         }
@@ -400,7 +390,7 @@ public class Okapi {
     }
 
     public static Coordinate getHomeCoordinates(TokenProviderI tokenProvider)
-            throws Coordinate.UnparsableException, IOException, InterruptedException,
+            throws CoordinateUnparsableException, IOException, InterruptedException,
                     ExecutionException {
         final String uuid = getUuid(tokenProvider);
 
@@ -408,8 +398,7 @@ public class Okapi {
                 BASE_URL + "/users/user" + "?fields=home_location" + "&user_uuid=" + uuid;
         final String responseBody = authedHttpGet(tokenProvider, url);
 
-        final HomeLocationDocument document =
-                new Gson().fromJson(responseBody, HomeLocationDocument.class);
+        final UserDocument document = new Gson().fromJson(responseBody, UserDocument.class);
 
         return document.getHomeLocationAsCoordinate();
     }

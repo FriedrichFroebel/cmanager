@@ -10,13 +10,13 @@ import cmanager.geo.Geocache;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-/** Tests for the OKAPI-based methods with do not require an user login. */
+/** Tests for the OKAPI-based methods which do not require an user login. */
 public class OkapiTest {
 
     /** Test the conversion of an username to an UUID with a not existing user. */
     @Test
     @DisplayName("Test user name conversion with not existing user")
-    public void testUsernameToUUIDNotExisting() throws Exception {
+    public void testUsernameToUuidNotExisting() throws Exception {
         final String uuid = Okapi.usernameToUuid("This.User.Does.Not.Exist");
         assertNull(uuid);
     }
@@ -24,7 +24,7 @@ public class OkapiTest {
     /** Test the conversion of an username to an UUID with a valid user. */
     @Test
     @DisplayName("Test user name conversion with an existing user")
-    public void testUsernameToUUIDValid() throws Exception {
+    public void testUsernameToUuidValid() throws Exception {
         final String uuid = Okapi.usernameToUuid("cmanagerTestÄccount");
         assertEquals("a912cccd-1c60-11e7-8e90-86c6a7325f31", uuid);
     }

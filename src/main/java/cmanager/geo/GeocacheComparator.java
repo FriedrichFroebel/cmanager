@@ -14,7 +14,7 @@ public class GeocacheComparator {
         }
 
         // If a non premium member downloads her/his founds via geotoad, premium caches are
-        // mislocated at 0.0/0.0 which falsely matches many OC dummies in the ocean.
+        // mis-located at 0.0/0.0 which falsely matches many OC dummies in the ocean.
         if (geocache1.getCoordinate().equals(new Coordinate(0.0, 0.0))
                 && geocache2.getCoordinate().equals(new Coordinate(0.0, 0.0))) {
             return 0;
@@ -76,7 +76,11 @@ public class GeocacheComparator {
         return dividend / divisor;
     }
 
-    public static boolean similar(Geocache geocache1, Geocache geocache2) {
-        return calculateSimilarity(geocache1, geocache2) >= 0.8;
+    public static boolean areSimilar(Geocache geocache1, Geocache geocache2) {
+        return areSimilar(geocache1, geocache2, 0.8);
+    }
+
+    public static boolean areSimilar(Geocache geocache1, Geocache geocache2, double threshold) {
+        return calculateSimilarity(geocache1, geocache2) >= threshold;
     }
 }

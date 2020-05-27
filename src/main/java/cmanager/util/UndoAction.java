@@ -1,4 +1,4 @@
-package cmanager;
+package cmanager.util;
 
 import cmanager.geo.Geocache;
 import java.util.ArrayList;

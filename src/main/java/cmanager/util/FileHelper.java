@@ -1,4 +1,4 @@
-package cmanager;
+package cmanager.util;
 
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
