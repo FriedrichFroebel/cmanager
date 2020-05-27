@@ -68,8 +68,8 @@ test {
 
 // Check if we are running on Travis CI.
 static def isTravis() {
-    if (System.getProperty('user.name') != 'travis') return false
-    if (System.getProperty('HAS_JOSH_K_SEAL_OF_APPROVAL') != 'true') return false
+    if (System.getenv('USER') != 'travis') return false
+    if (System.getenv('HAS_JOSH_K_SEAL_OF_APPROVAL') != 'true') return false
     return true
 }
 
