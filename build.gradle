@@ -158,7 +158,7 @@ clean.doFirst {
 
 jar {
     archiveBaseName = 'cm'
-    if (isTravis()) project.version = 'ci'
+    if (isTravis()) version = 'ci'
     manifest {
         attributes 'Main-Class': mainClassName
     }
