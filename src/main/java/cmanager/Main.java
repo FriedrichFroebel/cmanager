@@ -6,6 +6,8 @@ import cmanager.gui.MainWindow;
 import cmanager.util.ForkUtil;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 public class Main {
 
@@ -18,6 +20,19 @@ public class Main {
             throwable.printStackTrace();
         }
 
+        // Try to set the look and feel to follow the system style.
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException
+                | InstantiationException
+                | IllegalAccessException
+                | ClassCastException
+                | UnsupportedLookAndFeelException exception) {
+            System.out.println(
+                    "Failed setting system look and feel. Falling back to Java default.");
+        }
+
+        // Display the frame.
         final MainWindow frame = new MainWindow();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setTitle(Constants.APP_NAME + " " + Version.VERSION);
