@@ -5,15 +5,18 @@ import cmanager.geo.Geocache;
 import cmanager.geo.GeocacheComparator;
 import cmanager.geo.GeocacheLog;
 import cmanager.gui.ExceptionPanel;
+import cmanager.gui.GuiUtils;
 import cmanager.gui.MainWindow;
 import cmanager.gui.components.CacheListView;
 import cmanager.gui.components.CachePanel;
 import cmanager.gui.components.LogPanel;
 import cmanager.gui.components.Logo;
+import cmanager.oc.OcUtil;
 import cmanager.oc.ShadowList;
 import cmanager.okapi.Okapi;
 import cmanager.okapi.User;
 import cmanager.settings.Settings;
+import cmanager.util.DesktopUtil;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -189,12 +192,14 @@ public class CopyLogDialog extends JFrame {
             // Retrieve the new log text.
             log.setText(logPanel.getLogText());
 
-            // Copy the log.
-            Okapi.postLog(User.getOKAPIUser(), oc, log);
+            // Copy the log and determine its URL.
+            final String logId = Okapi.postLog(User.getOKAPIUser(), oc, log);
+            final String logUrl = OcUtil.determineLogUrl(oc, logId);
 
-            // Disable the button as this log must have been posted successfully (otherwise an
-            // exception would have occurred).
-            button.setVisible(false);
+            // Use button to let the user open the posted log.
+            GuiUtils.removeActionListeners(button);
+            button.addActionListener(actionEvent -> DesktopUtil.openUrl(logUrl));
+            button.setText("Open log on opencaching.de");
 
             // Remember that we copied the log so the user can not double post it by accident.
             logsCopied.add(log);

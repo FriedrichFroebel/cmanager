@@ -14,6 +14,7 @@ import cmanager.network.UnexpectedStatusCode;
 import cmanager.okapi.responses.CachesSearchNearestDocument;
 import cmanager.okapi.responses.ErrorDocument;
 import cmanager.okapi.responses.GeocacheDocument;
+import cmanager.okapi.responses.LogDocument;
 import cmanager.okapi.responses.LogSubmissionDocument;
 import cmanager.okapi.responses.UserDocument;
 import com.github.scribejava.core.builder.ServiceBuilder;
@@ -162,7 +163,8 @@ public class Okapi {
                         + geocache.getCode()
                         + "&fields="
                         + URLEncoder.encode(
-                                "size2|short_description|description|owner|hint2|req_passwd",
+                                "size2|short_description|description|owner|hint2|url|req_passwd"
+                                        + "|internal_id",
                                 "UTF-8");
 
         final HttpResponse httpResponse = httpClient.get(url);
@@ -184,7 +186,9 @@ public class Okapi {
         geocache.setListing(document.getDescription());
         geocache.setOwner(document.getOwnerUsername());
         geocache.setHint(document.getHint());
+        geocache.setUrl(document.getUrl());
         geocache.setRequiresPassword(document.doesRequirePassword());
+        geocache.setInternalId(document.getInternalId());
 
         return geocache;
     }
@@ -349,8 +353,9 @@ public class Okapi {
         return document.getUsername();
     }
 
-    public static void postLog(TokenProviderI tokenProvider, Geocache cache, GeocacheLog log)
-            throws InterruptedException, ExecutionException, IOException, UnexpectedLogStatus {
+    public static String postLog(TokenProviderI tokenProvider, Geocache cache, GeocacheLog log)
+            throws InterruptedException, ExecutionException, IOException, UnexpectedLogStatus,
+                    UnexpectedStatusCode {
         String url =
                 BASE_URL
                         + "/logs/submit"
@@ -387,6 +392,8 @@ public class Okapi {
         if (!document.isSuccess()) {
             throw new UnexpectedLogStatus(document.getMessage());
         }
+
+        return Okapi.getLogId(document.getLogUuid());
     }
 
     public static Coordinate getHomeCoordinates(TokenProviderI tokenProvider)
@@ -401,5 +408,26 @@ public class Okapi {
         final UserDocument document = new Gson().fromJson(responseBody, UserDocument.class);
 
         return document.getHomeLocationAsCoordinate();
+    }
+
+    /** Convert the given log UUID to a real (internal) log ID. */
+    public static String getLogId(String logUuid) throws IOException, UnexpectedStatusCode {
+        final String url =
+                BASE_URL
+                        + "/logs/entry?consumer_key="
+                        + CONSUMER_API_KEY
+                        + "&fields=internal_id"
+                        + "&log_uuid="
+                        + URLEncoder.encode(logUuid, "UTF-8");
+
+        final HttpResponse httpResponse = httpClient.get(url);
+        final String responseBody = httpResponse.getBody();
+
+        if (httpResponse.getStatusCode() != 200) {
+            throw new UnexpectedStatusCode(httpResponse.getStatusCode(), responseBody);
+        }
+
+        final LogDocument document = new Gson().fromJson(responseBody, LogDocument.class);
+        return document.getInternalId();
     }
 }

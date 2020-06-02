@@ -1,6 +1,7 @@
 package cmanager.okapi;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -91,6 +92,9 @@ public class OkapiTest {
         assertEquals(expected, listing);
 
         assertEquals("<magnetisch>", geocache.getHint());
+
+        assertTrue(geocache.doesRequirePassword());
+        assertEquals("136478", geocache.getInternalId());
     }
 
     /** Test the cache details getter. */
@@ -114,5 +118,15 @@ public class OkapiTest {
         assertEquals(expected, listing);
 
         assertEquals("", geocache.getHint());
+
+        assertFalse(geocache.doesRequirePassword());
+        assertEquals("176512", geocache.getInternalId());
+    }
+
+    @Test
+    @DisplayName("Test getting the log ID")
+    public void testGetLogId() throws Exception {
+        final String logId = Okapi.getLogId("4785b5f8-46e0-102b-9919-00163e645ac3");
+        assertEquals("278256", logId);
     }
 }

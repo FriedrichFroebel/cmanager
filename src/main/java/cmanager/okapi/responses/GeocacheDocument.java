@@ -57,8 +57,20 @@ public class GeocacheDocument {
     /** Plain-text string, cache hints/spoilers. */
     String hint2;
 
+    /** The URL of the cache's web page. */
+    String url;
+
+    /**
+     * The internal ID of the cache.
+     *
+     * <p>Although it is not recommended to use this, it seems like we need this for log
+     * hyperlinking.
+     */
+    @SerializedName("internal_id")
+    String internalId;
+
     /** State if this cache requires a password in order to submit a "Found it" log entry. */
-    @SerializedName("req_password")
+    @SerializedName("req_passwd")
     Boolean requiresPassword;
 
     /** Whether the user has already found this cache. */
@@ -189,6 +201,24 @@ public class GeocacheDocument {
      */
     public String getHint() {
         return hint2;
+    }
+
+    /**
+     * Get the URL.
+     *
+     * @return The URL.
+     */
+    public String getUrl() {
+        return url;
+    }
+
+    /**
+     * Get the internal ID.
+     *
+     * @return The internal ID.
+     */
+    public String getInternalId() {
+        return internalId;
     }
 
     /**

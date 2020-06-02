@@ -44,4 +44,8 @@ public class LogSubmissionDocument {
     public String getMessage() {
         return message;
     }
+
+    public String getLogUuid() {
+        return logUuid;
+    }
 }

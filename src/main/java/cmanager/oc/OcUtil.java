@@ -2,6 +2,7 @@ package cmanager.oc;
 
 import cmanager.geo.Geocache;
 import cmanager.geo.GeocacheComparator;
+import cmanager.global.Constants;
 import cmanager.list.CacheListModel;
 import cmanager.okapi.Okapi;
 import cmanager.okapi.User;
@@ -15,7 +16,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class Util {
+public class OcUtil {
 
     static final List<Geocache> OKAPI_RUNTIME_CACHE = new ArrayList<>();
 
@@ -138,5 +139,14 @@ public class Util {
         }
 
         return null;
+    }
+
+    public static String determineLogUrl(final Geocache opencache, final String logId) {
+        return Constants.SITE_BASE
+                + "viewcache.php?cacheid="
+                + opencache.getInternalId()
+                + "&log"
+                + "=A#log"
+                + logId;
     }
 }

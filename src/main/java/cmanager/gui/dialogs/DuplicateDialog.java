@@ -6,9 +6,9 @@ import cmanager.gui.ExceptionPanel;
 import cmanager.gui.FrameHelper;
 import cmanager.gui.components.Logo;
 import cmanager.list.CacheListModel;
+import cmanager.oc.OcUtil;
 import cmanager.oc.OutputInterface;
 import cmanager.oc.ShadowList;
-import cmanager.oc.Util;
 import cmanager.okapi.User;
 import cmanager.settings.Settings;
 import cmanager.util.DesktopUtil;
@@ -207,7 +207,7 @@ public class DuplicateDialog extends JFrame {
             ShadowList.updateShadowList();
             shadowList = ShadowList.loadShadowList();
 
-            Util.findOnOc(
+            OcUtil.findOnOc(
                     stopBackgroundThread,
                     cacheListModel,
                     new OutputInterface() {

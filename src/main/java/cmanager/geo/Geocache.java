@@ -23,7 +23,9 @@ public class Geocache implements Serializable, Comparable<String> {
     private String listing = null;
     private String listingShort = null;
     private String hint = null;
+    private String url = null;
     private Boolean requiresPassword = null;
+    private String internalId = null;
 
     private Boolean archived = null;
     private Boolean available = null;
@@ -102,6 +104,9 @@ public class Geocache implements Serializable, Comparable<String> {
             setListing(ObjectHelper.getBest(getListing(), geocache.getListing()));
             listingShort = ObjectHelper.getBest(listingShort, geocache.listingShort);
             hint = ObjectHelper.getBest(hint, geocache.hint);
+            url = ObjectHelper.getBest(url, geocache.url);
+            requiresPassword = ObjectHelper.getBest(requiresPassword, geocache.requiresPassword);
+            internalId = ObjectHelper.getBest(internalId, geocache.internalId);
             archived = ObjectHelper.getBest(archived, geocache.archived);
             available = ObjectHelper.getBest(available, geocache.available);
 
@@ -124,6 +129,10 @@ public class Geocache implements Serializable, Comparable<String> {
     }
 
     public String getUrl() {
+        if (url != null && !url.isEmpty()) {
+            return url;
+        }
+
         if (isGc()) {
             return "https://www.geocaching.com/geocache/" + code;
         }
@@ -132,6 +141,19 @@ public class Geocache implements Serializable, Comparable<String> {
         }
 
         return null;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    // Only for Opencaching.de at the moment.
+    public void setInternalId(String internalId) {
+        this.internalId = internalId;
+    }
+
+    public String getInternalId() {
+        return internalId;
     }
 
     public String getStatusAsString() {
