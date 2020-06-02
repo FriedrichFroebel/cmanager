@@ -1,6 +1,7 @@
 .gradle
 build
 *.gpx
+*.jar
 
 # Ignore Gradle GUI config
 gradle-app.setting
