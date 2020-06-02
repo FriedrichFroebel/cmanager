@@ -3,9 +3,9 @@ package cmanager.geo;
 import cmanager.global.Constants;
 import cmanager.util.ObjectHelper;
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import org.joda.time.DateTime;
 
 public class Geocache implements Serializable, Comparable<String> {
 
@@ -190,7 +190,7 @@ public class Geocache implements Serializable, Comparable<String> {
         return logs;
     }
 
-    public DateTime getMostRecentFoundLog(String usernameGC, String usernameOc) {
+    public ZonedDateTime getMostRecentFoundLog(String usernameGC, String usernameOc) {
         GeocacheLog mostRecentLog = null;
 
         for (final GeocacheLog log : logs) {

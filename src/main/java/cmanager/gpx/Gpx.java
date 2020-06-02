@@ -10,6 +10,8 @@ import cmanager.xml.Parser;
 import cmanager.xml.XmlAttribute;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -17,9 +19,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 
 public class Gpx {
 
@@ -104,9 +103,8 @@ public class Gpx {
                                 + Version.VERSION));
         gpx.add(new Element("author", Constants.APP_NAME));
 
-        final DateTime dateTime = new DateTime();
-        final DateTimeFormatter formatter = ISODateTimeFormat.dateTime();
-        final String dateString = formatter.print(dateTime);
+        final ZonedDateTime dateTime = ZonedDateTime.now();
+        final String dateString = dateTime.format(DateTimeFormatter.ISO_INSTANT);
         gpx.add(new Element("time", dateString));
 
         for (final Geocache geocache : list) {

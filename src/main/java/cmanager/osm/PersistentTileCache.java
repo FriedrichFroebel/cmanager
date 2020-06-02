@@ -1,13 +1,13 @@
 package cmanager.osm;
 
 import cmanager.gui.ExceptionPanel;
+import cmanager.util.DateTimeUtil;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.imageio.ImageIO;
-import org.joda.time.DateTime;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
@@ -96,12 +96,9 @@ public class PersistentTileCache implements TileCache {
         final String fileName = getFileName(source, x, y, z);
         final File file = new File(fileName);
         if (file.exists()) {
-            // Reload if is older than 3 month.
-            DateTime fileTime = new DateTime(file.lastModified());
-            final DateTime now = new DateTime();
-            fileTime = fileTime.plusMonths(3);
-            if (fileTime.isBefore(now)) {
-                // only enforce only tile download/update if we are only
+            // Reload if is older than 3 months.
+            if (DateTimeUtil.isTooOldWithMonths(file, 3)) {
+                // Only enforce tile download/update if we are online.
                 if (online) {
                     return null;
                 }
@@ -111,7 +108,7 @@ public class PersistentTileCache implements TileCache {
             try {
                 tile.loadImage(new FileInputStream(fileName));
                 tile.initLoading();
-            } catch (IOException e) {
+            } catch (IOException exception) {
                 tile = null;
             }
         }

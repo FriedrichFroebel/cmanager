@@ -167,8 +167,9 @@ public class GpxElementUtil {
                                     final GeocacheLog log =
                                             new GeocacheLog(logType, author, text, date);
                                     logs.add(log);
-                                } catch (NullPointerException | IllegalArgumentException ex) {
-                                    ExceptionPanel.display(ex);
+                                } catch (NullPointerException
+                                        | IllegalArgumentException exception) {
+                                    ExceptionPanel.display(exception);
                                 }
                             }
                     } else if (groundspeakElement.is("groundspeak:attributes")) {

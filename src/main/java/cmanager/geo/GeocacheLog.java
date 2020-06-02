@@ -1,11 +1,8 @@
 package cmanager.geo;
 
 import java.io.Serializable;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class GeocacheLog implements Serializable {
 
@@ -50,7 +47,7 @@ public class GeocacheLog implements Serializable {
     private int type;
     private String author;
     private String text;
-    private DateTime date;
+    private ZonedDateTime date;
     private String password;
 
     public GeocacheLog(String type, String author, String text, String date) {
@@ -82,7 +79,7 @@ public class GeocacheLog implements Serializable {
     public void setDate(String date) {
         // <groundspeak:date>2015-08-16T19:00:00Z</groundspeak:date>
         // ISO 8601
-        this.date = new DateTime(date, DateTimeZone.UTC);
+        this.date = ZonedDateTime.parse(date);
     }
 
     /**
@@ -157,23 +154,21 @@ public class GeocacheLog implements Serializable {
         return text;
     }
 
-    public DateTime getDate() {
+    public ZonedDateTime getDate() {
         return date;
     }
 
     public String getDateStr() {
-        final DateTimeFormatter fmt = DateTimeFormat.forPattern("dd.MM.yyyy HH:mm");
-        return fmt.print(date);
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+        return date.format(formatter);
     }
 
     public String getDateStrIso8601() {
-        final DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
-        return fmt.print(date);
+        return date.format(DateTimeFormatter.ISO_INSTANT);
     }
 
-    public static String getDateStrIso8601NoTime(DateTime date) {
-        final DateTimeFormatter fmt = ISODateTimeFormat.date();
-        return fmt.print(date);
+    public static String getDateStrIso8601NoTime(ZonedDateTime date) {
+        return date.format(DateTimeFormatter.ISO_LOCAL_DATE);
     }
 
     public String getDateStrIso8601NoTime() {

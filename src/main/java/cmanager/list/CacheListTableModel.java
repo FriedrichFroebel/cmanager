@@ -3,8 +3,8 @@ package cmanager.list;
 import cmanager.geo.Geocache;
 import cmanager.geo.GeocacheLog;
 import cmanager.settings.Settings;
+import java.time.ZonedDateTime;
 import javax.swing.table.AbstractTableModel;
-import org.joda.time.DateTime;
 
 public class CacheListTableModel extends AbstractTableModel {
 
@@ -63,7 +63,7 @@ public class CacheListTableModel extends AbstractTableModel {
                 return Double.class;
 
             case 9:
-                return DateTime.class;
+                return ZonedDateTime.class;
         }
 
         return null;
@@ -111,7 +111,7 @@ public class CacheListTableModel extends AbstractTableModel {
                                 .distanceHaversineRounded(cacheListModel.relativeLocation)
                         : "";
             case 9:
-                final DateTime date =
+                final ZonedDateTime date =
                         geocache.getMostRecentFoundLog(
                                 Settings.getString(Settings.Key.GC_USERNAME),
                                 Settings.getString(Settings.Key.OC_USERNAME));

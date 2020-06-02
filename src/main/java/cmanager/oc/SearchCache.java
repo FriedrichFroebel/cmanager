@@ -2,10 +2,11 @@ package cmanager.oc;
 
 import cmanager.geo.Geocache;
 import cmanager.global.Constants;
+import cmanager.util.DateTimeUtil;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.concurrent.ThreadLocalRandom;
-import org.joda.time.DateTime;
 
 /** Search result caching. */
 public class SearchCache {
@@ -61,12 +62,12 @@ public class SearchCache {
         if (file.exists()) {
             final int randomMonthCount = -1 * ThreadLocalRandom.current().nextInt(4, 12 + 1);
             final int randomDayCount = -1 * ThreadLocalRandom.current().nextInt(0, 31 + 1);
-            DateTime now = new DateTime();
-            now = now.plusMonths(randomMonthCount);
-            now = now.plusDays(randomDayCount);
+            LocalDateTime expirationDateTime = LocalDateTime.now();
+            expirationDateTime = expirationDateTime.plusMonths(randomMonthCount);
+            expirationDateTime = expirationDateTime.plusDays(randomDayCount);
 
             // Outdated?
-            if (now.isAfter(new DateTime(file.lastModified()))) {
+            if (DateTimeUtil.isTooOld(file, expirationDateTime)) {
                 file.delete();
                 return false;
             } else {

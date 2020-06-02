@@ -11,7 +11,6 @@ import cmanager.gui.dialogs.DuplicateDialog;
 import cmanager.gui.dialogs.LocationDialog;
 import cmanager.gui.dialogs.SettingsDialog;
 import cmanager.gui.dialogs.WaitDialog;
-import cmanager.gui.interfaces.RunLocationDialogI;
 import cmanager.list.CacheListController;
 import cmanager.list.filter.CacheNameFilter;
 import cmanager.list.filter.DifficultyFilter;
@@ -552,11 +551,7 @@ public class MainWindow extends JFrame {
                                         menuWindows,
                                         (Location) comboBox.getSelectedItem(),
                                         chooser.getSelectedFile().getAbsolutePath(),
-                                        new RunLocationDialogI() {
-                                            public void openDialog(Geocache geocache) {
-                                                openLocationDialog(geocache);
-                                            }
-                                        });
+                                        this::openLocationDialog);
                             } else {
                                 CacheListController.getTopViewCacheController(desktopPane)
                                         .addFromFile(chooser.getSelectedFile().getAbsolutePath());
