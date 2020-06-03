@@ -18,7 +18,9 @@ public class DateTimeUtilTest {
         assertFalse(
                 DateTimeUtil.isTooOldWithMonths(
                         LocalDateTime.now().minusMonths(2).minusDays(25), 3));
-        assertFalse(DateTimeUtil.isTooOldWithMonths(LocalDateTime.now().minusMonths(3), 3));
+        assertFalse(
+                DateTimeUtil.isTooOldWithMonths(
+                        LocalDateTime.now().minusMonths(3).plusMinutes(5), 3));
     }
 
     @Test

@@ -93,7 +93,7 @@ public class TestClient implements TokenProviderI {
                                 String response;
                                 try {
                                     response = http.get(url).getBody();
-                                } catch (IOException e) {
+                                } catch (IOException exception) {
                                     return;
                                 }
 

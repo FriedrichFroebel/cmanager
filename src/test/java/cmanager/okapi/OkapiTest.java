@@ -48,7 +48,7 @@ public class OkapiTest {
         assertEquals("auftanken", geocache.getName());
         assertTrue(geocache.getCoordinate().equals(new Coordinate(49.955717, 8.332967)));
         assertEquals("Tradi", geocache.getType().asNiceType()); // OKAPI has no "Drive-In" type.
-        assertNull(geocache.getCodeGC());
+        assertNull(geocache.getCodeGc());
         assertEquals(1.0, geocache.getDifficulty(), 0.0);
         assertEquals(2.0, geocache.getTerrain(), 0.0);
         assertTrue(geocache.isArchived());
@@ -64,7 +64,7 @@ public class OkapiTest {
         assertEquals("Gehüpft wie gesprungen", geocache.getName());
         assertTrue(geocache.getCoordinate().equals(new Coordinate(53.019517, 8.5344)));
         assertEquals("Tradi", geocache.getType().asNiceType());
-        assertEquals("GC46PY8", geocache.getCodeGC());
+        assertEquals("GC46PY8", geocache.getCodeGc());
         assertEquals(2.0, geocache.getDifficulty(), 0.0);
         assertEquals(1.5, geocache.getTerrain(), 0.0);
         assertTrue(geocache.isArchived());

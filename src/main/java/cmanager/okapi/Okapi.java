@@ -111,7 +111,7 @@ public class Okapi {
                         document.getDifficulty(),
                         document.getTerrain(),
                         document.getType());
-        geocache.setCodeGC(document.getGcCode());
+        geocache.setCodeGc(document.getGcCode());
 
         final String status = document.getStatus();
         if (status != null) {

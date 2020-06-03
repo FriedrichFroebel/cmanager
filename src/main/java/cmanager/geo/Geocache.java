@@ -282,11 +282,11 @@ public class Geocache implements Serializable, Comparable<String> {
         return hint;
     }
 
-    public void setCodeGC(String gc) {
+    public void setCodeGc(String gc) {
         codeGc = gc;
     }
 
-    public String getCodeGC() {
+    public String getCodeGc() {
         return codeGc;
     }
 

@@ -253,7 +253,7 @@ public class GeocacheComparatorTest {
      * @param container2 The container size of the second cache.
      * @param archived2 Whether the second cache is archived.
      * @param available2 Whether the second cache is available.
-     * @param code_gc The GC code of the cache.
+     * @param codeGc The GC code of the cache.
      */
     private void addBad(
             String code1,
@@ -276,7 +276,7 @@ public class GeocacheComparatorTest {
             String container2,
             Boolean archived2,
             Boolean available2,
-            String code_gc) {
+            String codeGc) {
         add(
                 notMatching,
                 code1,
@@ -299,7 +299,7 @@ public class GeocacheComparatorTest {
                 container2,
                 archived2,
                 available2,
-                code_gc);
+                codeGc);
     }
 
     /**
@@ -326,7 +326,7 @@ public class GeocacheComparatorTest {
      * @param container2 The container size of the second cache.
      * @param archived2 Whether the second cache is archived.
      * @param available2 Whether the second cache is available.
-     * @param code_gc The GC code of the cache.
+     * @param codeGc The GC code of the cache.
      */
     private void add(
             List<Geocache[]> list,
@@ -350,7 +350,7 @@ public class GeocacheComparatorTest {
             String container2,
             Boolean archived2,
             Boolean available2,
-            String code_gc) {
+            String codeGc) {
         try {
             final Geocache geocache1 =
                     new Geocache(
@@ -377,7 +377,7 @@ public class GeocacheComparatorTest {
             geocache2.setContainer(container2);
             geocache2.setArchived(archived2);
             geocache2.setAvailable(available2);
-            geocache2.setCodeGC(code_gc);
+            geocache2.setCodeGc(codeGc);
 
             list.add(new Geocache[] {geocache1, geocache2});
         } catch (NullPointerException | CoordinateUnparsableException exception) {

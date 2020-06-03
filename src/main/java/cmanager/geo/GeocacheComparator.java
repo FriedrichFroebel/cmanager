@@ -3,8 +3,8 @@ package cmanager.geo;
 public class GeocacheComparator {
 
     public static double calculateSimilarity(Geocache geocache1, Geocache geocache2) {
-        final String codeGc1 = geocache1.getCodeGC();
-        final String codeGc2 = geocache2.getCodeGC();
+        final String codeGc1 = geocache1.getCodeGc();
+        final String codeGc2 = geocache2.getCodeGc();
         final String code1 = geocache1.getCode();
         final String code2 = geocache2.getCode();
 
