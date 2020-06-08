@@ -1,16 +1,15 @@
 package cmanager.okapi;
 
-import cmanager.okapi.Okapi.TokenProviderI;
 import cmanager.settings.Settings;
 import com.github.scribejava.core.model.OAuth1AccessToken;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-public class User implements TokenProviderI {
+public class User implements TokenProviderInterface {
 
     private static User user = null;
 
-    public static User getOKAPIUser() {
+    public static User getOkapiUser() {
         if (user == null) {
             user = new User();
         }
@@ -34,7 +33,7 @@ public class User implements TokenProviderI {
         return okapiAccessToken;
     }
 
-    public void requestOkapiToken(RequestAuthorizationCallbackI callback)
+    public void requestOkapiToken(RequestAuthorizationCallbackInterface callback)
             throws IOException, InterruptedException, ExecutionException {
         okapiAccessToken = Okapi.requestAuthorization(callback);
         if (okapiAccessToken != null) {

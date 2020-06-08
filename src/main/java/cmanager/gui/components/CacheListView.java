@@ -4,7 +4,7 @@ import cmanager.geo.Geocache;
 import cmanager.geo.GeocacheType;
 import cmanager.global.Compatibility;
 import cmanager.global.Constants;
-import cmanager.gui.interfaces.RunLocationDialogI;
+import cmanager.gui.interfaces.RunLocationDialogInterface;
 import cmanager.list.CacheListController;
 import cmanager.list.CacheListTableModel;
 import cmanager.list.filter.FilterModel;
@@ -63,7 +63,7 @@ public class CacheListView extends JInternalFrame {
     /** Create the frame. */
     public CacheListView(
             final CacheListController cacheListController,
-            final RunLocationDialogI runLocationDialog) {
+            final RunLocationDialogInterface runLocationDialog) {
         this.cacheListController = cacheListController;
 
         final AbstractTableModel tableModel = cacheListController.getTableModel();

@@ -6,6 +6,8 @@ import cmanager.global.Constants;
 import cmanager.list.CacheListModel;
 import cmanager.okapi.Okapi;
 import cmanager.okapi.User;
+import cmanager.util.LoggingUtil;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -122,6 +124,12 @@ public class OcUtil {
             final double searchRadius = geocache.hasVolatileStart() ? 1 : 0.05;
             final List<Geocache> similar =
                     Okapi.getCachesAround(user, uuid, geocache, searchRadius, OKAPI_RUNTIME_CACHE);
+            LoggingUtil.getLogger(OcUtil.class)
+                    .info(
+                            MessageFormat.format(
+                                    "Found {0} candidates for {1}.",
+                                    similar.size(), geocache.getCode()));
+
             boolean match = false;
             for (final Geocache opencache : similar) {
                 if (GeocacheComparator.areSimilar(opencache, geocache)) {
@@ -141,6 +149,13 @@ public class OcUtil {
         return null;
     }
 
+    /**
+     * Determine the URL of the given geocache log.
+     *
+     * @param opencache The Opencache instance to retrieve the internal cache ID from.
+     * @param logId The internal log ID to link to.
+     * @return The log URL for the given cache.
+     */
     public static String determineLogUrl(final Geocache opencache, final String logId) {
         return Constants.SITE_BASE
                 + "viewcache.php?cacheid="

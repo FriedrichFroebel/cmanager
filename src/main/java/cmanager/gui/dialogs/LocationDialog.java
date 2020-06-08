@@ -281,7 +281,7 @@ public class LocationDialog extends JDialog {
     }
 
     private void retrieveOkapiCoordinates() {
-        final User user = User.getOKAPIUser();
+        final User user = User.getOkapiUser();
         try {
             final Coordinate coordinate = Okapi.getHomeCoordinates(user);
             textName.setText("OKAPI Home Coordinate");
@@ -304,7 +304,7 @@ public class LocationDialog extends JDialog {
     }
 
     private void checkOkapiStatus(final JButton buttonRetrieve) {
-        final User user = User.getOKAPIUser();
+        final User user = User.getOkapiUser();
         try {
             if (user.getOkapiToken() != null && Okapi.getUuid(user) != null) {
                 buttonRetrieve.setEnabled(true);

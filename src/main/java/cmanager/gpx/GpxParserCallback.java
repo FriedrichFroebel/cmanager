@@ -4,11 +4,11 @@ import cmanager.geo.Geocache;
 import cmanager.geo.Waypoint;
 import cmanager.gui.ExceptionPanel;
 import cmanager.xml.Element;
-import cmanager.xml.XmlParserCallbackI;
+import cmanager.xml.XmlParserCallbackInterface;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
-public class GpxParserCallback implements XmlParserCallbackI {
+public class GpxParserCallback implements XmlParserCallbackInterface {
 
     private final ExecutorService service;
     private final List<Geocache> geocaches;

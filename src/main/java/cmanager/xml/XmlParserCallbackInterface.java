@@ -1,6 +1,6 @@
 package cmanager.xml;
 
-public interface XmlParserCallbackI {
+public interface XmlParserCallbackInterface {
 
     boolean elementLocatedCorrectly(Element element, Element parent);
 

@@ -16,12 +16,12 @@ public class Parser {
         return parse(new BufferReadAbstraction(element), null);
     }
 
-    public static Element parse(InputStream inputStream, XmlParserCallbackI callback)
+    public static Element parse(InputStream inputStream, XmlParserCallbackInterface callback)
             throws MalFormedException, IOException {
         return parse(new BufferReadAbstraction(inputStream), callback);
     }
 
-    private static Element parse(BufferReadAbstraction element, XmlParserCallbackI callback)
+    private static Element parse(BufferReadAbstraction element, XmlParserCallbackInterface callback)
             throws MalFormedException, IOException {
         final Element root = new Element();
         do {
@@ -43,7 +43,7 @@ public class Parser {
     }
 
     private static void parse(
-            BufferReadAbstraction element, Element root, XmlParserCallbackI callback)
+            BufferReadAbstraction element, Element root, XmlParserCallbackInterface callback)
             throws MalFormedException, IOException {
         removeDelimiter(element);
         if (element.charAt(0) != '<') {

@@ -1,6 +1,6 @@
 package cmanager.okapi;
 
-public interface RequestAuthorizationCallbackI {
+public interface RequestAuthorizationCallbackInterface {
 
     void redirectUrlToUser(String authUrl);
 

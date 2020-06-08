@@ -3,7 +3,7 @@ package cmanager.gui.dialogs;
 import cmanager.global.Constants;
 import cmanager.gui.ExceptionPanel;
 import cmanager.okapi.Okapi;
-import cmanager.okapi.RequestAuthorizationCallbackI;
+import cmanager.okapi.RequestAuthorizationCallbackInterface;
 import cmanager.okapi.User;
 import cmanager.settings.Settings;
 import cmanager.util.DesktopUtil;
@@ -228,7 +228,7 @@ public class SettingsDialog extends JDialog {
         labelOkapiToken.setFont(font.deriveFont(font.getStyle() | Font.ITALIC));
         buttonRequestNewToken.setVisible(true);
 
-        final User user = User.getOKAPIUser();
+        final User user = User.getOkapiUser();
         try {
             if (user.getOkapiToken() != null && Okapi.getUuid(user) != null) {
                 labelOkapiToken.setText("okay");
@@ -283,9 +283,9 @@ public class SettingsDialog extends JDialog {
 
     private void requestOkapiToken() {
         try {
-            User.getOKAPIUser()
+            User.getOkapiUser()
                     .requestOkapiToken(
-                            new RequestAuthorizationCallbackI() {
+                            new RequestAuthorizationCallbackInterface() {
                                 @Override
                                 public String getPin() {
                                     return JOptionPane.showInputDialog(

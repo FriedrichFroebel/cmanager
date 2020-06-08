@@ -1,10 +1,9 @@
 package cmanager.okapi.helper;
 
 import cmanager.network.ApacheHttp;
-import cmanager.network.UnexpectedStatusCode;
 import cmanager.okapi.Okapi;
-import cmanager.okapi.Okapi.TokenProviderI;
-import cmanager.okapi.RequestAuthorizationCallbackI;
+import cmanager.okapi.RequestAuthorizationCallbackInterface;
+import cmanager.okapi.TokenProviderInterface;
 import com.github.scribejava.core.model.OAuth1AccessToken;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,7 +15,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
 /** Client implementation for the OAuth-based tests. */
-public class TestClient implements TokenProviderI {
+public class TestClient implements TokenProviderInterface {
 
     /** The networking instance to use for our requests. */
     private final ApacheHttp http = new ApacheHttp();
@@ -28,17 +27,15 @@ public class TestClient implements TokenProviderI {
      * Login into the Opencaching.de site.
      *
      * @return Whether the login worked or not.
-     * @throws UnexpectedStatusCode The status code of the response is not 200, so there seems to be
-     *     a problem.
      * @throws IOException Something I/O-related failed - maybe the internet connection is not
      *     working.
      */
-    public boolean login() throws UnexpectedStatusCode, IOException {
-        final List<NameValuePair> nvps = new ArrayList<>();
-        nvps.add(new BasicNameValuePair("email", TestClientCredentials.USERNAME));
-        nvps.add(new BasicNameValuePair("password", TestClientCredentials.PASSWORD));
-        nvps.add(new BasicNameValuePair("action", "login"));
-        http.post("https://www.opencaching.de/login.php", nvps);
+    public boolean login() throws IOException {
+        final List<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new BasicNameValuePair("email", TestClientCredentials.USERNAME));
+        nameValuePairs.add(new BasicNameValuePair("password", TestClientCredentials.PASSWORD));
+        nameValuePairs.add(new BasicNameValuePair("action", "login"));
+        http.post("https://www.opencaching.de/login.php", nameValuePairs);
 
         final String response = http.get("https://www.opencaching.de/index.php").getBody();
         return response.contains(TestClientCredentials.USERNAME);
@@ -78,7 +75,7 @@ public class TestClient implements TokenProviderI {
             throws IOException, InterruptedException, ExecutionException {
         final OAuth1AccessToken token =
                 Okapi.requestAuthorization(
-                        new RequestAuthorizationCallbackI() {
+                        new RequestAuthorizationCallbackInterface() {
                             private String pin = null;
 
                             @Override

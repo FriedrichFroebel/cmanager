@@ -622,7 +622,7 @@ public class MainWindow extends JFrame {
             User user;
             String uuid;
             try {
-                user = User.getOKAPIUser();
+                user = User.getOkapiUser();
                 uuid = Okapi.getUuid(user);
                 if (uuid == null) {
                     throw new NullPointerException();

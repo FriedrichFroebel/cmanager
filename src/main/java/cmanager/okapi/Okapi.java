@@ -199,7 +199,8 @@ public class Okapi {
                 .build(new OAuth());
     }
 
-    public static OAuth1AccessToken requestAuthorization(RequestAuthorizationCallbackI callback)
+    public static OAuth1AccessToken requestAuthorization(
+            RequestAuthorizationCallbackInterface callback)
             throws IOException, InterruptedException, ExecutionException {
         // Step One: Create the OAuthService object
         final OAuth10aService service = getOAuthService();
@@ -220,11 +221,8 @@ public class Okapi {
         return service.getAccessToken(requestToken, pin);
     }
 
-    public interface TokenProviderI {
-        OAuth1AccessToken getOkapiToken();
-    }
-
-    private static String authedHttpGet(final TokenProviderI tokenProvider, final String url)
+    private static String authedHttpGet(
+            final TokenProviderInterface tokenProvider, final String url)
             throws InterruptedException, ExecutionException, IOException {
         final OAuth10aService service = getOAuthService();
         final OAuthRequest request = new OAuthRequest(Verb.GET, url);
@@ -235,7 +233,7 @@ public class Okapi {
     }
 
     public static List<Geocache> getCachesAround(
-            TokenProviderI tokenProvider,
+            TokenProviderInterface tokenProvider,
             String excludeUuid,
             Geocache geocache,
             double searchRadius,
@@ -252,7 +250,7 @@ public class Okapi {
     }
 
     public static List<Geocache> getCachesAround(
-            TokenProviderI tokenProvider,
+            TokenProviderInterface tokenProvider,
             String excludeUuid,
             Double latitude,
             Double longitude,
@@ -308,7 +306,7 @@ public class Okapi {
         return caches;
     }
 
-    public static void updateFoundStatus(TokenProviderI tokenProvider, Geocache oc)
+    public static void updateFoundStatus(TokenProviderInterface tokenProvider, Geocache oc)
             throws IOException, InterruptedException, ExecutionException {
         if (tokenProvider == null) {
             return;
@@ -329,7 +327,7 @@ public class Okapi {
         oc.setIsFound(document.isFound());
     }
 
-    public static String getUuid(TokenProviderI tokenProvider)
+    public static String getUuid(TokenProviderInterface tokenProvider)
             throws IOException, InterruptedException, ExecutionException {
         final String url = BASE_URL + "/users/user" + "?fields=uuid";
         final String responseBody = authedHttpGet(tokenProvider, url);
@@ -341,7 +339,7 @@ public class Okapi {
         return document.getUuid();
     }
 
-    public static String getUsername(TokenProviderI tokenProvider)
+    public static String getUsername(TokenProviderInterface tokenProvider)
             throws IOException, InterruptedException, ExecutionException {
         final String url = BASE_URL + "/users/user" + "?fields=username";
         final String responseBody = authedHttpGet(tokenProvider, url);
@@ -353,7 +351,8 @@ public class Okapi {
         return document.getUsername();
     }
 
-    public static String postLog(TokenProviderI tokenProvider, Geocache cache, GeocacheLog log)
+    public static String postLog(
+            TokenProviderInterface tokenProvider, Geocache cache, GeocacheLog log)
             throws InterruptedException, ExecutionException, IOException, UnexpectedLogStatus,
                     UnexpectedStatusCode {
         String url =
@@ -396,7 +395,7 @@ public class Okapi {
         return Okapi.getLogId(document.getLogUuid());
     }
 
-    public static Coordinate getHomeCoordinates(TokenProviderI tokenProvider)
+    public static Coordinate getHomeCoordinates(TokenProviderInterface tokenProvider)
             throws CoordinateUnparsableException, IOException, InterruptedException,
                     ExecutionException {
         final String uuid = getUuid(tokenProvider);

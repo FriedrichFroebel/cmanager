@@ -4,7 +4,7 @@ import cmanager.geo.Geocache;
 import cmanager.geo.Location;
 import cmanager.gui.ExceptionPanel;
 import cmanager.gui.components.CacheListView;
-import cmanager.gui.interfaces.RunLocationDialogI;
+import cmanager.gui.interfaces.RunLocationDialogInterface;
 import cmanager.list.filter.FilterModel;
 import cmanager.settings.Settings;
 import cmanager.util.ObjectHelper;
@@ -34,7 +34,7 @@ public class CacheListController {
             JMenu menuWindows,
             Location relativeLocation,
             String path,
-            RunLocationDialogI runLocationDialog)
+            RunLocationDialogInterface runLocationDialog)
             throws Throwable {
         final CacheListController cacheListController =
                 new CacheListController(
@@ -96,7 +96,7 @@ public class CacheListController {
             JDesktopPane desktop,
             JMenu menuWindows,
             Location relativeLocation,
-            RunLocationDialogI runLocationDialog) {
+            RunLocationDialogInterface runLocationDialog) {
         List<PersistenceInfo> persistenceInfoList;
         try {
             persistenceInfoList = Settings.getSerialized(Settings.Key.CLC_LIST);
@@ -139,7 +139,7 @@ public class CacheListController {
             final JMenu menuWindows,
             Location relativeLocation,
             String path,
-            RunLocationDialogI runLocationDialog)
+            RunLocationDialogInterface runLocationDialog)
             throws Throwable {
         if (path != null) {
             cacheListModel.load(path);
