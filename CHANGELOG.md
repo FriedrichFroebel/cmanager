@@ -1,3 +1,10 @@
+# Version 0.4.1 - 2020-06-09
+
+* Provide a link to the log after submission.
+* Use look and feel of the system.
+* Add basic HTTP proxy support using terminal arguments.
+* Lots of internal refactoring.
+
 # Version 0.4.0 - 2020-05-22
 
 * Add fallback methods for opening an URL in the web browser.
