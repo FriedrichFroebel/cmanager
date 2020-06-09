@@ -1,7 +1,5 @@
 package cmanager.util;
 
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,16 +40,11 @@ public class LoggingUtil {
      * @return The logger for the specified class, with the correct log level being set.
      */
     public static Logger getLogger(final Class clazz) {
-        // Get the default logger for the class and create a default handler.
+        // Get the default logger for the class.
         final Logger logger = Logger.getLogger(clazz.getName());
-        final Handler handler = new ConsoleHandler();
 
-        // Set the log level for the handler.
+        // Set the log level.
         retrieveLevel();
-        handler.setLevel(logLevel);
-
-        // Add the handler to the logger and set the log level for the logger.
-        logger.addHandler(handler);
         logger.setLevel(logLevel);
 
         // Return the configured logger itself.

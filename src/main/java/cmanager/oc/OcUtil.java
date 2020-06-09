@@ -17,8 +17,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
 
 public class OcUtil {
+
+    private static final Logger LOGGER = LoggingUtil.getLogger(OcUtil.class);
 
     static final List<Geocache> OKAPI_RUNTIME_CACHE = new ArrayList<>();
 
@@ -124,11 +127,9 @@ public class OcUtil {
             final double searchRadius = geocache.hasVolatileStart() ? 1 : 0.05;
             final List<Geocache> similar =
                     Okapi.getCachesAround(user, uuid, geocache, searchRadius, OKAPI_RUNTIME_CACHE);
-            LoggingUtil.getLogger(OcUtil.class)
-                    .info(
-                            MessageFormat.format(
-                                    "Found {0} candidates for {1}.",
-                                    similar.size(), geocache.getCode()));
+            LOGGER.info(
+                    MessageFormat.format(
+                            "Found {0} candidates for {1}.", similar.size(), geocache.getCode()));
 
             boolean match = false;
             for (final Geocache opencache : similar) {
