@@ -1,6 +1,7 @@
 package cmanager.geo;
 
 import cmanager.global.Constants;
+import cmanager.settings.Settings;
 import cmanager.util.ObjectHelper;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -365,5 +366,28 @@ public class Geocache implements Serializable, Comparable<String> {
 
     public Boolean doesRequirePassword() {
         return requiresPassword;
+    }
+
+    /**
+     * Check whether this geocache has a found log by the configured GC user.
+     *
+     * @return Whether this cache has a found log by the configured GC user.
+     */
+    public boolean hasFoundLogByGcUser() {
+        final String usernameGc = Settings.getString(Settings.Key.GC_USERNAME);
+
+        for (final GeocacheLog log : getLogs()) {
+            // We are only interested in found logs.
+            if (!log.isFoundLog()) {
+                continue;
+            }
+            // If we have found a log, we can stop.
+            if (log.isAuthor(usernameGc)) {
+                return true;
+            }
+        }
+
+        // We did not find a log.
+        return false;
     }
 }

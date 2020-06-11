@@ -618,6 +618,16 @@ public class MainWindow extends JFrame {
     }
 
     private void syncWithOc() {
+        final String usernameGc = Settings.getString(Settings.Key.GC_USERNAME);
+        if (usernameGc == null || usernameGc.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    THIS,
+                    "No GC username found. Check your settings!",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         try {
             User user;
             String uuid;

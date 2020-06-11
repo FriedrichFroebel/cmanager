@@ -68,17 +68,18 @@ public class CopyLogDialog extends JFrame {
         splitPane2 = new JSplitPane();
         splitPane1.setRightComponent(splitPane2);
 
-        CachePanel cachePanel = new CachePanel();
-        cachePanel.setMinimumSize(new Dimension(100, 100));
-        cachePanel.setCache(gc, false);
-        cachePanel.colorize(oc);
-        splitPane1.setLeftComponent(cachePanel);
+        final CachePanel panelGc = new CachePanel();
+        panelGc.setMinimumSize(new Dimension(100, 100));
+        panelGc.setCache(gc, false);
+        panelGc.colorize(oc);
 
-        cachePanel = new CachePanel();
-        cachePanel.setMinimumSize(new Dimension(100, 100));
-        cachePanel.setCache(oc, false);
-        cachePanel.colorize(gc);
-        splitPane2.setLeftComponent(cachePanel);
+        final CachePanel panelOc = new CachePanel();
+        panelOc.setMinimumSize(new Dimension(100, 100));
+        panelOc.setCache(oc, false);
+        panelOc.colorize(gc);
+
+        splitPane1.setLeftComponent(panelGc);
+        splitPane2.setLeftComponent(panelOc);
 
         final JPanel panelLogs = new JPanel();
         panelLogs.setLayout(new GridBagLayout());
@@ -88,7 +89,7 @@ public class CopyLogDialog extends JFrame {
         gbc.gridy = 0;
         gbc.weighty = 1;
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = java.awt.GridBagConstraints.BOTH;
+        gbc.fill = GridBagConstraints.BOTH;
 
         for (final GeocacheLog log : gc.getLogs()) {
             if (!log.isFoundLog()) {

@@ -11,9 +11,10 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JViewport;
 
-public class CachePanel extends javax.swing.JPanel {
+public class CachePanel extends JPanel {
 
     private static final long serialVersionUID = -4848832298041708795L;
 

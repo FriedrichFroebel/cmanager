@@ -57,9 +57,15 @@ public class DuplicateDialog extends JFrame {
     private final List<GeocacheLog> logsCopied = new ArrayList<>();
     private ShadowList shadowList = null;
 
+    private final boolean isCopyDialog;
+
     /** Create the dialog. */
     public DuplicateDialog(
             final CacheListModel cacheListModel, final User user, final String uuid) {
+        // We are passing `user = null` and `uuid = null` for "Find on OC", so we are able to detect
+        // the usage type of this dialog with this condition.
+        isCopyDialog = uuid != null;
+
         setResizable(true);
         this.setMinimumSize(new Dimension(600, 300));
         Logo.setLogo(this);
@@ -106,12 +112,12 @@ public class DuplicateDialog extends JFrame {
                 });
         panelUrl.add(buttonUrl);
 
-        final JPanel panel = new JPanel();
-        panelUrl.add(panel, BorderLayout.SOUTH);
-        panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        final JPanel panelClipboard = new JPanel();
+        panelUrl.add(panelClipboard, BorderLayout.SOUTH);
+        panelClipboard.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
         final JButton buttonClipboard = new JButton("Export all as text to clipboard");
-        panel.add(buttonClipboard);
+        panelClipboard.add(buttonClipboard);
         buttonClipboard.addActionListener(actionEvent -> copyToClipboard());
 
         tree = new JTree(rootNode);
@@ -128,24 +134,24 @@ public class DuplicateDialog extends JFrame {
 
         final JPanel panelCopyMessage = new JPanel();
         panelTree.add(panelCopyMessage, BorderLayout.NORTH);
-        if (uuid == null) {
+        if (!isCopyDialog) {
             panelCopyMessage.setVisible(false);
         }
         panelCopyMessage.setLayout(new BorderLayout(0, 0));
 
-        final JLabel lblDoubleClick = new JLabel("Double Click an OC cache to open copy dialog.");
-        lblDoubleClick.setHorizontalAlignment(SwingConstants.CENTER);
-        panelCopyMessage.add(lblDoubleClick);
+        final JLabel labelDoubleClick = new JLabel("Double Click an OC cache to open copy dialog.");
+        labelDoubleClick.setHorizontalAlignment(SwingConstants.CENTER);
+        panelCopyMessage.add(labelDoubleClick);
 
-        final JPanel buttonPane = new JPanel();
-        getContentPane().add(buttonPane, BorderLayout.SOUTH);
-        buttonPane.setLayout(new BorderLayout(0, 0));
+        final JPanel panelBottom = new JPanel();
+        getContentPane().add(panelBottom, BorderLayout.SOUTH);
+        panelBottom.setLayout(new BorderLayout(0, 0));
 
-        final JPanel panel1 = new JPanel();
-        buttonPane.add(panel1, BorderLayout.EAST);
+        final JPanel panelButtonOk = new JPanel();
+        panelBottom.add(panelButtonOk, BorderLayout.EAST);
 
         final JButton buttonOk = new JButton("Dismiss");
-        panel1.add(buttonOk);
+        panelButtonOk.add(buttonOk);
         buttonOk.setHorizontalAlignment(SwingConstants.RIGHT);
         buttonOk.addActionListener(
                 actionEvent -> {
@@ -157,14 +163,14 @@ public class DuplicateDialog extends JFrame {
                 });
         getRootPane().setDefaultButton(buttonOk);
 
-        final JPanel panel2 = new JPanel();
-        buttonPane.add(panel2, BorderLayout.WEST);
+        final JPanel panelDuplicateCount = new JPanel();
+        panelBottom.add(panelDuplicateCount, BorderLayout.WEST);
 
         labelCandidates = new JLabel("0");
-        panel2.add(labelCandidates);
+        panelDuplicateCount.add(labelCandidates);
 
         final JLabel labelHits = new JLabel("Candidates");
-        panel2.add(labelHits);
+        panelDuplicateCount.add(labelHits);
 
         backgroundThread = new Thread(() -> findDuplicates(cacheListModel, user, uuid));
         backgroundThread.start();
@@ -223,6 +229,12 @@ public class DuplicateDialog extends JFrame {
                         private Integer candidates = 0;
 
                         public void match(Geocache gc, Geocache oc) {
+                            // Make sure that for the copy dialog at least one log of the specified
+                            // user is present.
+                            if (isCopyDialog && !gc.hasFoundLogByGcUser()) {
+                                return;
+                            }
+
                             candidates++;
                             labelCandidates.setText(candidates.toString());
 
