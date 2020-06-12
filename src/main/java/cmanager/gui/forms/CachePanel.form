@@ -22,17 +22,17 @@
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
   <SubComponents>
-    <Container class="javax.swing.JScrollPane" name="jScrollPane">
+    <Container class="javax.swing.JScrollPane" name="scrollPaneMain">
       <Properties>
         <Property name="alignmentX" type="float" value="0.0"/>
         <Property name="alignmentY" type="float" value="0.0"/>
       </Properties>
       <Events>
-        <EventHandler event="componentShown" listener="java.awt.event.ComponentListener" parameters="java.awt.event.ComponentEvent" handler="jScrollPaneComponentShown"/>
+        <EventHandler event="componentShown" listener="java.awt.event.ComponentListener" parameters="java.awt.event.ComponentEvent" handler="scrollPaneMainComponentShown"/>
       </Events>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
-          <BorderConstraints direction="Center"/>
+          <BorderConstraints direction="After"/>
         </Constraint>
       </Constraints>
 
@@ -55,8 +55,8 @@
                   <Group type="102" attributes="0">
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="panelFooter" min="-2" max="-2" attributes="0"/>
-                          <Component id="panelHeading" min="-2" max="-2" attributes="0"/>
+                          <Component id="panelLink" min="-2" max="-2" attributes="0"/>
+                          <Component id="panelOverview" min="-2" max="-2" attributes="0"/>
                           <Component id="panelLogs" alignment="0" min="-2" pref="523" max="-2" attributes="0"/>
                           <Component id="panelListingText" alignment="1" max="32767" attributes="0"/>
                       </Group>
@@ -67,9 +67,9 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <Component id="panelHeading" min="-2" max="-2" attributes="0"/>
+                      <Component id="panelOverview" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="panelFooter" min="-2" max="-2" attributes="0"/>
+                      <Component id="panelLink" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                       <Component id="panelListingText" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
@@ -80,13 +80,13 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Container class="javax.swing.JPanel" name="panelHeading">
+            <Container class="javax.swing.JPanel" name="panelOverview">
               <Properties>
                 <Property name="alignmentX" type="float" value="1.0"/>
                 <Property name="alignmentY" type="float" value="0.0"/>
               </Properties>
               <Events>
-                <EventHandler event="componentResized" listener="java.awt.event.ComponentListener" parameters="java.awt.event.ComponentEvent" handler="panelHeadingComponentResized"/>
+                <EventHandler event="componentResized" listener="java.awt.event.ComponentListener" parameters="java.awt.event.ComponentEvent" handler="panelOverviewComponentResized"/>
               </Events>
 
               <Layout>
@@ -94,39 +94,39 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                          <Component id="lblName" max="32767" attributes="0"/>
+                          <Component id="labelName" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                          <Component id="lblCode" pref="512" max="32767" attributes="0"/>
+                          <Component id="labelCode" pref="512" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jLabel7" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="labelContainerText" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="labelDifficultyText" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="labelTypeText" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="labelTerrainText" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="labelStatusText" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="jLabel6" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jLabel5" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="labelCoordinatesText" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="labelOwnerText" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="lblOwner" min="-2" max="-2" attributes="0"/>
-                                      <Component id="lblType" min="-2" max="-2" attributes="0"/>
-                                      <Component id="lblCoordinates" min="-2" max="-2" attributes="0"/>
-                                      <Component id="lblDifficulty" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="lblTerrain" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="lblContainer" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="lblStatus" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="labelOwner" min="-2" max="-2" attributes="0"/>
+                                      <Component id="labelType" min="-2" max="-2" attributes="0"/>
+                                      <Component id="labelCoordinates" min="-2" max="-2" attributes="0"/>
+                                      <Component id="labelDifficulty" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="labelTerrain" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="labelContainer" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="labelStatus" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                               </Group>
@@ -138,43 +138,43 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <EmptySpace min="12" pref="12" max="-2" attributes="0"/>
-                          <Component id="lblName" min="-2" max="-2" attributes="0"/>
+                          <Component id="labelName" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-                          <Component id="lblCode" min="-2" max="-2" attributes="0"/>
+                          <Component id="labelCode" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="lblCoordinates" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="labelCoordinatesText" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="labelCoordinates" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="lblType" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="labelTypeText" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="labelType" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="lblDifficulty" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="labelDifficultyText" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="labelDifficulty" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="lblTerrain" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="labelTerrainText" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="labelTerrain" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="lblContainer" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="labelContainerText" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="labelContainer" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="lblStatus" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="labelStatusText" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="labelStatus" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="lblOwner" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="labelOwnerText" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="labelOwner" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="32767" attributes="0"/>
                       </Group>
@@ -182,7 +182,7 @@
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Component class="javax.swing.JLabel" name="lblName">
+                <Component class="javax.swing.JLabel" name="labelName">
                   <Properties>
                     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="33" green="ff" red="66" type="rgb"/>
@@ -191,96 +191,96 @@
                       <Font name="Dialog" size="18" style="1"/>
                     </Property>
                     <Property name="horizontalAlignment" type="int" value="0"/>
-                    <Property name="text" type="java.lang.String" value="lblName"/>
-                    <Property name="name" type="java.lang.String" value="lblName" noResource="true"/>
+                    <Property name="text" type="java.lang.String" value="Cache name"/>
+                    <Property name="name" type="java.lang.String" value="labelName" noResource="true"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JLabel" name="lblCode">
+                <Component class="javax.swing.JLabel" name="labelCode">
                   <Properties>
                     <Property name="horizontalAlignment" type="int" value="0"/>
-                    <Property name="text" type="java.lang.String" value="lblCode"/>
+                    <Property name="text" type="java.lang.String" value="Cache code"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JLabel" name="jLabel1">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Type: "/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JLabel" name="lblType">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="lblType"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JLabel" name="jLabel2">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Difficulty: "/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JLabel" name="lblDifficulty">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="lblDifficulty"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JLabel" name="jLabel3">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Terrain: "/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JLabel" name="lblTerrain">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="lblTerrain"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JLabel" name="jLabel4">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Container:"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JLabel" name="lblContainer">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="lblContainer"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JLabel" name="jLabel5">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Owner:"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JLabel" name="lblOwner">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="lblOwner"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JLabel" name="jLabel6">
+                <Component class="javax.swing.JLabel" name="labelCoordinatesText">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Coordinates:"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JLabel" name="lblCoordinates">
+                <Component class="javax.swing.JLabel" name="labelCoordinates">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="lblCoordinates"/>
+                    <Property name="text" type="java.lang.String" value="Coordinate value"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JLabel" name="jLabel7">
+                <Component class="javax.swing.JLabel" name="labelTypeText">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Type: "/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="labelType">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Type value"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="labelDifficultyText">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Difficulty: "/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="labelDifficulty">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Difficulty rating"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="labelTerrainText">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Terrain: "/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="labelTerrain">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Terrain rating"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="labelContainerText">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Container:"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="labelContainer">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Container size"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="labelStatusText">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Status:"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JLabel" name="lblStatus">
+                <Component class="javax.swing.JLabel" name="labelStatus">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="lblStatus"/>
+                    <Property name="text" type="java.lang.String" value="Cache status"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="labelOwnerText">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Owner:"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="labelOwner">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Owner name"/>
                   </Properties>
                 </Component>
               </SubComponents>
             </Container>
-            <Container class="javax.swing.JPanel" name="panelFooter">
+            <Container class="javax.swing.JPanel" name="panelLink">
 
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace pref="374" max="32767" attributes="0"/>
-                          <Component id="btnOnline" min="-2" max="-2" attributes="0"/>
+                          <Component id="buttonViewOnline" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -289,19 +289,19 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace max="32767" attributes="0"/>
-                          <Component id="btnOnline" min="-2" max="-2" attributes="0"/>
+                          <Component id="buttonViewOnline" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Component class="javax.swing.JButton" name="btnOnline">
+                <Component class="javax.swing.JButton" name="buttonViewOnline">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="View Online"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnOnlineActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buttonViewOnlineActionPerformed"/>
                   </Events>
                 </Component>
               </SubComponents>
