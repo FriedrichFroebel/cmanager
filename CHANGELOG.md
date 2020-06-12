@@ -1,7 +1,15 @@
+# Development version
+
+* Require a configured GC username for the log synchronization.
+* Limit "Sync with OC" results to caches which actually have a found log by the configured GC user.
+* Warn on closing modified lists.
+* Some internal refactoring regarding cache details and log entry panels.
+
 # Version 0.4.1 - 2020-06-09
 
 * Provide a link to the log after submission.
 * Use look and feel of the system.
+* Cache names just differing in trailing or leading whitespaces are now considered equal.
 * Add basic HTTP proxy support using terminal arguments.
 * Lots of internal refactoring.
 
