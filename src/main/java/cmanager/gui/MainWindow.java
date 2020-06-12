@@ -694,7 +694,8 @@ public class MainWindow extends JFrame {
                         final int option =
                                 JOptionPane.showConfirmDialog(
                                         THIS,
-                                        "You may have unsaved list changes.\nDo you want to return to the application?",
+                                        "You may have unsaved list changes.\n"
+                                                + "Do you want to return to the application?",
                                         "Unsaved changes",
                                         JOptionPane.YES_NO_OPTION,
                                         JOptionPane.WARNING_MESSAGE);

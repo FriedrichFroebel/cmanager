@@ -197,7 +197,8 @@ public class CacheListController {
                         final int option =
                                 JOptionPane.showConfirmDialog(
                                         THIS.view,
-                                        "You may have unsaved list changes.\nDo you want to return to the list tab?",
+                                        "You may have unsaved list changes.\n"
+                                                + "Do you want to return to the list tab?",
                                         "Unsaved changes",
                                         JOptionPane.YES_NO_OPTION,
                                         JOptionPane.WARNING_MESSAGE);
