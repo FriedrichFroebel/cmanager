@@ -20,6 +20,7 @@ import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
@@ -109,6 +110,10 @@ public class CacheListController {
         }
 
         for (final PersistenceInfo persistenceInfo : persistenceInfoList) {
+            if (persistenceInfo == null) {
+                continue;
+            }
+
             try {
                 if (new File(persistenceInfo.getPath()).exists()) {
                     newCacheListController(
@@ -122,6 +127,16 @@ public class CacheListController {
                 ExceptionPanel.showErrorDialog(desktop, throwable);
             }
         }
+    }
+
+    public static boolean areAllSaved() {
+        for (final CacheListController cacheListController : controllerList) {
+            if (!cacheListController.isSaved()) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private final CacheListModel cacheListModel = new CacheListModel();
@@ -147,14 +162,12 @@ public class CacheListController {
 
         setRelativeLocation(relativeLocation);
 
-        // set up the view
+        // Set up the view.
         view = new CacheListView(this, runLocationDialog);
-        // view.setMaximizable(true);
         view.setMinimumSize(new Dimension(100, 100));
         view.setClosable(true);
         view.setResizable(true);
         view.setVisible(true);
-        // view.setIconifiable(false);
 
         if (path == null) {
             modifiedAndUnsaved = true;
@@ -163,12 +176,40 @@ public class CacheListController {
             this.path = Paths.get(path);
         }
 
+        // Handle close events manually.
+        view.setDefaultCloseOperation(JInternalFrame.DO_NOTHING_ON_CLOSE);
         view.addInternalFrameListener(
                 new InternalFrameAdapter() {
                     @Override
                     public void internalFrameClosing(InternalFrameEvent internalFrameEvent) {
-                        CacheListController.remove(THIS);
-                        menuWindows.remove(menuWindow);
+                        // Get the storage status.
+                        final boolean saved = THIS.isSaved();
+
+                        // The list is saved, so we can exit normally.
+                        if (saved) {
+                            CacheListController.remove(THIS);
+                            menuWindows.remove(menuWindow);
+                            internalFrameEvent.getInternalFrame().dispose();
+                            return;
+                        }
+
+                        // The list might be unsaved. Let the user choose the next step.
+                        final int option =
+                                JOptionPane.showConfirmDialog(
+                                        THIS.view,
+                                        "You may have unsaved list changes.\nDo you want to return to the list tab?",
+                                        "Unsaved changes",
+                                        JOptionPane.YES_NO_OPTION,
+                                        JOptionPane.WARNING_MESSAGE);
+
+                        // The user does not want to save the modified list. Close the tab.
+                        if (option == JOptionPane.NO_OPTION) {
+                            CacheListController.remove(THIS);
+                            menuWindows.remove(menuWindow);
+                            internalFrameEvent.getInternalFrame().dispose();
+                        }
+
+                        // The user wants to keep the tab open for now.
                     }
                 });
 
@@ -179,11 +220,11 @@ public class CacheListController {
         }
 
         final JTable table = view.getTable();
-        setWidth(table, 1, 150);
-        setWidth(table, 2, 60);
-        setWidth(table, 3, 60);
-        setWidth(table, 4, 60);
-        setWidth(table, 7, 150);
+        setWidth(table, CacheListTableColumn.CACHE_NAME.getColumnIndex(), 150);
+        setWidth(table, CacheListTableColumn.CACHE_TYPE.getColumnIndex(), 60);
+        setWidth(table, CacheListTableColumn.DIFFICULTY_RATING.getColumnIndex(), 60);
+        setWidth(table, CacheListTableColumn.TERRAIN_RATING.getColumnIndex(), 60);
+        setWidth(table, CacheListTableColumn.CACHE_OWNER.getColumnIndex(), 150);
 
         this.menuWindow = new JMenuItem("");
         menuWindows.add(this.menuWindow);
@@ -337,6 +378,14 @@ public class CacheListController {
     }
 
     private PersistenceInfo getPersistenceInfo() {
+        if (path == null) {
+            return null;
+        }
+
         return new PersistenceInfo(path.toString());
+    }
+
+    public boolean isSaved() {
+        return modifiedAndUnsaved != null && !modifiedAndUnsaved;
     }
 }

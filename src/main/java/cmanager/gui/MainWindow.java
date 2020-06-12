@@ -70,10 +70,13 @@ public class MainWindow extends JFrame {
 
     /** Create the frame. */
     public MainWindow() {
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(new Dimension(1050, 550));
         setLocationRelativeTo(null);
         Logo.setLogo(this);
+
+        // Handle close events manually.
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
         final JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
@@ -410,16 +413,7 @@ public class MainWindow extends JFrame {
 
         // Store and reopen cache lists.
 
-        this.addWindowListener(
-                new WindowAdapter() {
-                    public void windowClosing(WindowEvent windowEvent) {
-                        try {
-                            CacheListController.storePersistenceInfo(desktopPane);
-                        } catch (IOException exception) {
-                            ExceptionPanel.showErrorDialog(THIS, exception);
-                        }
-                    }
-                });
+        handleWindowCloseEvents();
 
         SwingUtilities.invokeLater(
                 () ->
@@ -673,6 +667,53 @@ public class MainWindow extends JFrame {
         dialog.setLocationRelativeTo(THIS);
         dialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
         dialog.setVisible(true);
+    }
+
+    /** Add a handler for close events occurring on the window. */
+    private void handleWindowCloseEvents() {
+        this.addWindowListener(
+                new WindowAdapter() {
+                    public void windowClosing(WindowEvent windowEvent) {
+                        // Get the storage status.
+                        final boolean saved = CacheListController.areAllSaved();
+
+                        // Everything is saved, so we can exit normally.
+                        if (saved) {
+                            try {
+                                CacheListController.storePersistenceInfo(desktopPane);
+                            } catch (IOException exception) {
+                                ExceptionPanel.showErrorDialog(THIS, exception);
+                            }
+
+                            windowEvent.getWindow().dispose();
+                            System.exit(0);
+                            return;
+                        }
+
+                        // Some lists might be unsaved. Let the user choose the next step.
+                        final int option =
+                                JOptionPane.showConfirmDialog(
+                                        THIS,
+                                        "You may have unsaved list changes.\nDo you want to return to the application?",
+                                        "Unsaved changes",
+                                        JOptionPane.YES_NO_OPTION,
+                                        JOptionPane.WARNING_MESSAGE);
+
+                        // The user does not want to save the modified lists. Exit the application.
+                        if (option == JOptionPane.NO_OPTION) {
+                            try {
+                                CacheListController.storePersistenceInfo(desktopPane);
+                            } catch (IOException exception) {
+                                ExceptionPanel.showErrorDialog(THIS, exception);
+                            }
+
+                            windowEvent.getWindow().dispose();
+                            System.exit(0);
+                        }
+
+                        // The user wants to go back to the application.
+                    }
+                });
     }
 
     private void checkForUpdates(final JButton buttonUpdate) {

@@ -4,7 +4,6 @@ import cmanager.global.Constants;
 import cmanager.global.Version;
 import cmanager.gui.MainWindow;
 import cmanager.util.ForkUtil;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -34,7 +33,7 @@ public class Main {
 
         // Display the frame.
         final MainWindow frame = new MainWindow();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setTitle(Constants.APP_NAME + " " + Version.VERSION);
         frame.setVisible(true);
     }

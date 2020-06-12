@@ -6,6 +6,7 @@ import cmanager.global.Compatibility;
 import cmanager.global.Constants;
 import cmanager.gui.interfaces.RunLocationDialogInterface;
 import cmanager.list.CacheListController;
+import cmanager.list.CacheListTableColumn;
 import cmanager.list.CacheListTableModel;
 import cmanager.list.filter.FilterModel;
 import cmanager.osm.PersistentTileCache;
@@ -54,7 +55,7 @@ public class CacheListView extends JInternalFrame {
     private final JTable table;
     private final CachePanel cachePanel;
     private final JLabel labelCacheCount;
-    private final JLabel lblWaypointsCount;
+    private final JLabel labelWaypointCount;
     private final CustomJMapViewer mapViewer;
     private final JPanel panelFilters;
 
@@ -65,6 +66,9 @@ public class CacheListView extends JInternalFrame {
             final CacheListController cacheListController,
             final RunLocationDialogInterface runLocationDialog) {
         this.cacheListController = cacheListController;
+
+        // Handle close events manually.
+        setDefaultCloseOperation(JInternalFrame.DO_NOTHING_ON_CLOSE);
 
         final AbstractTableModel tableModel = cacheListController.getTableModel();
         table = new JTable(tableModel);
@@ -80,12 +84,19 @@ public class CacheListView extends JInternalFrame {
 
         final DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        table.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
-        table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
-        table.getColumnModel().getColumn(5).setCellRenderer(centerRenderer);
-        table.getColumnModel().getColumn(6).setCellRenderer(centerRenderer);
-        table.getColumnModel().getColumn(8).setCellRenderer(centerRenderer);
-        table.getColumnModel().getColumn(9).setCellRenderer(centerRenderer);
+        final CacheListTableColumn[] centeredColumns = {
+            CacheListTableColumn.DIFFICULTY_RATING,
+            CacheListTableColumn.TERRAIN_RATING,
+            CacheListTableColumn.COORDINATE_LATITUDE,
+            CacheListTableColumn.COORDINATE_LONGITUDE,
+            CacheListTableColumn.DISTANCE,
+            CacheListTableColumn.LATEST_FOUND_LOG
+        };
+        for (final CacheListTableColumn centeredColumn : centeredColumns) {
+            table.getColumnModel()
+                    .getColumn(centeredColumn.getColumnIndex())
+                    .setCellRenderer(centerRenderer);
+        }
 
         panelFilters = new JPanel();
         panelFilters.setVisible(false);
@@ -121,13 +132,13 @@ public class CacheListView extends JInternalFrame {
         mapViewer.setFocusable(true);
         panelMap.add(mapViewer, BorderLayout.CENTER);
 
-        final JPanel panel2 = new JPanel();
-        panelMap.add(panel2, BorderLayout.SOUTH);
+        final JPanel panelMapHelp = new JPanel();
+        panelMap.add(panelMapHelp, BorderLayout.SOUTH);
 
         final JLabel labelMapHelp =
                 new JLabel("Drag map with right mouse, selection box with left mouse.");
         labelMapHelp.setFont(new Font("Dialog", Font.BOLD, 9));
-        panel2.add(labelMapHelp);
+        panelMapHelp.add(labelMapHelp);
 
         // Make map movable with mouse.
         final DefaultMapController mapController = new DefaultMapController(mapViewer);
@@ -235,34 +246,34 @@ public class CacheListView extends JInternalFrame {
         final JLabel labelCaches = new JLabel("Caches");
         panelCaches.add(labelCaches);
 
-        final JPanel panel1 = new JPanel();
-        panel.add(panel1, BorderLayout.SOUTH);
-        panel1.setLayout(new BorderLayout(10, 0));
+        final JPanel panelCounts = new JPanel();
+        panel.add(panelCounts, BorderLayout.SOUTH);
+        panelCounts.setLayout(new BorderLayout(10, 0));
 
-        lblWaypointsCount = new JLabel("0 Waypoints");
-        lblWaypointsCount.setHorizontalAlignment(SwingConstants.CENTER);
-        lblWaypointsCount.setFont(new Font("Dialog", Font.BOLD, 10));
-        panel1.add(lblWaypointsCount, BorderLayout.NORTH);
+        labelWaypointCount = new JLabel("0 Waypoints");
+        labelWaypointCount.setHorizontalAlignment(SwingConstants.CENTER);
+        labelWaypointCount.setFont(new Font("Dialog", Font.BOLD, 10));
+        panelCounts.add(labelWaypointCount, BorderLayout.NORTH);
 
         final JPanel panelSelected = new JPanel();
-        panel1.add(panelSelected, BorderLayout.SOUTH);
+        panelCounts.add(panelSelected, BorderLayout.SOUTH);
         panelSelected.setLayout(new BorderLayout(10, 0));
         panelSelected.setVisible(false);
 
-        final JSeparator separator = new JSeparator();
-        panelSelected.add(separator, BorderLayout.NORTH);
+        final JSeparator separatorSelected = new JSeparator();
+        panelSelected.add(separatorSelected, BorderLayout.NORTH);
 
-        final JPanel panel4 = new JPanel();
-        panelSelected.add(panel4, BorderLayout.SOUTH);
-        panel4.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        final JPanel panelSelectedLabel = new JPanel();
+        panelSelected.add(panelSelectedLabel, BorderLayout.SOUTH);
+        panelSelectedLabel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
         final JLabel labelSelected = new JLabel("0");
         labelSelected.setFont(new Font("Dialog", Font.PLAIN, 10));
-        panel4.add(labelSelected);
+        panelSelectedLabel.add(labelSelected);
 
-        final JLabel label1 = new JLabel("Selected");
-        label1.setFont(new Font("Dialog", Font.PLAIN, 10));
-        panel4.add(label1);
+        final JLabel labelSelectedText = new JLabel("Selected");
+        labelSelectedText.setFont(new Font("Dialog", Font.PLAIN, 10));
+        panelSelectedLabel.add(labelSelectedText);
 
         table.getSelectionModel()
                 .addListSelectionListener(
@@ -590,7 +601,7 @@ public class CacheListView extends JInternalFrame {
         if (orphans > 0) {
             text = text + " (" + orphans.toString() + " Orphans)";
         }
-        lblWaypointsCount.setText(text);
+        labelWaypointCount.setText(text);
     }
 
     public void addFilter(final FilterModel filter) {
