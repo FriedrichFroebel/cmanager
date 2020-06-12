@@ -3,22 +3,50 @@ package cmanager.gui.components;
 import cmanager.geo.Geocache;
 import cmanager.geo.GeocacheLog;
 import cmanager.util.DesktopUtil;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.MouseEvent;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JViewport;
+import javax.swing.LayoutStyle;
+import javax.swing.SwingConstants;
 
 public class CachePanel extends JPanel {
 
     private static final long serialVersionUID = -4848832298041708795L;
 
     private Geocache geocache = null;
+
+    private JScrollPane scrollPaneMain;
+
+    private JLabel labelName;
+    private JLabel labelCode;
+    private JLabel labelCoordinates;
+    private JLabel labelType;
+    private JLabel labelDifficulty;
+    private JLabel labelTerrain;
+    private JLabel labelContainer;
+    private JLabel labelStatus;
+    private JLabel labelOwner;
+
+    private JPanel panelOverview;
+    private JPanel panelLink;
+    private JPanel panelListing;
+    private JPanel panelListingText;
+    private JEditorPane editorListing;
+    private JPanel panelLogs;
 
     public void setCache(Geocache geocache) {
         setCache(geocache, true);
@@ -30,20 +58,21 @@ public class CachePanel extends JPanel {
         if (this.geocache == null) {
             panelListing.setVisible(false);
         } else {
+            labelName.setText(this.geocache.getName());
+            labelCode.setText(this.geocache.getCode());
+
             final String coordinates =
                     this.geocache.getCoordinate() != null
                             ? this.geocache.getCoordinate().toString()
                             : null;
-            lblCoordinates.setText(coordinates);
+            labelCoordinates.setText(coordinates);
 
-            lblStatus.setText(this.geocache.getStatusAsString());
-            labelName.setText(this.geocache.getName());
-            lblCode.setText(this.geocache.getCode());
-            lblOwner.setText(this.geocache.getOwner());
-            lblType.setText(this.geocache.getType().asNiceType());
-            lblDifficulty.setText(this.geocache.getDifficulty().toString());
-            lblTerrain.setText(this.geocache.getTerrain().toString());
-            lblContainer.setText(this.geocache.getContainer().asGc());
+            labelType.setText(this.geocache.getType().asNiceType());
+            labelDifficulty.setText(this.geocache.getDifficulty().toString());
+            labelTerrain.setText(this.geocache.getTerrain().toString());
+            labelContainer.setText(this.geocache.getContainer().asGc());
+            labelStatus.setText(this.geocache.getStatusAsString());
+            labelOwner.setText(this.geocache.getOwner());
 
             String listing = this.geocache.getListingShort();
             if (listing != null && !listing.equals("")) {
@@ -58,17 +87,18 @@ public class CachePanel extends JPanel {
 
             panelLogs.removeAll();
 
+            // Used within the list view, not for log copying.
             if (showLogs) {
-                final GridBagConstraints gbc = new GridBagConstraints();
-                gbc.gridx = 0;
-                gbc.gridy = 0;
-                gbc.weightx = 1;
-                gbc.weighty = 1;
-                gbc.anchor = GridBagConstraints.WEST;
-                gbc.fill = GridBagConstraints.BOTH;
+                final GridBagConstraints gridBagConstraints = new GridBagConstraints();
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy = 0;
+                gridBagConstraints.weightx = 1;
+                gridBagConstraints.weighty = 1;
+                gridBagConstraints.anchor = GridBagConstraints.WEST;
+                gridBagConstraints.fill = GridBagConstraints.BOTH;
                 for (final GeocacheLog log : this.geocache.getLogs()) {
-                    panelLogs.add(new LogPanel(log), gbc);
-                    gbc.gridy++;
+                    panelLogs.add(new LogPanel(log), gridBagConstraints);
+                    gridBagConstraints.gridy++;
                 }
                 panelLogs.validate();
             }
@@ -81,27 +111,29 @@ public class CachePanel extends JPanel {
 
     public void colorize(Geocache geocache2) {
         if (geocache.getCoordinate() != null) {
-            colorize(lblCoordinates, geocache.getCoordinate().equals(geocache2.getCoordinate()));
+            colorize(labelCoordinates, geocache.getCoordinate().equals(geocache2.getCoordinate()));
         }
         if (geocache.getStatusAsString() != null) {
-            colorize(lblStatus, geocache.getStatusAsString().equals(geocache2.getStatusAsString()));
+            colorize(
+                    labelStatus,
+                    geocache.getStatusAsString().equals(geocache2.getStatusAsString()));
         }
         if (geocache.getName() != null) {
             colorize(labelName, geocache.getName().equals(geocache2.getName()));
         }
         if (geocache.getOwner() != null) {
-            colorize(lblOwner, geocache.getOwner().equals(geocache2.getOwner()));
+            colorize(labelOwner, geocache.getOwner().equals(geocache2.getOwner()));
         }
 
-        colorize(lblType, geocache.getType().equals(geocache2.getType()));
+        colorize(labelType, geocache.getType().equals(geocache2.getType()));
         colorize(
-                lblDifficulty,
+                labelDifficulty,
                 Double.compare(geocache.getDifficulty(), geocache2.getDifficulty()) == 0);
-        colorize(lblTerrain, Double.compare(geocache.getTerrain(), geocache2.getTerrain()) == 0);
-        colorize(lblContainer, geocache.getContainer().equals(geocache2.getContainer()));
+        colorize(labelTerrain, Double.compare(geocache.getTerrain(), geocache2.getTerrain()) == 0);
+        colorize(labelContainer, geocache.getContainer().equals(geocache2.getContainer()));
     }
 
-    private void colorize(JLabel label, boolean good) {
+    private void colorize(final JLabel label, boolean good) {
         label.setOpaque(true);
         if (good) {
             label.setBackground(Color.GREEN);
@@ -111,32 +143,31 @@ public class CachePanel extends JPanel {
     }
 
     public void adjustToOptimalWidth() {
-        int width = jScrollPane.getViewport().getVisibleRect().width;
+        int width = scrollPaneMain.getViewport().getVisibleRect().width;
         if (width <= 0) {
             return;
         }
 
-        final int scroll = jScrollPane.getVerticalScrollBar().getWidth() + 20;
+        final int scroll = scrollPaneMain.getVerticalScrollBar().getWidth() + 20;
         width -= scroll;
 
-        Dimension dimension = new Dimension(width, panelHeading.getSize().height);
-        panelHeading.setSize(dimension);
-        panelHeading.setPreferredSize(dimension);
+        Dimension dimension = new Dimension(width, panelOverview.getSize().height);
+        panelOverview.setSize(dimension);
+        panelOverview.setPreferredSize(dimension);
         dimension = labelName.getMinimumSize();
         dimension.width += 20;
-        panelHeading.setMinimumSize(dimension);
-        panelHeading.validate();
+        panelOverview.setMinimumSize(dimension);
+        panelOverview.validate();
 
-        dimension = new Dimension(width, panelFooter.getSize().height);
-        panelFooter.setSize(dimension);
-        panelFooter.setPreferredSize(dimension);
-        panelFooter.validate();
+        dimension = new Dimension(width, panelLink.getSize().height);
+        panelLink.setSize(dimension);
+        panelLink.setPreferredSize(dimension);
+        panelLink.validate();
 
         panelListing.validate();
         panelLogs.validate();
     }
 
-    /** Creates new form CachePanel2 */
     public CachePanel() {
         initComponents();
 
@@ -152,373 +183,320 @@ public class CachePanel extends JPanel {
                 new ComponentAdapter() {
                     @Override
                     public void componentResized(ComponentEvent componentEvent) {
-                        jScrollPane.getVerticalScrollBar().setValue(0);
-                        jScrollPane.getHorizontalScrollBar().setValue(0);
+                        scrollPaneMain.getVerticalScrollBar().setValue(0);
+                        scrollPaneMain.getHorizontalScrollBar().setValue(0);
                     }
                 });
-        jScrollPane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
+        scrollPaneMain.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
 
         setCache(null);
     }
 
-    /**
-     * This method is called from within the constructor to initialize the form. WARNING: Do NOT
-     * modify this code. The content of this method is always regenerated by the Form Editor.
-     */
-
-    // <editor-fold defaultstate="collapsed" desc="Generated
-    // Code">//GEN-BEGIN:initComponents
+    // This has been created automatically by NetBeans IDE, but with manual cleanup afterwards.
     private void initComponents() {
+        setLayout(new BorderLayout());
 
-        jScrollPane = new javax.swing.JScrollPane();
-        panelListing = new javax.swing.JPanel();
-        panelHeading = new javax.swing.JPanel();
-        labelName = new javax.swing.JLabel();
-        lblCode = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
-        lblType = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        lblDifficulty = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        lblTerrain = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        lblContainer = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        lblOwner = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        lblCoordinates = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        lblStatus = new javax.swing.JLabel();
-        panelFooter = new javax.swing.JPanel();
-        btnOnline = new javax.swing.JButton();
-        panelListingText = new javax.swing.JPanel();
-        editorListing = new javax.swing.JEditorPane();
-        panelLogs = new javax.swing.JPanel();
+        // Main container.
+        scrollPaneMain = new JScrollPane();
+        scrollPaneMain.setAlignmentX(0.0F);
+        scrollPaneMain.setAlignmentY(0.0F);
 
-        setName("panelListing"); // NOI18N
-        addComponentListener(
-                new java.awt.event.ComponentAdapter() {
-                    public void componentResized(java.awt.event.ComponentEvent evt) {
-                        formComponentResized(evt);
-                    }
-                });
-        setLayout(new java.awt.BorderLayout());
-
-        jScrollPane.setAlignmentX(0.0F);
-        jScrollPane.setAlignmentY(0.0F);
-        jScrollPane.addComponentListener(
-                new java.awt.event.ComponentAdapter() {
-                    public void componentShown(java.awt.event.ComponentEvent evt) {
-                        jScrollPaneComponentShown(evt);
-                    }
-                });
-
+        // Listing panel.
+        panelListing = new JPanel();
         panelListing.setAutoscrolls(true);
-        panelListing.setMaximumSize(new java.awt.Dimension(400, 400));
-        panelListing.addMouseListener(
-                new java.awt.event.MouseAdapter() {
-                    public void mouseClicked(java.awt.event.MouseEvent evt) {
-                        panelListingMouseClicked(evt);
+        panelListing.setMaximumSize(new Dimension(400, 400));
+
+        // Overview panel with the basic cache data.
+        panelOverview = new JPanel();
+        panelOverview.setAlignmentX(1.0F);
+        panelOverview.setAlignmentY(0.0F);
+        panelOverview.addComponentListener(
+                new ComponentAdapter() {
+                    public void componentResized(ComponentEvent componentEvent) {
+                        panelOverviewComponentResized(componentEvent);
                     }
                 });
 
-        panelHeading.setAlignmentX(1.0F);
-        panelHeading.setAlignmentY(0.0F);
-        panelHeading.addComponentListener(
-                new java.awt.event.ComponentAdapter() {
-                    public void componentResized(java.awt.event.ComponentEvent evt) {
-                        panelHeadingComponentResized(evt);
-                    }
-                });
+        // Cache name.
+        labelName = new JLabel("Cache name");
+        labelName.setBackground(new Color(102, 255, 51));
+        labelName.setFont(new Font("Dialog", 1, 18));
+        labelName.setHorizontalAlignment(SwingConstants.CENTER);
 
-        labelName.setBackground(new java.awt.Color(102, 255, 51));
-        labelName.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        labelName.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        labelName.setText("lblName");
-        labelName.setName("lblName"); // NOI18N
+        // Cache code.
+        labelCode = new JLabel("Cache code");
+        labelCode.setHorizontalAlignment(SwingConstants.CENTER);
 
-        lblCode.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblCode.setText("lblCode");
+        // Coordinates.
+        final JLabel labelCoordinatesText = new JLabel("Coordinates:");
+        labelCoordinates = new JLabel("Coordinate value");
 
-        jLabel1.setText("Type: ");
+        // Geocache type.
+        final JLabel labelTypeText = new JLabel("Type:");
+        labelType = new JLabel("Type value");
 
-        lblType.setText("lblType");
+        // Difficulty rating.
+        final JLabel labelDifficultyText = new JLabel("Difficulty:");
+        labelDifficulty = new JLabel("Difficulty rating");
 
-        jLabel2.setText("Difficulty: ");
+        // Terrain rating.
+        final JLabel labelTerrainText = new JLabel("Terrain:");
+        labelTerrain = new JLabel("Terrain rating");
 
-        lblDifficulty.setText("lblDifficulty");
+        // Container size.
+        final JLabel labelContainerText = new JLabel("Container:");
+        labelContainer = new JLabel("Container size");
 
-        jLabel3.setText("Terrain: ");
+        // Cache status.
+        final JLabel labelStatusText = new JLabel("Status:");
+        labelStatus = new JLabel("Cache status");
 
-        lblTerrain.setText("lblTerrain");
+        // Cache owner.
+        final JLabel labelOwnerText = new JLabel("Owner:");
+        labelOwner = new JLabel("Owner name");
 
-        jLabel4.setText("Container:");
+        // Add the single labels to the overview panel.
+        final GroupLayout panelOverviewLayout = new GroupLayout(panelOverview);
+        panelOverview.setLayout(panelOverviewLayout);
 
-        lblContainer.setText("lblContainer");
-
-        jLabel5.setText("Owner:");
-
-        lblOwner.setText("lblOwner");
-
-        jLabel6.setText("Coordinates:");
-
-        lblCoordinates.setText("lblCoordinates");
-
-        jLabel7.setText("Status:");
-
-        lblStatus.setText("lblStatus");
-
-        javax.swing.GroupLayout panelHeadingLayout = new javax.swing.GroupLayout(panelHeading);
-        panelHeading.setLayout(panelHeadingLayout);
-        panelHeadingLayout.setHorizontalGroup(
-                panelHeadingLayout
-                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        panelOverviewLayout.setHorizontalGroup(
+                panelOverviewLayout
+                        .createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(
-                                panelHeadingLayout
+                                panelOverviewLayout
                                         .createSequentialGroup()
                                         .addGap(12, 12, 12)
                                         .addComponent(
                                                 labelName,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                GroupLayout.DEFAULT_SIZE,
+                                                GroupLayout.DEFAULT_SIZE,
                                                 Short.MAX_VALUE))
                         .addGroup(
-                                panelHeadingLayout
+                                panelOverviewLayout
                                         .createSequentialGroup()
                                         .addGap(12, 12, 12)
                                         .addComponent(
-                                                lblCode,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                labelCode,
+                                                GroupLayout.DEFAULT_SIZE,
                                                 512,
                                                 Short.MAX_VALUE))
                         .addGroup(
-                                panelHeadingLayout
+                                panelOverviewLayout
                                         .createSequentialGroup()
                                         .addGap(20, 20, 20)
                                         .addGroup(
-                                                panelHeadingLayout
+                                                panelOverviewLayout
                                                         .createParallelGroup(
-                                                                javax.swing.GroupLayout.Alignment
-                                                                        .LEADING)
+                                                                GroupLayout.Alignment.LEADING)
                                                         .addGroup(
-                                                                panelHeadingLayout
+                                                                panelOverviewLayout
                                                                         .createSequentialGroup()
                                                                         .addGroup(
-                                                                                panelHeadingLayout
+                                                                                panelOverviewLayout
                                                                                         .createParallelGroup(
-                                                                                                javax
-                                                                                                        .swing
-                                                                                                        .GroupLayout
+                                                                                                GroupLayout
                                                                                                         .Alignment
                                                                                                         .LEADING)
                                                                                         .addComponent(
-                                                                                                jLabel4)
+                                                                                                labelContainerText)
                                                                                         .addComponent(
-                                                                                                jLabel2)
+                                                                                                labelDifficultyText)
                                                                                         .addComponent(
-                                                                                                jLabel1)
+                                                                                                labelTypeText)
                                                                                         .addComponent(
-                                                                                                jLabel3)
+                                                                                                labelTerrainText)
                                                                                         .addComponent(
-                                                                                                jLabel7))
+                                                                                                labelStatusText))
                                                                         .addContainerGap(
-                                                                                javax.swing
-                                                                                        .GroupLayout
+                                                                                GroupLayout
                                                                                         .DEFAULT_SIZE,
                                                                                 Short.MAX_VALUE))
                                                         .addGroup(
-                                                                panelHeadingLayout
+                                                                panelOverviewLayout
                                                                         .createSequentialGroup()
                                                                         .addGroup(
-                                                                                panelHeadingLayout
+                                                                                panelOverviewLayout
                                                                                         .createParallelGroup(
-                                                                                                javax
-                                                                                                        .swing
-                                                                                                        .GroupLayout
+                                                                                                GroupLayout
                                                                                                         .Alignment
                                                                                                         .LEADING)
                                                                                         .addComponent(
-                                                                                                jLabel6)
+                                                                                                labelCoordinatesText)
                                                                                         .addComponent(
-                                                                                                jLabel5))
+                                                                                                labelOwnerText))
                                                                         .addPreferredGap(
-                                                                                javax.swing
-                                                                                        .LayoutStyle
+                                                                                LayoutStyle
                                                                                         .ComponentPlacement
                                                                                         .UNRELATED)
                                                                         .addGroup(
-                                                                                panelHeadingLayout
+                                                                                panelOverviewLayout
                                                                                         .createParallelGroup(
-                                                                                                javax
-                                                                                                        .swing
-                                                                                                        .GroupLayout
+                                                                                                GroupLayout
                                                                                                         .Alignment
                                                                                                         .LEADING)
                                                                                         .addComponent(
-                                                                                                lblOwner)
+                                                                                                labelOwner)
                                                                                         .addComponent(
-                                                                                                lblType)
+                                                                                                labelType)
                                                                                         .addComponent(
-                                                                                                lblCoordinates)
+                                                                                                labelCoordinates)
                                                                                         .addComponent(
-                                                                                                lblDifficulty)
+                                                                                                labelDifficulty)
                                                                                         .addComponent(
-                                                                                                lblTerrain)
+                                                                                                labelTerrain)
                                                                                         .addComponent(
-                                                                                                lblContainer)
+                                                                                                labelContainer)
                                                                                         .addComponent(
-                                                                                                lblStatus))
+                                                                                                labelStatus))
                                                                         .addGap(
                                                                                 0,
                                                                                 0,
                                                                                 Short
                                                                                         .MAX_VALUE)))));
-        panelHeadingLayout.setVerticalGroup(
-                panelHeadingLayout
-                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+
+        panelOverviewLayout.setVerticalGroup(
+                panelOverviewLayout
+                        .createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(
-                                panelHeadingLayout
+                                panelOverviewLayout
                                         .createSequentialGroup()
                                         .addGap(12, 12, 12)
                                         .addComponent(labelName)
                                         .addGap(6, 6, 6)
-                                        .addComponent(lblCode)
+                                        .addComponent(labelCode)
                                         .addGap(12, 12, 12)
                                         .addGroup(
-                                                panelHeadingLayout
+                                                panelOverviewLayout
                                                         .createParallelGroup(
-                                                                javax.swing.GroupLayout.Alignment
-                                                                        .BASELINE)
-                                                        .addComponent(jLabel6)
-                                                        .addComponent(lblCoordinates))
-                                        .addPreferredGap(
-                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(labelCoordinatesText)
+                                                        .addComponent(labelCoordinates))
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                         .addGroup(
-                                                panelHeadingLayout
+                                                panelOverviewLayout
                                                         .createParallelGroup(
-                                                                javax.swing.GroupLayout.Alignment
-                                                                        .BASELINE)
-                                                        .addComponent(jLabel1)
-                                                        .addComponent(lblType))
+                                                                GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(labelTypeText)
+                                                        .addComponent(labelType))
                                         .addGap(6, 6, 6)
                                         .addGroup(
-                                                panelHeadingLayout
+                                                panelOverviewLayout
                                                         .createParallelGroup(
-                                                                javax.swing.GroupLayout.Alignment
-                                                                        .BASELINE)
-                                                        .addComponent(jLabel2)
-                                                        .addComponent(lblDifficulty))
+                                                                GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(labelDifficultyText)
+                                                        .addComponent(labelDifficulty))
                                         .addGap(6, 6, 6)
                                         .addGroup(
-                                                panelHeadingLayout
+                                                panelOverviewLayout
                                                         .createParallelGroup(
-                                                                javax.swing.GroupLayout.Alignment
-                                                                        .BASELINE)
-                                                        .addComponent(jLabel3)
-                                                        .addComponent(lblTerrain))
+                                                                GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(labelTerrainText)
+                                                        .addComponent(labelTerrain))
                                         .addGap(6, 6, 6)
                                         .addGroup(
-                                                panelHeadingLayout
+                                                panelOverviewLayout
                                                         .createParallelGroup(
-                                                                javax.swing.GroupLayout.Alignment
-                                                                        .BASELINE)
-                                                        .addComponent(jLabel4)
-                                                        .addComponent(lblContainer))
-                                        .addPreferredGap(
-                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(labelContainerText)
+                                                        .addComponent(labelContainer))
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                         .addGroup(
-                                                panelHeadingLayout
+                                                panelOverviewLayout
                                                         .createParallelGroup(
-                                                                javax.swing.GroupLayout.Alignment
-                                                                        .BASELINE)
-                                                        .addComponent(jLabel7)
-                                                        .addComponent(lblStatus))
-                                        .addPreferredGap(
-                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(labelStatusText)
+                                                        .addComponent(labelStatus))
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                         .addGroup(
-                                                panelHeadingLayout
+                                                panelOverviewLayout
                                                         .createParallelGroup(
-                                                                javax.swing.GroupLayout.Alignment
-                                                                        .BASELINE)
-                                                        .addComponent(jLabel5)
-                                                        .addComponent(lblOwner))
+                                                                GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(labelOwnerText)
+                                                        .addComponent(labelOwner))
                                         .addContainerGap(
-                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                Short.MAX_VALUE)));
+                                                GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 
-        btnOnline.setText("View Online");
-        btnOnline.addActionListener(
-                new java.awt.event.ActionListener() {
-                    public void actionPerformed(java.awt.event.ActionEvent evt) {
-                        btnOnlineActionPerformed(evt);
+        // Button to open cache in web browser.
+        final JButton buttonViewOnline = new JButton("View Online");
+        buttonViewOnline.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent actionEvent) {
+                        buttonViewOnlineActionPerformed(actionEvent);
                     }
                 });
 
-        javax.swing.GroupLayout panelFooterLayout = new javax.swing.GroupLayout(panelFooter);
-        panelFooter.setLayout(panelFooterLayout);
-        panelFooterLayout.setHorizontalGroup(
-                panelFooterLayout
-                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        // Add the button to the corresponding panel.
+        panelLink = new JPanel();
+        final GroupLayout panelLinkLayout = new GroupLayout(panelLink);
+        panelLink.setLayout(panelLinkLayout);
+
+        panelLinkLayout.setHorizontalGroup(
+                panelLinkLayout
+                        .createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(
-                                javax.swing.GroupLayout.Alignment.TRAILING,
-                                panelFooterLayout
+                                GroupLayout.Alignment.TRAILING,
+                                panelLinkLayout
                                         .createSequentialGroup()
                                         .addContainerGap(374, Short.MAX_VALUE)
-                                        .addComponent(btnOnline)
+                                        .addComponent(buttonViewOnline)
                                         .addContainerGap()));
-        panelFooterLayout.setVerticalGroup(
-                panelFooterLayout
-                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        panelLinkLayout.setVerticalGroup(
+                panelLinkLayout
+                        .createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(
-                                javax.swing.GroupLayout.Alignment.TRAILING,
-                                panelFooterLayout
+                                GroupLayout.Alignment.TRAILING,
+                                panelLinkLayout
                                         .createSequentialGroup()
-                                        .addContainerGap(
-                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                Short.MAX_VALUE)
-                                        .addComponent(btnOnline)
+                                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(buttonViewOnline)
                                         .addContainerGap()));
 
+        // Listing text.
+        editorListing = new JEditorPane();
         editorListing.setEditable(false);
 
-        javax.swing.GroupLayout panelListingTextLayout =
-                new javax.swing.GroupLayout(panelListingText);
+        // Add the listing text to the corresponding panel.
+        panelListingText = new JPanel();
+        final GroupLayout panelListingTextLayout = new GroupLayout(panelListingText);
         panelListingText.setLayout(panelListingTextLayout);
+
         panelListingTextLayout.setHorizontalGroup(
                 panelListingTextLayout
-                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGap(0, 548, Short.MAX_VALUE)
                         .addGroup(
                                 panelListingTextLayout
-                                        .createParallelGroup(
-                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                        .createParallelGroup(GroupLayout.Alignment.LEADING)
                                         .addComponent(
                                                 editorListing,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                GroupLayout.PREFERRED_SIZE,
                                                 524,
                                                 Short.MAX_VALUE)));
         panelListingTextLayout.setVerticalGroup(
                 panelListingTextLayout
-                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGap(0, 87, Short.MAX_VALUE)
                         .addGroup(
                                 panelListingTextLayout
-                                        .createParallelGroup(
-                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                        .createParallelGroup(GroupLayout.Alignment.LEADING)
                                         .addComponent(
                                                 editorListing,
-                                                javax.swing.GroupLayout.Alignment.TRAILING,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                GroupLayout.Alignment.TRAILING,
+                                                GroupLayout.DEFAULT_SIZE,
                                                 87,
                                                 Short.MAX_VALUE)));
 
-        panelLogs.setLayout(new java.awt.GridBagLayout());
+        // Log panel.
+        panelLogs = new JPanel();
+        panelLogs.setLayout(new GridBagLayout());
 
-        javax.swing.GroupLayout panelListingLayout = new javax.swing.GroupLayout(panelListing);
+        // Add the single panels to the overall listing panel.
+        final GroupLayout panelListingLayout = new GroupLayout(panelListing);
         panelListing.setLayout(panelListingLayout);
+
         panelListingLayout.setHorizontalGroup(
                 panelListingLayout
-                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(
                                 panelListingLayout
                                         .createSequentialGroup()
@@ -526,128 +504,74 @@ public class CachePanel extends JPanel {
                                         .addGroup(
                                                 panelListingLayout
                                                         .createParallelGroup(
-                                                                javax.swing.GroupLayout.Alignment
-                                                                        .LEADING)
+                                                                GroupLayout.Alignment.LEADING)
                                                         .addComponent(
-                                                                panelFooter,
-                                                                javax.swing.GroupLayout
-                                                                        .PREFERRED_SIZE,
-                                                                javax.swing.GroupLayout
-                                                                        .DEFAULT_SIZE,
-                                                                javax.swing.GroupLayout
-                                                                        .PREFERRED_SIZE)
+                                                                panelLink,
+                                                                GroupLayout.PREFERRED_SIZE,
+                                                                GroupLayout.DEFAULT_SIZE,
+                                                                GroupLayout.PREFERRED_SIZE)
                                                         .addComponent(
-                                                                panelHeading,
-                                                                javax.swing.GroupLayout
-                                                                        .PREFERRED_SIZE,
-                                                                javax.swing.GroupLayout
-                                                                        .DEFAULT_SIZE,
-                                                                javax.swing.GroupLayout
-                                                                        .PREFERRED_SIZE)
+                                                                panelOverview,
+                                                                GroupLayout.PREFERRED_SIZE,
+                                                                GroupLayout.DEFAULT_SIZE,
+                                                                GroupLayout.PREFERRED_SIZE)
                                                         .addComponent(
                                                                 panelLogs,
-                                                                javax.swing.GroupLayout
-                                                                        .PREFERRED_SIZE,
+                                                                GroupLayout.PREFERRED_SIZE,
                                                                 523,
-                                                                javax.swing.GroupLayout
-                                                                        .PREFERRED_SIZE)
+                                                                GroupLayout.PREFERRED_SIZE)
                                                         .addComponent(
                                                                 panelListingText,
-                                                                javax.swing.GroupLayout.Alignment
-                                                                        .TRAILING,
-                                                                javax.swing.GroupLayout
-                                                                        .DEFAULT_SIZE,
-                                                                javax.swing.GroupLayout
-                                                                        .DEFAULT_SIZE,
+                                                                GroupLayout.Alignment.TRAILING,
+                                                                GroupLayout.DEFAULT_SIZE,
+                                                                GroupLayout.DEFAULT_SIZE,
                                                                 Short.MAX_VALUE))
                                         .addContainerGap()));
         panelListingLayout.setVerticalGroup(
                 panelListingLayout
-                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(
                                 panelListingLayout
                                         .createSequentialGroup()
                                         .addComponent(
-                                                panelHeading,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(
-                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                panelOverview,
+                                                GroupLayout.PREFERRED_SIZE,
+                                                GroupLayout.DEFAULT_SIZE,
+                                                GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(
-                                                panelFooter,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(
-                                                javax.swing.LayoutStyle.ComponentPlacement
-                                                        .UNRELATED)
+                                                panelLink,
+                                                GroupLayout.PREFERRED_SIZE,
+                                                GroupLayout.DEFAULT_SIZE,
+                                                GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                                         .addComponent(
                                                 panelListingText,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(
-                                                javax.swing.LayoutStyle.ComponentPlacement
-                                                        .UNRELATED)
+                                                GroupLayout.PREFERRED_SIZE,
+                                                GroupLayout.DEFAULT_SIZE,
+                                                GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                                         .addComponent(
                                                 panelLogs,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                GroupLayout.DEFAULT_SIZE,
                                                 90,
                                                 Short.MAX_VALUE)
                                         .addContainerGap()));
 
-        jScrollPane.setViewportView(panelListing);
+        // Add the listing panel to the scroll pane.
+        scrollPaneMain.setViewportView(panelListing);
 
-        add(jScrollPane, java.awt.BorderLayout.CENTER);
-    } // </editor-fold>//GEN-END:initComponents
+        // Add the scroll panel to main parent panel.
+        // The second parameter has to be `BorderLayout.CENTER` - otherwise the output is wrong!
+        // NetBeans IDE provides the (wrong) value `BorderLayout.LINE_END`.
+        add(scrollPaneMain, BorderLayout.CENTER);
+    }
 
-    private void formComponentResized(
-            ComponentEvent componentEvent) { // GEN-FIRST:event_formComponentResized
-    } // GEN-LAST:event_formComponentResized
-
-    private void btnOnlineActionPerformed(
-            ActionEvent actionEvent) { // GEN-FIRST:event_btnOnlineActionPerformed
+    private void buttonViewOnlineActionPerformed(ActionEvent actionEvent) {
         DesktopUtil.openUrl(geocache.getUrl());
-    } // GEN-LAST:event_btnOnlineActionPerformed
+    }
 
-    private void panelHeadingComponentResized(
-            ComponentEvent componentEvent) { // GEN-FIRST:event_panelHeadingComponentResized
-        jScrollPane.getVerticalScrollBar().setValue(0);
-    } // GEN-LAST:event_panelHeadingComponentResized
-
-    private void jScrollPaneComponentShown(
-            ComponentEvent componentEvent) { // GEN-FIRST:event_jScrollPaneComponentShown
-    } // GEN-LAST:event_jScrollPaneComponentShown
-
-    private void panelListingMouseClicked(
-            MouseEvent mouseEvent) { // GEN-FIRST:event_panelListingMouseClicked
-    } // GEN-LAST:event_panelListingMouseClicked
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnOnline;
-    private javax.swing.JEditorPane editorListing;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JScrollPane jScrollPane;
-    private javax.swing.JLabel lblCode;
-    private javax.swing.JLabel lblContainer;
-    private javax.swing.JLabel lblCoordinates;
-    private javax.swing.JLabel lblDifficulty;
-    private javax.swing.JLabel labelName;
-    private javax.swing.JLabel lblOwner;
-    private javax.swing.JLabel lblStatus;
-    private javax.swing.JLabel lblTerrain;
-    private javax.swing.JLabel lblType;
-    private javax.swing.JPanel panelFooter;
-    private javax.swing.JPanel panelHeading;
-    private javax.swing.JPanel panelListing;
-    private javax.swing.JPanel panelListingText;
-    private javax.swing.JPanel panelLogs;
-    // End of variables declaration//GEN-END:variables
+    private void panelOverviewComponentResized(ComponentEvent componentEvent) {
+        scrollPaneMain.getVerticalScrollBar().setValue(0);
+    }
 }
