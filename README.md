@@ -7,6 +7,8 @@ Further information in German:
 * https://wiki.opencaching.de/index.php/Cmanager
 * https://forum.opencaching.de/index.php?topic=4348.0
 
+**Important note:** If *cmanager* fails with an exception, you should try to update your local Java installation to the latest version at first. This especially holds true for SSL errors, but might cause other problems as well.
+
 ## License & Source Code
 
 `cmanager` is distributed under the terms of [The GNU General Public License v3](http://www.gnu.org/licenses/gpl-3.0-standalone.html). The sources are available [on GitHub](https://github.com/FriedrichFroebel/cmanager).
