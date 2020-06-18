@@ -44,26 +44,26 @@ public class ForkUtil {
         System.exit(0);
     }
 
-    public static void forkWithRezeidHeapAndExit(String[] args) throws IOException {
-        for (final String arg : args) {
-            if (arg.equals(PARAM_HEAP_RESIZED)) {
+    public static void forkWithResizedHeapAndExit(String[] arguments) throws IOException {
+        for (final String argument : arguments) {
+            if (argument.equals(PARAM_HEAP_RESIZED)) {
                 return;
             }
         }
 
-        // Read settings
-        final String heapSizeS = Settings.getString(Settings.Key.HEAP_SIZE);
-        Integer heapSizeI = null;
+        // Read settings.
+        final String heapSizeString = Settings.getString(Settings.Key.HEAP_SIZE);
+        Integer heapSizeInteger = null;
         try {
-            heapSizeI = Integer.valueOf(heapSizeS);
+            heapSizeInteger = Integer.valueOf(heapSizeString);
         } catch (Throwable ignored) {
         }
 
-        if (heapSizeI == null || heapSizeI < 128) {
+        if (heapSizeInteger == null || heapSizeInteger < 128) {
             return;
         }
 
-        // Query path
+        // Query path.
         final String jarPath = getCodeSource();
         if (!new File(jarPath).exists()) {
             showInvalidJarPathMessage(jarPath);
@@ -71,13 +71,13 @@ public class ForkUtil {
         }
 
         // Run new VM.
-        final String originalArguments = String.join(" ", args);
+        final String originalArguments = String.join(" ", arguments);
         final ProcessBuilder processBuilder =
                 new ProcessBuilder()
                         .inheritIO()
                         .command(
                                 "java",
-                                "-Xmx" + heapSizeI.toString() + "m",
+                                "-Xmx" + heapSizeInteger.toString() + "m",
                                 "-jar",
                                 jarPath,
                                 PARAM_HEAP_RESIZED,
@@ -90,7 +90,7 @@ public class ForkUtil {
         }
 
         if (retval == 0) {
-            System.exit(0); // New vm ran fine
+            System.exit(0); // New VM ran fine.
         } else {
             String message =
                     "The chosen heap size could not be applied. \n"
@@ -100,10 +100,10 @@ public class ForkUtil {
 
             if (System.getProperty("sun.arch.data.model").equals("32")) {
                 message =
-                        "You are running a 32bit Java VM. \n"
-                                + "This limits your available memory to less than 4096MB \n"
-                                + "and in some configurations to less than 2048MB. \n\n"
-                                + "Install a 64bit VM to get rid of this limitation!";
+                        "You are running a 32 bit Java VM. \n"
+                                + "This limits your available memory to less than 4096 MB \n"
+                                + "and in some configurations to less than 2048 MB. \n\n"
+                                + "Install a 64 bit VM to get rid of this limitation!";
                 JOptionPane.showMessageDialog(
                         null, message, "Memory Settings", JOptionPane.INFORMATION_MESSAGE);
             }

@@ -1,6 +1,7 @@
 .gradle
 build
 *.gpx
+*.zip
 *.jar
 out
 
