@@ -418,12 +418,18 @@ public class MainWindow extends JFrame {
         SwingUtilities.invokeLater(
                 () ->
                         actionWithWaitDialog(
-                                () ->
+                                () -> {
+                                    try {
                                         CacheListController.reopenPersistentCacheListControllers(
                                                 desktopPane,
                                                 menuWindows,
                                                 (Location) comboBox.getSelectedItem(),
-                                                this::openLocationDialog),
+                                                this::openLocationDialog);
+                                    } catch (ClassNotFoundException exception) {
+                                        System.out.println("Error loading opened cache lists.");
+                                        exception.printStackTrace();
+                                    }
+                                },
                                 THIS));
     }
 

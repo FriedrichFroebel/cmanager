@@ -97,13 +97,17 @@ public class CacheListController {
             JDesktopPane desktop,
             JMenu menuWindows,
             Location relativeLocation,
-            RunLocationDialogInterface runLocationDialog) {
+            RunLocationDialogInterface runLocationDialog)
+            throws ClassNotFoundException {
         List<PersistenceInfo> persistenceInfoList;
         try {
             persistenceInfoList = Settings.getSerialized(Settings.Key.CLC_LIST);
             if (persistenceInfoList == null) {
                 return;
             }
+        } catch (ClassNotFoundException exception) {
+            // Forward separately as this probably indicates a serialization issue.
+            throw exception;
         } catch (Throwable throwable) {
             ExceptionPanel.showErrorDialog(desktop, throwable);
             return;
