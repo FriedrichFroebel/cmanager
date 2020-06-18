@@ -14,7 +14,7 @@ dist: bionic
 # code with Java 8 as they miss the newer APIs we reference inside the `Compatibility.java` file.
 jobs:
   include:
-    - jdk: openjdk10
+    - jdk: openjdk11
     - jdk: openjdk14
 
 # The stuff to execute.
