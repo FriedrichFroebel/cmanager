@@ -62,7 +62,7 @@ Run `gradle run` (or `./gradlew run`) from the root directory of the Git reposit
 
 ### Starting the application JAR file
 
-Run `java -jar cm-0.4.1.jar` from the directory containing the JAR file.
+Run `java -jar cm-0.1.2.jar` from the directory containing the JAR file. Replace `0.1.2` with the corresponding version number.
 
 ### Starting the Java-independent package
 

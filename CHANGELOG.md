@@ -1,5 +1,7 @@
 # Development version
 
+# Version 0.5.0 - 2020-06-18
+
 * Require a configured GC username for the log synchronization.
 * Limit "Sync with OC" results to caches which actually have a found log by the configured GC user.
 * Warn on closing modified lists.
