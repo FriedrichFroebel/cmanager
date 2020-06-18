@@ -8,7 +8,7 @@ install: true
 os: linux
 dist: bionic
 
-# Run compilation tests using the OpenJDK in version 10 and version 14 (the latest one at the time
+# Run compilation tests using the OpenJDK in version 11 and version 14 (the latest one at the time
 # of writing).
 # Please note that we still support Java versions starting with Java 8, but we cannot compile our
 # code with Java 8 as they miss the newer APIs we reference inside the `Compatibility.java` file.
