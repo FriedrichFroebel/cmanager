@@ -66,6 +66,31 @@ public class Geocache implements Serializable, Comparable<String> {
         this.type = new GeocacheType(type);
     }
 
+    public Geocache(
+            String code,
+            String name,
+            Coordinate coordinate,
+            Double difficulty,
+            Double terrain,
+            GeocacheType type)
+            throws NullPointerException {
+        if (code == null
+                || name == null
+                || coordinate == null
+                || difficulty == null
+                || terrain == null
+                || type == null) {
+            throw new NullPointerException();
+        }
+
+        this.code = code;
+        this.name = name;
+        this.coordinate = coordinate;
+        this.difficulty = difficulty;
+        this.terrain = terrain;
+        this.type = type;
+    }
+
     public String toString() {
         return difficulty.toString()
                 + "/"
@@ -389,5 +414,31 @@ public class Geocache implements Serializable, Comparable<String> {
 
         // We did not find a log.
         return false;
+    }
+
+    /**
+     * Return a minimal (basic) copy of this geocache instance.
+     *
+     * <p>This is required to make the duplicate search more reliable. Otherwise we would compare
+     * the container size and owner name as well in a second run. This is due to the caching done
+     * using the OKAPI runtime cache. See issue #34 for more details about this.
+     *
+     * @return A minimal copy of the current geocache. This only has the code, name, coordinate,
+     *     difficulty and terrain rating, the type, GC code and availability status attributes.
+     */
+    public Geocache getBasicCopy() {
+        final Geocache geocache =
+                new Geocache(
+                        getCode(),
+                        getName(),
+                        getCoordinate(),
+                        getDifficulty(),
+                        getTerrain(),
+                        getType());
+        geocache.setCodeGc(getCodeGc());
+        geocache.setAvailable(isAvailable());
+        geocache.setArchived(isArchived());
+
+        return geocache;
     }
 }

@@ -133,7 +133,9 @@ public class OcUtil {
 
             boolean match = false;
             for (final Geocache opencache : similar) {
-                if (GeocacheComparator.areSimilar(opencache, geocache)) {
+                // Use the basic copy for the opencache to make the search more reliable across
+                // multiple runs without closing the application in between.
+                if (GeocacheComparator.areSimilar(opencache.getBasicCopy(), geocache)) {
                     Okapi.completeCacheDetails(opencache);
                     outputInterface.match(geocache, opencache);
                     match = true;
