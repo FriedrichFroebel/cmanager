@@ -1,5 +1,10 @@
 # Development version
 
+
+# Version 0.5.1 - 2020-06-19
+
+* Avoid blocking the application on cache list deserialization when updating from a version older than 0.4.1.
+
 # Version 0.5.0 - 2020-06-18
 
 * Require a configured GC username for the log synchronization.
