@@ -16,7 +16,14 @@ public abstract class FilterModel extends CacheListFilterPanel {
 
     public List<Geocache> getFiltered(final List<Geocache> originalList) {
         final int listSize = originalList.size();
-        ThreadStore threadStore = new ThreadStore();
+
+        // Stop if this is an empty list. Otherwise we get a division by zero as the number of cores
+        // cannot be greater than the list size.
+        if (listSize == 0) {
+            return originalList;
+        }
+
+        final ThreadStore threadStore = new ThreadStore();
         final int cores = threadStore.getCores(listSize);
         final int perProcess = listSize / cores;
 
@@ -66,7 +73,7 @@ public abstract class FilterModel extends CacheListFilterPanel {
                 }
             }
         } catch (Throwable throwable) {
-            Thread thread = Thread.currentThread();
+            final Thread thread = Thread.currentThread();
             thread.getUncaughtExceptionHandler().uncaughtException(thread, throwable);
         }
     }

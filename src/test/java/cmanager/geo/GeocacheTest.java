@@ -82,7 +82,7 @@ public class GeocacheTest {
         assertThrows(
                 NullPointerException.class,
                 () -> {
-                    new Geocache("OC1234", "test", new Coordinate(0, 0), 0.0, 0.0, null);
+                    new Geocache("OC1234", "test", new Coordinate(0, 0), 0.0, 0.0, (String) null);
                 });
     }
 
