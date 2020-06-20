@@ -18,7 +18,6 @@ public class OcUtilTest {
 
         final String logUrl = OcUtil.determineLogUrl(opencache, "278256");
 
-        assertEquals(
-                "https://www.opencaching.de/viewcache.php?cacheid=103011&log=A#log278256", logUrl);
+        assertEquals(OcSite.getBaseUrl() + "viewcache.php?cacheid=103011&log=A#log278256", logUrl);
     }
 }

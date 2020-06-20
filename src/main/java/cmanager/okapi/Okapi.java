@@ -6,11 +6,11 @@ import cmanager.exception.UnexpectedLogStatus;
 import cmanager.geo.Coordinate;
 import cmanager.geo.Geocache;
 import cmanager.geo.GeocacheLog;
-import cmanager.global.Constants;
 import cmanager.gui.ExceptionPanel;
 import cmanager.network.ApacheHttp;
 import cmanager.network.HttpResponse;
 import cmanager.network.UnexpectedStatusCode;
+import cmanager.oc.OcSite;
 import cmanager.okapi.responses.CachesSearchNearestDocument;
 import cmanager.okapi.responses.ErrorDocument;
 import cmanager.okapi.responses.GeocacheDocument;
@@ -35,9 +35,9 @@ import java.util.concurrent.ExecutionException;
 
 public class Okapi {
 
-    private static final String CONSUMER_API_KEY = ConsumerKeys.get_CONSUMER_API_KEY();
-    private static final String CONSUMER_SECRET_KEY = ConsumerKeys.get_CONSUMER_SECRET_KEY();
-    private static final String BASE_URL = Constants.OKAPI_SERVICE_BASE;
+    private static final String CONSUMER_API_KEY = OcSite.getConsumerApiKey();
+    private static final String CONSUMER_SECRET_KEY = OcSite.getConsumerSecretKey();
+    private static final String BASE_URL = OcSite.getBaseUrl() + "okapi/services";
 
     private static final ApacheHttp httpClient = new ApacheHttp();
 
@@ -352,7 +352,10 @@ public class Okapi {
     }
 
     public static String postLog(
-            TokenProviderInterface tokenProvider, Geocache cache, GeocacheLog log)
+            TokenProviderInterface tokenProvider,
+            Geocache cache,
+            GeocacheLog log,
+            boolean returnInternalIdInsteadOfUuid)
             throws InterruptedException, ExecutionException, IOException, UnexpectedLogStatus,
                     UnexpectedStatusCode {
         String url =
@@ -392,7 +395,10 @@ public class Okapi {
             throw new UnexpectedLogStatus(document.getMessage());
         }
 
-        return Okapi.getLogId(document.getLogUuid());
+        if (returnInternalIdInsteadOfUuid) {
+            return Okapi.getLogId(document.getLogUuid());
+        }
+        return document.getLogUuid();
     }
 
     public static Coordinate getHomeCoordinates(TokenProviderInterface tokenProvider)

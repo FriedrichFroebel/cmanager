@@ -8,11 +8,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import cmanager.geo.Coordinate;
 import cmanager.geo.Geocache;
+import cmanager.oc.OcSite;
+import cmanager.oc.SupportedSite;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /** Tests for the OKAPI-based methods which do not require an user login. */
 public class OkapiTest {
+
+    /** Set up the test client. */
+    @BeforeAll
+    public static void setUp() {
+        // Ensure that we are using the German main site.
+        OcSite.setSite(SupportedSite.OPENCACHING_DE);
+    }
 
     /** Test the conversion of an username to an UUID with a not existing user. */
     @Test
@@ -79,6 +89,7 @@ public class OkapiTest {
 
         geocache = Okapi.completeCacheDetails(geocache);
 
+        assertNotNull(geocache);
         assertNotNull(geocache.getContainer());
         assertEquals("Nano", geocache.getContainer().asGc());
         assertEquals("following", geocache.getOwner());
@@ -106,6 +117,7 @@ public class OkapiTest {
 
         geocache = Okapi.completeCacheDetails(geocache);
 
+        assertNotNull(geocache);
         assertEquals("Micro", geocache.getContainer().asGc());
         assertEquals("Samsung1", geocache.getOwner());
         assertEquals("", geocache.getListingShort());

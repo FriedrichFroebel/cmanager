@@ -1,19 +1,18 @@
 package cmanager.okapi;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import cmanager.geo.Coordinate;
 import cmanager.geo.Geocache;
+import cmanager.oc.OcSite;
+import cmanager.oc.SupportedSite;
+import cmanager.okapi.helper.SiteHelper;
 import cmanager.okapi.helper.TestClient;
-import cmanager.okapi.helper.TestClientCredentials;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -29,6 +28,10 @@ public class OkapiAuthedTest {
      */
     @BeforeAll
     public static void setUp() throws Exception {
+        // Set the correct site.
+        OcSite.setSite(SupportedSite.OPENCACHING_DE);
+        SiteHelper.setSite(SupportedSite.OPENCACHING_DE);
+
         testClient = new TestClient();
         final boolean loggedIn = testClient.login();
         assertTrue(loggedIn);
@@ -105,41 +108,6 @@ public class OkapiAuthedTest {
         // assertFalse(containsCache);
     }
 
-    /**
-     * Test logging the specified test cache.
-     *
-     * <p>This has been disabled to avoid spamming the production site.
-     */
-    @Test
-    @Disabled
-    @DisplayName("Test updating the found status with success")
-    public void testUpdateFoundStatusSuccess() throws Exception {
-        final Geocache geocache =
-                new Geocache("OC13A45", "test", new Coordinate(0, 0), 0.0, 0.0, "Tradi");
-        assertNull(geocache.getIsFound());
-
-        Okapi.updateFoundStatus(testClient, geocache);
-        assertTrue(geocache.getIsFound());
-    }
-
-    /**
-     * Test logging the specified test cache.
-     *
-     * <p>This has been disabled to avoid spamming the production site.
-     */
-    @Test
-    @Disabled
-    @DisplayName("Test updating the found status without success")
-    public void testUpdateFoundStatusFailure() throws Exception {
-        final Geocache geocache =
-                new Geocache("OC0BEF", "test", new Coordinate(0, 0), 0.0, 0.0, "Tradi");
-        assertNull(geocache.getIsFound());
-
-        // Logging should not be successful. TODO: Why?
-        Okapi.updateFoundStatus(testClient, geocache);
-        assertFalse(geocache.getIsFound());
-    }
-
     /** Test getting the UUID of the test user. */
     @Test
     @DisplayName("Test getting the user ID ot the test user")
@@ -152,7 +120,7 @@ public class OkapiAuthedTest {
     @Test
     @DisplayName("Test getting the user name of the test user")
     public void testGetUsername() throws Exception {
-        assertEquals(TestClientCredentials.USERNAME, Okapi.getUsername(testClient));
+        assertEquals(SiteHelper.getUsername(), Okapi.getUsername(testClient));
     }
 
     /** Test getting the home coordinates of the test user. */

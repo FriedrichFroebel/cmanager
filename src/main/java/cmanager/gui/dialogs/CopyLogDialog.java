@@ -194,7 +194,7 @@ public class CopyLogDialog extends JFrame {
             log.setText(logPanel.getLogText());
 
             // Copy the log and determine its URL.
-            final String logId = Okapi.postLog(User.getOkapiUser(), oc, log);
+            final String logId = Okapi.postLog(User.getOkapiUser(), oc, log, true);
             final String logUrl = OcUtil.determineLogUrl(oc, logId);
 
             // Use button to let the user open the posted log.

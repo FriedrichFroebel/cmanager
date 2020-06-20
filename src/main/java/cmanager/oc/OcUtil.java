@@ -2,7 +2,6 @@ package cmanager.oc;
 
 import cmanager.geo.Geocache;
 import cmanager.geo.GeocacheComparator;
-import cmanager.global.Constants;
 import cmanager.list.CacheListModel;
 import cmanager.okapi.Okapi;
 import cmanager.okapi.User;
@@ -160,7 +159,7 @@ public class OcUtil {
      * @return The log URL for the given cache.
      */
     public static String determineLogUrl(final Geocache opencache, final String logId) {
-        return Constants.SITE_BASE
+        return OcSite.getBaseUrl()
                 + "viewcache.php?cacheid="
                 + opencache.getInternalId()
                 + "&log"

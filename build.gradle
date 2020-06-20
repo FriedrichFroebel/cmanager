@@ -19,9 +19,13 @@ apply plugin: 'application'
 // Use it with the `dependencyUpdates` task.
 apply plugin: 'com.github.ben-manes.versions'
 
-// Apply the autoformatter plugin.
+// Apply the auto formatter plugin.
 // Use it with the `googleJavaFormat` and `verifyGoogleJavaFormat` tasks.
 apply plugin: 'com.github.sherter.google-java-format'
+
+// Use definitions from external files.
+apply from: 'gradle/methods.gradle'
+apply from: 'gradle/keyHelper.gradle'
 
 // In this section you declare where to find the dependencies of your project.
 repositories {
@@ -65,50 +69,9 @@ test {
     useJUnitPlatform()
 }
 
-// Check if we are running on Travis CI.
-static def isTravis() {
-    if (System.getenv('USER') != 'travis') return false
-    if (System.getenv('HAS_JOSH_K_SEAL_OF_APPROVAL') != 'true') return false
-    return true
-}
-
-// Allow retrieving the configuration values from environment variables as well.
-def retrieveOcOkapiProperties() {
-    // Use dummy values as secret environment variables are not available on Travis CI for external
-    // pull requests.
-    if (isTravis() && System.getenv('TRAVIS_PULL_REQUEST') != 'false') {
-        ext.oc_okapi_de_consumer_key = 'DUMMY'
-        ext.oc_okapi_de_consumer_secret = 'DUMMY'
-        ext.oc_test_client_username = 'DUMMY'
-        ext.oc_test_client_password = 'DUMMY'
-        logger.quiet('Detected pull request. Falling back to dummy values.')
-        return
-    }
-
-    if (file(project.ocOkapiPropertiesFile).exists()) {
-        Properties properties = new Properties()
-        File propertiesFile = new File(project.ocOkapiPropertiesFile)
-        properties.load(propertiesFile.newDataInputStream())
-        ext.oc_okapi_de_consumer_key = properties.getProperty('oc_okapi_de_consumer_key')
-        ext.oc_okapi_de_consumer_secret = properties.getProperty('oc_okapi_de_consumer_secret')
-        ext.oc_test_client_username = properties.getProperty('oc_test_client_username')
-        ext.oc_test_client_password = properties.getProperty('oc_test_client_password')
-    } else {
-        ext.oc_okapi_de_consumer_key = System.getenv('OC_OKAPI_DE_CONSUMER_KEY')
-        ext.oc_okapi_de_consumer_secret = System.getenv('OC_OKAPI_DE_CONSUMER_SECRET')
-        ext.oc_test_client_username = System.getenv('OC_TEST_CLIENT_USERNAME')
-        ext.oc_test_client_password = System.getenv('OC_TEST_CLIENT_PASSWORD')
-    }
-
-    // The testing values are not required.
-    if (ext.oc_okapi_de_consumer_key == null || ext.oc_okapi_de_consumer_secret == null) {
-        throw new GradleException('Configuration data missing. Please follow the instructions in the README')
-    }
-}
-
 
 task OcOkapiKeys(type: Copy) {
-    retrieveOcOkapiProperties()
+    project.retrieveOcOkapiProperties()
 
     outputs.files 'src/main/java/cmanager/okapi/ConsumerKeys.java'
     from('templates') {
@@ -116,21 +79,25 @@ task OcOkapiKeys(type: Copy) {
     }
     expand(
         oc_okapi_de_consumer_key: oc_okapi_de_consumer_key,
-        oc_okapi_de_consumer_secret: oc_okapi_de_consumer_secret
+        oc_okapi_de_consumer_secret: oc_okapi_de_consumer_secret,
+        oc_okapi_de_testing_consumer_key: oc_okapi_de_testing_consumer_key,
+        oc_okapi_de_testing_consumer_secret: oc_okapi_de_testing_consumer_secret
     )
     into 'src/main/java/cmanager/okapi'
 }
 
 task OcTestClientLogin(type: Copy) {
-    retrieveOcOkapiProperties()
+    project.retrieveOcOkapiProperties()
 
     outputs.files 'src/test/java/cmanager/okapi/helper/TestClientCredentials.java'
     from('templates') {
         exclude '**/*.properties', 'ConsumerKeys.java', 'Version.java'
     }
     expand(
-        oc_test_client_username: oc_test_client_username,
-        oc_test_client_password: oc_test_client_password
+        oc_de_test_client_username: oc_de_test_client_username,
+        oc_de_test_client_password: oc_de_test_client_password,
+        oc_de_testing_test_client_username: oc_de_testing_test_client_username,
+        oc_de_testing_test_client_password: oc_de_testing_test_client_password
     )
     into 'src/test/java/cmanager/okapi/helper'
 }
@@ -157,7 +124,7 @@ clean.doFirst {
 
 jar {
     archiveBaseName = 'cm'
-    if (isTravis()) version = 'ci'
+    if (project.isTravis()) version = 'ci'
     manifest {
         attributes 'Main-Class': mainClassName
     }
@@ -205,20 +172,13 @@ runtime {
     }
 }
 
-// Retrieve the system string for indicating the package content.
-static def getSystemString() {
-    def osName = System.getProperty('os.name').toLowerCase()
-    if (osName.contains('windows')) return 'windows';
-    return osName;
-}
-
 // Provide a dedicated task to create a ZIP file of the `jpackage` image.
 task jpackageImageZip(type: Zip) {
     group = 'Build'
     description = 'Bundles the jpackage image as a ZIP file.'
     from "${buildDir}/jpackage/cmanager"
     include '**/*'
-    archiveName "cmanager-${version}_${getSystemString()}.zip"
+    archiveName "cmanager-${version}_${project.getSystemString()}.zip"
     destinationDir file("${buildDir}/jpackage/")
 }
 jpackageImageZip.dependsOn jpackageImage

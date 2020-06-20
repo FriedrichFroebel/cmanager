@@ -1,6 +1,6 @@
 package cmanager.geo;
 
-import cmanager.global.Constants;
+import cmanager.oc.OcSite;
 import cmanager.settings.Settings;
 import cmanager.util.ObjectHelper;
 import java.io.Serializable;
@@ -162,8 +162,10 @@ public class Geocache implements Serializable, Comparable<String> {
         if (isGc()) {
             return "https://www.geocaching.com/geocache/" + code;
         }
+
+        // TODO: Add real support for the different sites here.
         if (isOc()) {
-            return Constants.SITE_BASE + code;
+            return OcSite.getBaseUrl() + code;
         }
 
         return null;

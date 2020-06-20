@@ -1,6 +1,7 @@
 package cmanager.okapi.helper;
 
 import cmanager.network.ApacheHttp;
+import cmanager.oc.OcSite;
 import cmanager.okapi.Okapi;
 import cmanager.okapi.RequestAuthorizationCallbackInterface;
 import cmanager.okapi.TokenProviderInterface;
@@ -32,13 +33,13 @@ public class TestClient implements TokenProviderInterface {
      */
     public boolean login() throws IOException {
         final List<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new BasicNameValuePair("email", TestClientCredentials.USERNAME));
-        nameValuePairs.add(new BasicNameValuePair("password", TestClientCredentials.PASSWORD));
+        nameValuePairs.add(new BasicNameValuePair("email", SiteHelper.getUsername()));
+        nameValuePairs.add(new BasicNameValuePair("password", SiteHelper.getPassword()));
         nameValuePairs.add(new BasicNameValuePair("action", "login"));
-        http.post("https://www.opencaching.de/login.php", nameValuePairs);
+        http.post(OcSite.getBaseUrl() + "login.php", nameValuePairs);
 
-        final String response = http.get("https://www.opencaching.de/index.php").getBody();
-        return response.contains(TestClientCredentials.USERNAME);
+        final String response = http.get(OcSite.getBaseUrl() + "index.php").getBody();
+        return response.contains(SiteHelper.getUsername());
     }
 
     /**
@@ -83,7 +84,8 @@ public class TestClient implements TokenProviderInterface {
                                 // Determine the URL to use for the request.
                                 final String oauth_token = extractParameter(authUrl, "oauth_token");
                                 final String url =
-                                        "https://www.opencaching.de/okapi/apps/authorize?interactivity=minimal&oauth_token="
+                                        OcSite.getBaseUrl()
+                                                + "okapi/apps/authorize?interactivity=minimal&oauth_token="
                                                 + oauth_token;
 
                                 // Open the authorization page.
@@ -103,7 +105,7 @@ public class TestClient implements TokenProviderInterface {
                                 // if needed.
                                 if (response.contains(
                                         "<form id='authform' method='POST' class='form'>")) {
-                                    final List<NameValuePair> parameters = new ArrayList<>(3);
+                                    final List<NameValuePair> parameters = new ArrayList<>(1);
                                     /*parameters.add(
                                             new BasicNameValuePair("interactivity", "minimal"));
                                     parameters.add(

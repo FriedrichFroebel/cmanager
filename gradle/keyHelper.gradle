@@ -1,0 +1,50 @@
+// Allow retrieving the configuration values from environment variables as well.
+ext.retrieveOcOkapiProperties = { ->
+    // Use dummy values as secret environment variables are not available on Travis CI for external
+    // pull requests.
+    if (project.isTravis() && System.getenv('TRAVIS_PULL_REQUEST') != 'false') {
+        ext.oc_okapi_de_consumer_key = 'DUMMY'
+        ext.oc_okapi_de_consumer_secret = 'DUMMY'
+        ext.oc_test_client_username = 'DUMMY'
+        ext.oc_test_client_password = 'DUMMY'
+
+        ext.oc_okapi_de_testing_consumer_key = 'DUMMY'
+        ext.oc_okapi_de_testing_consumer_secret = 'DUMMY'
+        ext.oc_de_testing_test_client_username = 'DUMMY'
+        ext.oc_de_testing_test_client_password = 'DUMMY'
+
+        logger.quiet('Detected pull request. Falling back to dummy values.')
+        return
+    }
+
+    if (file(project.ocOkapiPropertiesFile).exists()) {
+        final Properties properties = new Properties()
+        final File propertiesFile = new File(project.ocOkapiPropertiesFile)
+        properties.load(propertiesFile.newDataInputStream())
+
+        ext.oc_okapi_de_consumer_key = properties.getProperty('oc_okapi_de_consumer_key')
+        ext.oc_okapi_de_consumer_secret = properties.getProperty('oc_okapi_de_consumer_secret')
+        ext.oc_de_test_client_username = properties.getProperty('oc_de_test_client_username')
+        ext.oc_de_test_client_password = properties.getProperty('oc_de_test_client_password')
+
+        ext.oc_okapi_de_testing_consumer_key = properties.getProperty('oc_okapi_de_testing_consumer_key')
+        ext.oc_okapi_de_testing_consumer_secret = properties.getProperty('oc_okapi_de_testing_consumer_secret')
+        ext.oc_de_testing_test_client_username = properties.getProperty('oc_de_testing_test_client_username')
+        ext.oc_de_testing_test_client_password = properties.getProperty('oc_de_testing_test_client_password')
+    } else {
+        ext.oc_okapi_de_consumer_key = System.getenv('OC_OKAPI_DE_CONSUMER_KEY')
+        ext.oc_okapi_de_consumer_secret = System.getenv('OC_OKAPI_DE_CONSUMER_SECRET')
+        ext.oc_de_test_client_username = System.getenv('OC_DE_TEST_CLIENT_USERNAME')
+        ext.oc_de_test_client_password = System.getenv('OC_DE_TEST_CLIENT_PASSWORD')
+
+        ext.oc_okapi_de_testing_consumer_key = System.getenv('OC_OKAPI_DE_TESTING_CONSUMER_KEY')
+        ext.oc_okapi_de_testing_consumer_secret = System.getenv('OC_OKAPI_DE_TESTING_CONSUMER_SECRET')
+        ext.oc_de_testing_test_client_username = System.getenv('OC_DE_TESTING_TEST_CLIENT_USERNAME')
+        ext.oc_de_testing_test_client_password = System.getenv('OC_DE_TESTING_TEST_CLIENT_PASSWORD')
+    }
+
+    // The testing values are not required.
+    if (ext.oc_okapi_de_consumer_key == null || ext.oc_okapi_de_consumer_secret == null) {
+        throw new GradleException('Configuration data missing. Please follow the instructions in the README')
+    }
+}
