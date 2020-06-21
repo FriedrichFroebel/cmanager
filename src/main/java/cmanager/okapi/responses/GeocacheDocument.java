@@ -75,7 +75,7 @@ public class GeocacheDocument {
 
     /** Whether the user has already found this cache. */
     @SerializedName("is_found")
-    private boolean found;
+    private Boolean found;
 
     /**
      * Get the OC code.
@@ -235,7 +235,7 @@ public class GeocacheDocument {
      *
      * @return Whether the user has already found this cache.
      */
-    public boolean isFound() {
+    public Boolean isFound() {
         return found;
     }
 }

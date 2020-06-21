@@ -14,6 +14,7 @@ import cmanager.oc.OcSite;
 import cmanager.okapi.responses.CachesSearchNearestDocument;
 import cmanager.okapi.responses.ErrorDocument;
 import cmanager.okapi.responses.GeocacheDocument;
+import cmanager.okapi.responses.LogDeletionDocument;
 import cmanager.okapi.responses.LogDocument;
 import cmanager.okapi.responses.LogSubmissionDocument;
 import cmanager.okapi.responses.UserDocument;
@@ -35,18 +36,15 @@ import java.util.concurrent.ExecutionException;
 
 public class Okapi {
 
-    private static final String CONSUMER_API_KEY = OcSite.getConsumerApiKey();
-    private static final String CONSUMER_SECRET_KEY = OcSite.getConsumerSecretKey();
-    private static final String BASE_URL = OcSite.getBaseUrl() + "okapi/services";
-
     private static final ApacheHttp httpClient = new ApacheHttp();
 
     public static String usernameToUuid(String username) throws Exception {
         final String url =
-                BASE_URL
+                OcSite.getBaseUrl()
+                        + "okapi/services"
                         + "/users/by_username"
                         + "?consumer_key="
-                        + CONSUMER_API_KEY
+                        + OcSite.getConsumerApiKey()
                         + "&username="
                         + URLEncoder.encode(username, "UTF-8")
                         + "&fields=uuid";
@@ -69,10 +67,11 @@ public class Okapi {
 
     public static Geocache getCache(String code) throws Exception {
         final String url =
-                BASE_URL
+                OcSite.getBaseUrl()
+                        + "okapi/services"
                         + "/caches/geocache"
                         + "?consumer_key="
-                        + CONSUMER_API_KEY
+                        + OcSite.getConsumerApiKey()
                         + "&cache_code="
                         + code
                         + "&fields="
@@ -155,10 +154,11 @@ public class Okapi {
 
     public static Geocache completeCacheDetails(Geocache geocache) throws Exception {
         final String url =
-                BASE_URL
+                OcSite.getBaseUrl()
+                        + "okapi/services"
                         + "/caches/geocache"
                         + "?consumer_key="
-                        + CONSUMER_API_KEY
+                        + OcSite.getConsumerApiKey()
                         + "&cache_code="
                         + geocache.getCode()
                         + "&fields="
@@ -194,8 +194,8 @@ public class Okapi {
     }
 
     private static OAuth10aService getOAuthService() {
-        return new ServiceBuilder(CONSUMER_API_KEY)
-                .apiSecret(CONSUMER_SECRET_KEY)
+        return new ServiceBuilder(OcSite.getConsumerApiKey())
+                .apiSecret(OcSite.getConsumerSecretKey())
                 .build(new OAuth());
     }
 
@@ -259,10 +259,11 @@ public class Okapi {
             throws Exception {
         final boolean useOAuth = tokenProvider != null && excludeUuid != null;
         final String url =
-                BASE_URL
+                OcSite.getBaseUrl()
+                        + "okapi/services"
                         + "/caches/search/nearest"
                         + "?consumer_key="
-                        + CONSUMER_API_KEY
+                        + OcSite.getConsumerApiKey()
                         + "&center="
                         + URLEncoder.encode(
                                 latitude.toString() + "|" + longitude.toString(), "UTF-8")
@@ -313,10 +314,11 @@ public class Okapi {
         }
 
         final String url =
-                BASE_URL
+                OcSite.getBaseUrl()
+                        + "okapi/services"
                         + "/caches/geocache"
                         + "?consumer_key="
-                        + CONSUMER_API_KEY
+                        + OcSite.getConsumerApiKey()
                         + "&cache_code="
                         + oc.getCode()
                         + "&fields=is_found";
@@ -329,7 +331,7 @@ public class Okapi {
 
     public static String getUuid(TokenProviderInterface tokenProvider)
             throws IOException, InterruptedException, ExecutionException {
-        final String url = BASE_URL + "/users/user" + "?fields=uuid";
+        final String url = OcSite.getBaseUrl() + "okapi/services" + "/users/user" + "?fields=uuid";
         final String responseBody = authedHttpGet(tokenProvider, url);
 
         final UserDocument document = new Gson().fromJson(responseBody, UserDocument.class);
@@ -341,7 +343,8 @@ public class Okapi {
 
     public static String getUsername(TokenProviderInterface tokenProvider)
             throws IOException, InterruptedException, ExecutionException {
-        final String url = BASE_URL + "/users/user" + "?fields=username";
+        final String url =
+                OcSite.getBaseUrl() + "okapi/services" + "/users/user" + "?fields=username";
         final String responseBody = authedHttpGet(tokenProvider, url);
 
         final UserDocument document = new Gson().fromJson(responseBody, UserDocument.class);
@@ -359,7 +362,8 @@ public class Okapi {
             throws InterruptedException, ExecutionException, IOException, UnexpectedLogStatus,
                     UnexpectedStatusCode {
         String url =
-                BASE_URL
+                OcSite.getBaseUrl()
+                        + "okapi/services"
                         + "/logs/submit"
                         + "?cache_code="
                         + URLEncoder.encode(cache.getCode(), "UTF-8")
@@ -370,7 +374,7 @@ public class Okapi {
                         + "&when="
                         + URLEncoder.encode(log.getDateStrIso8601NoTime(), "UTF-8");
 
-        /*if (cache.doesRequirePassword()) {
+        /*if (cache.doesRequirePassword() != null && cache.doesRequirePassword()) {
             url += "&password=" + URLEncoder.encode(log.getPassword(), "UTF-8");
         }*/
 
@@ -407,7 +411,12 @@ public class Okapi {
         final String uuid = getUuid(tokenProvider);
 
         final String url =
-                BASE_URL + "/users/user" + "?fields=home_location" + "&user_uuid=" + uuid;
+                OcSite.getBaseUrl()
+                        + "okapi/services"
+                        + "/users/user"
+                        + "?fields=home_location"
+                        + "&user_uuid="
+                        + uuid;
         final String responseBody = authedHttpGet(tokenProvider, url);
 
         final UserDocument document = new Gson().fromJson(responseBody, UserDocument.class);
@@ -418,9 +427,10 @@ public class Okapi {
     /** Convert the given log UUID to a real (internal) log ID. */
     public static String getLogId(String logUuid) throws IOException, UnexpectedStatusCode {
         final String url =
-                BASE_URL
+                OcSite.getBaseUrl()
+                        + "okapi/services"
                         + "/logs/entry?consumer_key="
-                        + CONSUMER_API_KEY
+                        + OcSite.getConsumerApiKey()
                         + "&fields=internal_id"
                         + "&log_uuid="
                         + URLEncoder.encode(logUuid, "UTF-8");
@@ -434,5 +444,42 @@ public class Okapi {
 
         final LogDocument document = new Gson().fromJson(responseBody, LogDocument.class);
         return document.getInternalId();
+    }
+
+    /**
+     * Delete the log given by its UUID.
+     *
+     * <p>This is only needed for the automated tests. It will probably be never implemented in the
+     * GUI (and it probably should not be implemented there anyway).
+     */
+    public static void deleteLog(TokenProviderInterface tokenProvider, String logUuid)
+            throws IOException, ExecutionException, InterruptedException, UnexpectedLogStatus {
+        String url =
+                OcSite.getBaseUrl()
+                        + "okapi/services"
+                        + "/logs/delete"
+                        + "?log_uuid="
+                        + URLEncoder.encode(logUuid, "UTF-8");
+
+        final String responseBody = authedHttpGet(tokenProvider, url);
+
+        // Retrieve the responseBody document.
+        final LogDeletionDocument document =
+                new Gson().fromJson(responseBody, LogDeletionDocument.class);
+
+        // The document itself is null.
+        if (document == null) {
+            throw new NullPointerException(
+                    "Problems with deletion of log. Response document is null.");
+        }
+
+        if (document.isSuccess() == null) {
+            throw new NullPointerException(responseBody);
+        }
+
+        // Check success status.
+        if (!document.isSuccess()) {
+            throw new UnexpectedLogStatus(document.getMessage());
+        }
     }
 }

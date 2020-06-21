@@ -137,6 +137,11 @@ jar {
     }
 }
 
+// Only run one test at a time to avoid clashes with the site helpers.
+test {
+    maxParallelForks = 1
+}
+
 // Fix the encoding on Windows systems.
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'

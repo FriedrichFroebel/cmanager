@@ -4,9 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
+import cmanager.exception.UnexpectedLogStatus;
 import cmanager.geo.Coordinate;
 import cmanager.geo.Geocache;
+import cmanager.geo.GeocacheLog;
 import cmanager.oc.OcSite;
 import cmanager.oc.SupportedSite;
 import cmanager.okapi.helper.SiteHelper;
@@ -14,7 +17,6 @@ import cmanager.okapi.helper.TestClient;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +24,6 @@ import org.junit.jupiter.api.Test;
  * Tests for the OKAPI-based methods which perform write operations or depend on existing logs by
  * the test user.
  */
-@Disabled
 public class OkapiRealInteractionTest {
 
     /** The test client instance to use. */
@@ -46,29 +47,52 @@ public class OkapiRealInteractionTest {
         assertNotNull(testClient.requestToken());
     }
 
-    /** Test logging the specified test cache. */
+    /** Test updating the found status of a logged cache. */
     @Test
-    @DisplayName("Test updating the found status with success")
-    public void testUpdateFoundStatusSuccess() throws Exception {
+    @DisplayName("Test updating the found status of logged cache")
+    public void testUpdateFoundStatusLoggedCache() throws Exception {
         final Geocache geocache =
-                new Geocache("OC13A45", "test", new Coordinate(0, 0), 0.0, 0.0, "Tradi");
+                new Geocache("OC12A70", "test", new Coordinate(0, 0), 0.0, 0.0, "Tradi");
         assertNull(geocache.getIsFound());
 
         Okapi.updateFoundStatus(testClient, geocache);
         assertTrue(geocache.getIsFound());
     }
 
-    /** Test logging the specified test cache. */
+    /** Test updating the found status of an unlogged cache. */
     @Test
-    @DisplayName("Test updating the found status without success")
-    public void testUpdateFoundStatusFailure() throws Exception {
+    @DisplayName("Test updating the found status of an unlogged cache")
+    public void testUpdateFoundStatusUnloggedCache() throws Exception {
         final Geocache geocache =
-                new Geocache("OC0BEF", "test", new Coordinate(0, 0), 0.0, 0.0, "Tradi");
+                new Geocache("OC12A6F", "test", new Coordinate(0, 0), 0.0, 0.0, "Tradi");
         assertNull(geocache.getIsFound());
 
-        // Logging should not be successful. TODO: Why?
         Okapi.updateFoundStatus(testClient, geocache);
         assertFalse(geocache.getIsFound());
+    }
+
+    /**
+     * Test getting the caches around a given position. This does not use a user filter, but checks
+     * that one cache is present.
+     */
+    @Test
+    @DisplayName("Test getting the caches around without a user filter")
+    public void testGetCachesAroundWithoutUserFilter() throws Exception {
+        final List<Geocache> caches =
+                Okapi.getCachesAround(null, null, 00.23333, 000.61667, 1.0, new ArrayList<>());
+        assertNotNull(caches);
+        assertTrue(caches.size() >= 1);
+
+        boolean containsCache = false;
+        for (final Geocache geocache : caches) {
+            if (geocache.toString()
+                    .equals("1.0/3.5 OC12A70 (Tradi) -- 0.233333, 0.616667 -- Logged cache")) {
+                containsCache = true;
+                break;
+            }
+        }
+
+        assertTrue(containsCache);
     }
 
     /**
@@ -78,12 +102,11 @@ public class OkapiRealInteractionTest {
     @Test
     @DisplayName("Test getting the caches around with a user filter")
     public void testGetCachesAroundWithUserFilter() throws Exception {
-        // TODO: Adapt the values to represent a real test server cache.
         final List<Geocache> caches =
                 Okapi.getCachesAround(
                         testClient,
                         Okapi.getUuid(testClient),
-                        00.21667,
+                        00.23333,
                         000.61667,
                         1.0,
                         new ArrayList<>());
@@ -92,13 +115,94 @@ public class OkapiRealInteractionTest {
         boolean containsCache = false;
         for (final Geocache geocache : caches) {
             if (geocache.toString()
-                    .equals(
-                            "1.0/5.0 OC13A45 (Tradi) -- 0.216667, 0.616667 -- cmanager TEST cache")) {
+                    .equals("1.0/3.5 OC12A70 (Tradi) -- 0.233333, 0.616667 -- Logged cache")) {
                 containsCache = true;
                 break;
             }
         }
 
         assertFalse(containsCache);
+    }
+
+    /** Test logging an unlogged cache. */
+    @Test
+    @DisplayName("Test logging a cache")
+    public void testLoggingUnloggedCache() throws Exception {
+        final Geocache geocache =
+                new Geocache("OC12A6F", "test", new Coordinate(0, 0), 0.0, 0.0, "Tradi");
+        final GeocacheLog log =
+                new GeocacheLog(
+                        "Found it",
+                        SiteHelper.getUsername(),
+                        "testLoggingUnloggedCache",
+                        "2020-06-21T19:00:00Z");
+
+        // Make sure that the cache has not been found. This might indicate a leftover from a
+        // previous test run.
+        Okapi.updateFoundStatus(testClient, geocache);
+        assertFalse(geocache.getIsFound());
+
+        // Post the log.
+        final String logUuid = Okapi.postLog(testClient, geocache, log, false);
+        Okapi.updateFoundStatus(testClient, geocache);
+        assertTrue(geocache.getIsFound());
+
+        // Clean up for the next test run by deleting the posted log.
+        assertNotNull(logUuid);
+        Okapi.deleteLog(testClient, logUuid);
+        Okapi.updateFoundStatus(testClient, geocache);
+        assertFalse(geocache.getIsFound());
+    }
+
+    /** Test logging an unlogged password-protected cache. */
+    @Test
+    @DisplayName("Test logging a password-protected cache")
+    public void testLoggingPasswordProtectedCache() throws Exception {
+        final Geocache geocache =
+                new Geocache("OC12A71", "test", new Coordinate(0, 0), 0.0, 0.0, "Tradi");
+        final GeocacheLog log =
+                new GeocacheLog(
+                        "Found it",
+                        SiteHelper.getUsername(),
+                        "testLoggingPasswordProtectedCache",
+                        "2020-06-21T19:00:00Z");
+
+        // Indicate that this cache requires a password.
+        geocache.setRequiresPassword(true);
+
+        // Make sure that the cache has not been found. This might indicate a leftover from a
+        // previous test run.
+        Okapi.updateFoundStatus(testClient, geocache);
+        assertFalse(geocache.getIsFound());
+
+        // Try to post the log without a password/with an empty password. This should fail.
+        String logUuid;
+        try {
+            logUuid = Okapi.postLog(testClient, geocache, log, false);
+            Okapi.deleteLog(testClient, logUuid);
+            fail("Posting log for password-protected cache with wrong password did not fail.");
+        } catch (UnexpectedLogStatus ignored) {
+        }
+
+        // Make sure again that the cache has not been found.
+        Okapi.updateFoundStatus(testClient, geocache);
+        assertFalse(geocache.getIsFound());
+
+        // As this functionality is not available from within the GUI for now, the OKAPI class does
+        // not handle this for now. Nevertheless the functionality works in theory, which can be
+        // verified with the following lines.
+        /*// Set the correct log password.
+        log.setPassword("cmanagerTest");
+
+        // Post the log, using the correct log password this time.
+        logUuid = Okapi.postLog(testClient, geocache, log, false);
+        Okapi.updateFoundStatus(testClient, geocache);
+        assertTrue(geocache.getIsFound());
+
+        // Clean up for the next test run by deleting the posted log.
+        assertNotNull(logUuid);
+        Okapi.deleteLog(testClient, logUuid);
+        Okapi.updateFoundStatus(testClient, geocache);
+        assertFalse(geocache.getIsFound());*/
     }
 }

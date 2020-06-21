@@ -135,6 +135,10 @@ public class GeocacheLog implements Serializable {
         this.text = bodyTrim;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public String getAuthor() {
         return author;
     }

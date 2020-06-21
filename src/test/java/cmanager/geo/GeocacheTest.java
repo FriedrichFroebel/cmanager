@@ -6,12 +6,22 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import cmanager.oc.OcSite;
+import cmanager.oc.SupportedSite;
 import cmanager.util.ObjectHelper;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /** Tests for the geocache container. */
 public class GeocacheTest {
+
+    /** Set the OC site. */
+    @BeforeAll
+    public static void setUp() throws Exception {
+        // Set the correct site.
+        OcSite.setSite(SupportedSite.OPENCACHING_DE);
+    }
 
     /** Test the constructor with valid parameters. */
     @Test
