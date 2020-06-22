@@ -1,6 +1,9 @@
 # Development version
 
 * Make the duplicate search more reliable when running it multiple times without closing the application in between.
+* Fix bug when trying to filter empty cache lists.
+* Enable tests requiring existing logs or write operations again.
+* Move OKAPI URL building to external class to increase readability.
 
 # Version 0.5.1 - 2020-06-19
 
