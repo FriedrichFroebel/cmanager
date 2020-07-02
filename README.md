@@ -19,7 +19,7 @@ This version is a fork of the [original repository by Samsung1](https://github.c
 
 Releases are published on GitHub as ["Releases"](https://github.com/FriedrichFroebel/cmanager/releases).
 
-Besides the regular release, there is a pre-release as well. This will be built by Travis CI on every change to the `master` branch. **Please note that these files (named `cm-<hexStringOfTheCommit>.jar`) are development versions which might have additional bugs or provide undocumented changes/features. Use them at your own risk!** The Travis integration is still work-in-progress, see [#7](https://github.com/FriedrichFroebel/cmanager/issues/7) for example.
+Besides the regular release, there is a pre-release as well. This will be built by Travis CI on every change to the `master` branch. **Please note that these files (named `cm-<hexStringOfTheCommit>.jar`) are development versions which might have additional bugs or provide undocumented changes/features. Use them at your own risk!** The Travis integration is still work-in-progress, see the list of issues for example.
 
 ## Building from Source
 
