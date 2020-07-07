@@ -30,7 +30,7 @@ public class DesktopUtil {
                 try {
                     Desktop.getDesktop().browse(uri);
                     return;
-                } catch (IOException exception) {
+                } catch (UnsupportedOperationException | IOException exception) {
                     // Add the exception anyway.
                     exception.printStackTrace();
                 }
