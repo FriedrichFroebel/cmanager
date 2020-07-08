@@ -1,3 +1,10 @@
+/**
+ * OKAPI key loader.
+ *
+ * This method has been moved to an external file to improve readability of the main Gradle build
+ * file.
+ */
+
 // Allow retrieving the configuration values from environment variables as well.
 ext.retrieveOcOkapiProperties = { ->
     // Use dummy values as secret environment variables are not available on Travis CI for external

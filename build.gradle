@@ -6,7 +6,7 @@ plugins {
     id 'com.github.sherter.google-java-format' version '0.9'
 
     // Create runtime images.
-    id 'org.beryx.runtime' version '1.9.1'
+    id 'org.beryx.runtime' version '1.10.0'
 }
 
 // Apply the java plugin to add support for Java.
@@ -58,10 +58,10 @@ project.ext.ocOkapiPropertiesFile = projectDir.getPath() + "${File.separator}oc_
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-version = '0.5.1'
+version = '0.5.2'
 
 wrapper {
-    gradleVersion = '6.5'
+    gradleVersion = '6.5.1'
 }
 
 // Use JUnit 5 for testing.

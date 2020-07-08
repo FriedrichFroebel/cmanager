@@ -1,5 +1,7 @@
 # Development version
 
+# Version 0.5.2 - 2020-07-08
+
 * Make the duplicate search more reliable when running it multiple times without closing the application in between.
 * Fix bug when trying to filter empty cache lists.
 * Enable tests requiring existing logs or write operations again.
