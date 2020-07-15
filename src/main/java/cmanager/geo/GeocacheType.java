@@ -64,6 +64,15 @@ public class GeocacheType implements Serializable {
         return gc != null ? gc : TYPE.get(type, 2);
     }
 
+    /**
+     * Check whether this is one of the available event types.
+     *
+     * @return If this is an event type, id est the GC type contains the substring "Event".
+     */
+    public boolean isEventType() {
+        return asGcType().contains("Event");
+    }
+
     public boolean equals(GeocacheType other) {
         return this.type == other.type;
     }

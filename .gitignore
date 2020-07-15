@@ -4,6 +4,7 @@ build
 *.zip
 *.jar
 out
+gpx/
 
 # Ignore Gradle GUI config
 gradle-app.setting

@@ -116,6 +116,7 @@ public class Okapi {
                         document.getTerrain(),
                         document.getType());
         geocache.setCodeGc(document.getGcCode());
+        geocache.setDateHidden(document.getDateHidden());
 
         final String status = document.getStatus();
         if (status != null) {

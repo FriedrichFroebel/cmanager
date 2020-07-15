@@ -2,9 +2,12 @@ package cmanager.geo;
 
 import cmanager.oc.OcSite;
 import cmanager.settings.Settings;
+import cmanager.util.DateTimeUtil;
 import cmanager.util.ObjectHelper;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +30,7 @@ public class Geocache implements Serializable, Comparable<String> {
     private String url = null;
     private Boolean requiresPassword = null;
     private String internalId = null;
+    private ZonedDateTime dateHidden;
 
     private Boolean archived = null;
     private Boolean available = null;
@@ -182,6 +186,30 @@ public class Geocache implements Serializable, Comparable<String> {
 
     public String getInternalId() {
         return internalId;
+    }
+
+    public void setDateHidden(String dateHidden) {
+        if (dateHidden == null) {
+            return;
+        }
+
+        try {
+            this.dateHidden = ZonedDateTime.parse(dateHidden);
+        } catch (DateTimeParseException exception) {
+            this.dateHidden = DateTimeUtil.parseIsoDateTime(dateHidden);
+        }
+    }
+
+    public void setDateHidden(ZonedDateTime dateHidden) {
+        this.dateHidden = dateHidden;
+    }
+
+    public ZonedDateTime getDateHidden() {
+        return dateHidden;
+    }
+
+    public String getDateHiddenStrIso8601() {
+        return dateHidden.format(DateTimeFormatter.ISO_INSTANT);
     }
 
     public String getStatusAsString() {
@@ -426,7 +454,8 @@ public class Geocache implements Serializable, Comparable<String> {
      * using the OKAPI runtime cache. See issue #34 for more details about this.
      *
      * @return A minimal copy of the current geocache. This only has the code, name, coordinate,
-     *     difficulty and terrain rating, the type, GC code and availability status attributes.
+     *     difficulty and terrain rating, the type, GC code, availability status attributes and the
+     *     hidden date.
      */
     public Geocache getBasicCopy() {
         final Geocache geocache =
@@ -440,6 +469,7 @@ public class Geocache implements Serializable, Comparable<String> {
         geocache.setCodeGc(getCodeGc());
         geocache.setAvailable(isAvailable());
         geocache.setArchived(isArchived());
+        geocache.setDateHidden(getDateHidden());
 
         return geocache;
     }

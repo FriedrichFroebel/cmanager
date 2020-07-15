@@ -73,6 +73,7 @@ public class GpxElementUtil {
         String listingShort = null;
         String hint = null;
         Integer id = null;
+        String dateHidden = null;
         Boolean archived = null;
         Boolean available = null;
         Boolean gcPremium = null;
@@ -98,6 +99,8 @@ public class GpxElementUtil {
                 code = element.getUnescapedBody();
             } else if (element.is("urlname")) {
                 urlName = element.getUnescapedBody();
+            } else if (element.is("time")) {
+                dateHidden = element.getUnescapedBody();
             } else if (element.is("groundspeak:cache")) {
                 groundspeak_cache = true;
 
@@ -235,6 +238,7 @@ public class GpxElementUtil {
         geocache.setListingShort(listingShort);
         geocache.setHint(hint);
         geocache.setId(id);
+        geocache.setDateHidden(dateHidden);
         geocache.setArchived(archived);
         geocache.setAvailable(available);
         geocache.setGcPremium(gcPremium);
@@ -270,6 +274,7 @@ public class GpxElementUtil {
 
         waypoint.add(new Element("name", geocache.getCode()));
         waypoint.add(new Element("urlname", geocache.getName()));
+        waypoint.add(new Element("time", geocache.getDateHiddenStrIso8601()));
 
         final Element groundspeakCache = new Element("groundspeak:cache");
         groundspeakCache.add(new XmlAttribute("id", geocache.getId()));

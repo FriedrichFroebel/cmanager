@@ -61,6 +61,14 @@ public class GeocacheDocument {
     String url;
 
     /**
+     * Date and time (ISO 8601) when the geocache was first hidden (for physical caches), or the
+     * geocache was first published (for virtual caches), or the event takes place (for event
+     * caches).
+     */
+    @SerializedName("date_hidden")
+    String dateHidden;
+
+    /**
      * The internal ID of the cache.
      *
      * <p>Although it is not recommended to use this, it seems like we need this for log
@@ -210,6 +218,15 @@ public class GeocacheDocument {
      */
     public String getUrl() {
         return url;
+    }
+
+    /**
+     * Get the hidden date.
+     *
+     * @return The hidden date.
+     */
+    public String getDateHidden() {
+        return dateHidden;
     }
 
     /**

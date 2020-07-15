@@ -1,5 +1,7 @@
 # Development version
 
+* Consider the date for event caches during comparison.
+
 # Version 0.5.2 - 2020-07-08
 
 * Make the duplicate search more reliable when running it multiple times without closing the application in between.

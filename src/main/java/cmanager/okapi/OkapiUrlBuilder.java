@@ -61,7 +61,9 @@ class OkapiUrlBuilder {
         return getBase()
                 .setPath("okapi/services/caches/geocache")
                 .addParameter("cache_code", ocCode)
-                .addParameter("fields", "code|name|location|type|gc_code|difficulty|terrain|status")
+                .addParameter(
+                        "fields",
+                        "code|name|location|type|gc_code|difficulty|terrain|status|date_hidden")
                 .toString();
     }
 

@@ -1,7 +1,9 @@
 package cmanager.geo;
 
+import cmanager.util.DateTimeUtil;
 import cmanager.util.LoggingUtil;
 import java.text.MessageFormat;
+import java.time.ZonedDateTime;
 import java.util.logging.Logger;
 
 public class GeocacheComparator {
@@ -70,6 +72,21 @@ public class GeocacheComparator {
             dividend++;
         } else {
             LOGGER.info("Cache types differ.");
+        }
+
+        // Handle event dates. See issue #17.
+        if (geocache1.getType().isEventType() && geocache2.getType().isEventType()) {
+            divisor++;
+            final ZonedDateTime dateHidden1 = geocache1.getDateHidden();
+            final ZonedDateTime dateHidden2 = geocache2.getDateHidden();
+            final boolean isInRange = DateTimeUtil.isInDayRange(dateHidden1, dateHidden2, 1);
+
+            if (isInRange) {
+                LOGGER.info("Event cache with dates less than one day apart.");
+                dividend++;
+            } else {
+                LOGGER.info("Event cache with dates more than one day apart.");
+            }
         }
 
         if (geocache1.getOwner() != null) {

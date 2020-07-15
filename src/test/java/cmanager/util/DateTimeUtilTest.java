@@ -41,4 +41,24 @@ public class DateTimeUtilTest {
                 DateTimeUtil.parseIsoDateTime("2013-04-13T00" + ":00:00");
         assertEquals(dateTimeOpencachingDe, dateTimeGeocachingCom);
     }
+
+    @Test
+    @DisplayName("Test day range check with dates close enough")
+    public void testIsInDayRangeInside() {
+        final ZonedDateTime newer = ZonedDateTime.parse("2018-11-09T00:00:00+02:00");
+        final ZonedDateTime older = DateTimeUtil.parseIsoDateTime("2018-11-09T00:00:00");
+
+        assertTrue(DateTimeUtil.isInDayRange(newer, older, 1));
+        assertTrue(DateTimeUtil.isInDayRange(older, newer, 1));
+    }
+
+    @Test
+    @DisplayName("Test day range check with dates too much apart")
+    public void testIsInDayRangeOutside() {
+        final ZonedDateTime newer = ZonedDateTime.parse("2019-06-19T00:00:00+02:00");
+        final ZonedDateTime older = DateTimeUtil.parseIsoDateTime("2018-11-09T00:00:00");
+
+        assertFalse(DateTimeUtil.isInDayRange(newer, older, 1));
+        assertFalse(DateTimeUtil.isInDayRange(older, newer, 1));
+    }
 }
