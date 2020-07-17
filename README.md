@@ -7,7 +7,9 @@ Further information in German:
 * https://wiki.opencaching.de/index.php/Cmanager
 * https://forum.opencaching.de/index.php?topic=4348.0
 
-**Important note:** If *cmanager* fails with an exception, you should try to update your local Java installation to the latest version at first. This especially holds true for SSL errors, but might cause other problems as well.
+**Note:** If *cmanager* fails with an exception, you should try to update your local Java installation to the latest version at first. This especially holds true for SSL errors, but might cause other problems as well.
+
+**Important note:** This application tries to support you with logging duplicates as best as possible. The results might be wrong due to the used heuristics, so you might end up with multiple results for one GC cache or no results at all. There is no guarantee that the results are correct, so you should be careful with logging by ensuring that this actually is a valid duplicate. (This is one of the reasons for not automating the synchronization by providing some batch processing for sending the actual logs.)
 
 ## License & Source Code
 
