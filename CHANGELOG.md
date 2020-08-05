@@ -1,5 +1,7 @@
 # Development version
 
+# Version 0.5.3 - 2020-08-05
+
 * Consider the date for event caches during comparison.
 
 # Version 0.5.2 - 2020-07-08
@@ -31,7 +33,7 @@
 # Version 0.4.0 - 2020-05-22
 
 * Add fallback methods for opening an URL in the web browser.
-* View logs as plaintext instead of HTML. This should finally provide correct linebreaks in the text.
+* View logs as plaintext instead of HTML. This should finally provide correct line breaks in the text.
 * Allow sending modified logs.
 * Add support for Travis CI for automated `master` builds.
 * Fix log type for webcam caches.
@@ -84,7 +86,7 @@
 # Version 0.2.43 - 2017-05-02
 
 * Perform some refactoring.
-* Store information about HTTP responses witout code 200.
+* Store information about HTTP responses without code 200.
 * Handle OKAPI error responses for the username and cache getter.
 * Switch OKAPI responses to JSON.
 * Split OKAPI result caching and cache lookup.
@@ -174,8 +176,8 @@
 
 # Version 0.2z - 2016-02-25
 
-* Only enable undo menu if undo action are available.
-* Allow restarting the program to update used heap size.
+* Only enable undo menu if undo actions are available.
+* Allow restarting the program to update the used heap size.
 * Add OC username to settings.
 
 # Version 0.2y - 2016-02-24
@@ -192,7 +194,7 @@
 # Version 0.2w - 2016-02-21
 
 * Move filters to main menu.
-* Allow to set cache coordinates as location using a right click.
+* Allow setting cache coordinates as location using a right click.
 * Display number of selected caches.
 * Switch to HTTPS.
 * Add undo support.
@@ -228,7 +230,7 @@
 * Unify found log definition.
 * Add cache name filter.
 * Ignore caches ignored on OC.
-* Use multithreaded filtering.
+* Use multi-threaded filtering.
 
 # Version 0.2q - 2016-01-28
 
@@ -240,7 +242,7 @@
 
 # Version 0.2o - 2016-01-26
 
-* Bugfix for multithreading.
+* Bugfix for multi-threading.
 * Allow reduced GPX files.
 
 # Version 0.2n - 2016-01-19

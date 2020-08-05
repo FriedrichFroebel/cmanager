@@ -40,6 +40,34 @@ public class DateTimeUtil {
     }
 
     /**
+     * Check if the given datetime is older than the given number of days.
+     *
+     * @param oldTime The datetime to check the invalidation for.
+     * @param maximumAgeInDays The maximum age in days allowed.
+     * @return Whether the given datetime is too old.
+     */
+    public static boolean isTooOldWithDays(final LocalDateTime oldTime, int maximumAgeInDays) {
+        final LocalDateTime invalidationTime = oldTime.plusDays(maximumAgeInDays);
+        final LocalDateTime now = LocalDateTime.now();
+
+        return invalidationTime.isBefore(now);
+    }
+
+    /**
+     * Check if the given file is older than the given number of days.
+     *
+     * @param file The file to check the modification time for.
+     * @param maximumAgeInDays The maximum age in days allowed.
+     * @return Whether the file is too old.
+     */
+    public static boolean isTooOldWithDays(final File file, int maximumAgeInDays) {
+        final LocalDateTime fileModifiedDate =
+                LocalDateTime.ofInstant(
+                        Instant.ofEpochMilli(file.lastModified()), ZoneId.systemDefault());
+        return DateTimeUtil.isTooOldWithDays(fileModifiedDate, maximumAgeInDays);
+    }
+
+    /**
      * Check if the given file is too old.
      *
      * @param file The file to check the modification time for.
