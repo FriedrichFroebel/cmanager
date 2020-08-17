@@ -4,12 +4,15 @@ import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+/** Container for a geocache log. */
 public class GeocacheLog implements Serializable {
 
     private static final long serialVersionUID = -2611937420437874774L;
 
+    /** The known log types. */
     public static final TypeMap TYPE = new TypeMap();
 
+    // Initialize the map.
     static {
         TYPE.add("Found it");
         TYPE.add("Didn't find it");
@@ -35,22 +38,31 @@ public class GeocacheLog implements Serializable {
         TYPE.add("Unarchive");
     }
 
-    public void setType(String type) {
-        type = type.toLowerCase();
-        this.type = TYPE.getLowercase(type);
-    }
-
-    public String getTypeStr() {
-        return TYPE.get(type, 0);
-    }
-
+    /** The log type. */
     private int type;
+
+    /** The author of the log. */
     private String author;
+
+    /** The log text. */
     private String text;
+
+    /** The date of the log. */
     private ZonedDateTime date;
+
+    /** The log password. */
     private String password;
 
-    public GeocacheLog(String type, String author, String text, String date) {
+    /**
+     * Create a new instance with the given values.
+     *
+     * @param type The log type.
+     * @param author The log author.
+     * @param text The log text.
+     * @param date The log date.
+     */
+    public GeocacheLog(
+            final String type, final String author, final String text, final String date) {
         setType(type);
         setDate(date);
 
@@ -63,7 +75,21 @@ public class GeocacheLog implements Serializable {
         this.password = "";
     }
 
-    public GeocacheLog(String type, String author, String text, String date, String password) {
+    /**
+     * Create a new instance with the given values.
+     *
+     * @param type The log type.
+     * @param author The log author.
+     * @param text The log text.
+     * @param date The log date.
+     * @param password The log password.
+     */
+    public GeocacheLog(
+            final String type,
+            final String author,
+            final String text,
+            final String date,
+            final String password) {
         setType(type);
         setDate(date);
 
@@ -76,9 +102,32 @@ public class GeocacheLog implements Serializable {
         this.password = password;
     }
 
-    public void setDate(String date) {
+    /**
+     * Set the log type.
+     *
+     * @param type The string/name for the log type.
+     */
+    public void setType(String type) {
+        type = type.toLowerCase();
+        this.type = TYPE.getLowercase(type);
+    }
+
+    /**
+     * Get the log type as a string.
+     *
+     * @return The log type as a string.
+     */
+    public String getTypeStr() {
+        return TYPE.get(type, 0);
+    }
+
+    /**
+     * Set the date of the log.
+     *
+     * @param date The date to set. This should follow the ISO-8601 format.
+     */
+    public void setDate(final String date) {
         // <groundspeak:date>2015-08-16T19:00:00Z</groundspeak:date>
-        // ISO 8601
         this.date = ZonedDateTime.parse(date);
     }
 
@@ -135,18 +184,50 @@ public class GeocacheLog implements Serializable {
         this.text = bodyTrim;
     }
 
-    public void setPassword(String password) {
+    /**
+     * Set the log password.
+     *
+     * @param password The password to set.
+     */
+    public void setPassword(final String password) {
         this.password = password;
     }
 
+    /**
+     * Get the log password.
+     *
+     * <p>This is only relevant for OC caches as GC does not support log passwords.
+     *
+     * @return The log password.
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Get the author of the log.
+     *
+     * @return The author of the log.
+     */
     public String getAuthor() {
         return author;
     }
 
-    public boolean isAuthor(String name) {
+    /**
+     * Check whether the given user is the author of the log entry.
+     *
+     * @param name The username to check for.
+     * @return Whether the given user is the author of the log entry.
+     */
+    public boolean isAuthor(final String name) {
         return author.toLowerCase().equals(name.toLowerCase());
     }
 
+    /**
+     * Check whether this is a found log.
+     *
+     * @return Whether this is a found log.
+     */
     public boolean isFoundLog() {
         final String typeStr = getTypeStr();
         return typeStr.equals("Found it")
@@ -154,33 +235,60 @@ public class GeocacheLog implements Serializable {
                 || typeStr.equals("Webcam Photo Taken");
     }
 
+    /**
+     * Get the log text.
+     *
+     * @return The log text.
+     */
     public String getText() {
         return text;
     }
 
+    /**
+     * Get the log date.
+     *
+     * @return The log date.
+     */
     public ZonedDateTime getDate() {
         return date;
     }
 
+    /**
+     * Get the log date in the format `dd.MM.yyyy HH:mm`.
+     *
+     * @return The log date as a string of the mentioned format.
+     */
     public String getDateStr() {
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         return date.format(formatter);
     }
 
+    /**
+     * Get the log date as an ISO-8601 string.
+     *
+     * @return The log date as a string formatted using ISO-8601.
+     */
     public String getDateStrIso8601() {
         return date.format(DateTimeFormatter.ISO_INSTANT);
     }
 
-    public static String getDateStrIso8601NoTime(ZonedDateTime date) {
+    /**
+     * Format the given date as ISO-8601 while ignoring the information.
+     *
+     * @param date The date to format.
+     * @return The formatted date.
+     */
+    public static String getDateStrIso8601NoTime(final ZonedDateTime date) {
         return date.format(DateTimeFormatter.ISO_LOCAL_DATE);
     }
 
+    /**
+     * Get the log date as an ISO-8601 string without the time.
+     *
+     * @return The log date as a string formatted using ISO-8601 without time information.
+     */
     public String getDateStrIso8601NoTime() {
         return getDateStrIso8601NoTime(date);
-    }
-
-    public String getPassword() {
-        return password;
     }
 
     /**
@@ -194,7 +302,7 @@ public class GeocacheLog implements Serializable {
      *     the different cache types in the future, but is not used for now.
      * @return The OKAPI log type.
      */
-    public String getOkapiType(Geocache geocache) {
+    public String getOkapiType(final Geocache geocache) {
         final String logType = getTypeStr();
 
         // Webcam caches require a "Found it".
@@ -206,6 +314,12 @@ public class GeocacheLog implements Serializable {
         return logType;
     }
 
+    /**
+     * Check whether the given log and the current instance are the same.
+     *
+     * @param log The log to check against.
+     * @return Whether the logs are equal.
+     */
     public boolean equals(GeocacheLog log) {
         return type == log.type
                 && date.equals(log.date)
