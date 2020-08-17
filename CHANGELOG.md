@@ -1,5 +1,7 @@
 # Development version
 
+* More deterministic handling of empty searches by using a fixed age of 6 months.
+
 # Version 0.5.3 - 2020-08-05
 
 * Consider the date for event caches during comparison.

@@ -5,22 +5,42 @@ import cmanager.global.Constants;
 import cmanager.util.DateTimeUtil;
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.concurrent.ThreadLocalRandom;
 
 /** Search result caching. */
 public class SearchCache {
 
+    /** The old directory containing the search cache. */
     private static final String LEGACY_CACHE_FOLDER = Constants.CACHE_FOLDER;
+
+    /** The directory containing the search cache. */
     private static final String OKAPI_CACHE_FOLDER =
             Constants.CACHE_FOLDER + "OC.OKAPI.emptySearches/";
+
+    /**
+     * Status variable to indicate whether the cache directory has already been initialized/checked
+     * for existence in this application run.
+     */
     private static boolean initDone = false;
 
+    /**
+     * Get the filename for the given search request.
+     *
+     * @param geocache The geocache instance to search for.
+     * @param excludeUuid The ID of the user to exclude.
+     * @return The filename for the given search request.
+     */
     private static String searchToFileName(Geocache geocache, String excludeUuid) {
         final String name = geocache.getCode() + (excludeUuid == null ? "" : " " + excludeUuid);
         return OKAPI_CACHE_FOLDER + name;
     }
 
+    /**
+     * Remember that the given search has been empty by creating the corresponding cache file (which
+     * basically is an empty file).
+     *
+     * @param geocache The geocache instance to search for.
+     * @param excludeUuid The ID of the user to exclude.
+     */
     public static synchronized void setEmptySearch(Geocache geocache, String excludeUuid)
             throws IOException {
         final String filename = searchToFileName(geocache, excludeUuid);
@@ -32,6 +52,15 @@ public class SearchCache {
         file.createNewFile();
     }
 
+    /**
+     * Check if the given search is known to be empty.
+     *
+     * <p>A search is considered empty if the corresponding cache file is not older than 6 months.
+     *
+     * @param geocache The geocache instance to search for.
+     * @param excludeUuid The ID of the user to exclude.
+     * @return Whether the given search is empty or not.
+     */
     public static synchronized boolean isEmptySearch(Geocache geocache, String excludeUuid) {
         if (!initDone) {
             new File(OKAPI_CACHE_FOLDER).mkdirs();
@@ -58,16 +87,11 @@ public class SearchCache {
             initDone = true;
         }
 
+        // Perform a request to the cache/cache file itself.
         final File file = new File(searchToFileName(geocache, excludeUuid));
         if (file.exists()) {
-            final int randomMonthCount = -1 * ThreadLocalRandom.current().nextInt(4, 12 + 1);
-            final int randomDayCount = -1 * ThreadLocalRandom.current().nextInt(0, 31 + 1);
-            LocalDateTime expirationDateTime = LocalDateTime.now();
-            expirationDateTime = expirationDateTime.plusMonths(randomMonthCount);
-            expirationDateTime = expirationDateTime.plusDays(randomDayCount);
-
-            // Outdated?
-            if (DateTimeUtil.isTooOld(file, expirationDateTime)) {
+            // Older than 6 months?
+            if (DateTimeUtil.isTooOldWithMonths(file, 6)) {
                 file.delete();
                 return false;
             } else {
