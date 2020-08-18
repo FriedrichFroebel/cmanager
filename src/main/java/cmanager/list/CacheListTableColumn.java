@@ -36,7 +36,11 @@ public enum CacheListTableColumn {
     /** The corresponding column index. */
     private final int columnIndex;
 
-    /** @param columnIndex Set the corresponding column index. */
+    /**
+     * Create a new instance with the given colum index.
+     *
+     * @param columnIndex Set the corresponding column index.
+     */
     CacheListTableColumn(int columnIndex) {
         this.columnIndex = columnIndex;
     }

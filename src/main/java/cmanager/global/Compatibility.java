@@ -5,7 +5,11 @@ import java.awt.Toolkit;
 /** Compatibility definitions for older Java versions. */
 public class Compatibility {
 
-    // Java 10 deprecated the old method.
+    /**
+     * The modifier key being the appropriate accelerator key for menu shortcuts.
+     *
+     * <p>The old method is deprecated since Java 10.
+     */
     public static int SHORTCUT_KEY_MASK = determineShortcutKeyMask();
 
     /**
@@ -35,6 +39,7 @@ public class Compatibility {
     private static int getJavaVersionMain() {
         final String[] parts = System.getProperty("java.version").split("\\.");
 
+        // Try to retrieve the major version as an integer.
         try {
             return Integer.parseInt(parts[0]);
         } catch (NumberFormatException exception) {

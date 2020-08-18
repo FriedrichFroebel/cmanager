@@ -9,45 +9,66 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
+/** HTTP requests with multiple retries. */
 public class Http {
 
-    public static String get(String url) throws Exception {
+    /**
+     * Perform a HTTP GET request.
+     *
+     * <p>This will use up to 3 connectionnection attempts.
+     *
+     * @param url The URL to perform the request against.
+     * @return The connection of the response.
+     * @throws Exception Something went wrong with the request.
+     */
+    public static String get(final String url) throws Exception {
         ConnectException connectException;
 
         int count = 0;
         do {
             try {
                 return getInternal(url);
-            } catch (ConnectException e) {
-                connectException = e;
+            } catch (ConnectException exception) {
+                connectException = exception;
             }
         } while (++count < 3);
 
         throw connectException;
     }
 
-    // HTTP GET request
-    private static String getInternal(String url) throws UnexpectedStatusCode, IOException {
-        final URL obj = new URL(url);
-        final HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+    /**
+     * Perform a single HTTP GET request.
+     *
+     * @param url The URL to perform the request against.
+     * @return The connection of the response.
+     * @throws UnexpectedStatusCode The server did not respond with status code 200.
+     * @throws IOException Something went wrong with the request.
+     */
+    private static String getInternal(final String url) throws UnexpectedStatusCode, IOException {
+        final URL urlObject = new URL(url);
+        final HttpURLConnection connection = (HttpURLConnection) urlObject.openConnection();
 
         // Optional default is GET.
-        con.setRequestMethod("GET");
+        connection.setRequestMethod("GET");
 
         // Add request header.
-        con.setRequestProperty("User-Agent", Constants.HTTP_USER_AGENT);
+        connection.setRequestProperty("User-Agent", Constants.HTTP_USER_AGENT);
 
+        // Get the response reader.
         BufferedReader bufferedReader;
         try {
             bufferedReader =
                     new BufferedReader(
-                            new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8));
+                            new InputStreamReader(
+                                    connection.getInputStream(), StandardCharsets.UTF_8));
         } catch (IOException exception) {
             bufferedReader =
                     new BufferedReader(
-                            new InputStreamReader(con.getErrorStream(), StandardCharsets.UTF_8));
+                            new InputStreamReader(
+                                    connection.getErrorStream(), StandardCharsets.UTF_8));
         }
 
+        // Read the response.
         String inputLine;
         final StringBuilder response = new StringBuilder();
         while ((inputLine = bufferedReader.readLine()) != null) {
@@ -55,7 +76,8 @@ public class Http {
         }
         bufferedReader.close();
 
-        final int statusCode = con.getResponseCode();
+        // Handle the status code.
+        final int statusCode = connection.getResponseCode();
         if (statusCode != 200) {
             throw new UnexpectedStatusCode(statusCode, response.toString());
         }

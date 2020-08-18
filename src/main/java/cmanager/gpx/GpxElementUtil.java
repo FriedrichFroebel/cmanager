@@ -11,9 +11,16 @@ import cmanager.xml.XmlAttribute;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Serialize/deserialize geocaches and waypoints from/to GPX/XML. */
 public class GpxElementUtil {
 
-    static Waypoint xmlToWaypoint(Element waypointElement) {
+    /**
+     * Deserialize the given GPX waypoint data.
+     *
+     * @param waypointElement The GPX waypoint element to deserialize.
+     * @return The deserialized waypoint.
+     */
+    static Waypoint xmlToWaypoint(final Element waypointElement) {
         Coordinate coordinate;
         String code = null;
         String description = null;
@@ -22,6 +29,7 @@ public class GpxElementUtil {
         String parent = null;
         String date = null;
 
+        // Load the coordinate.
         double latitude = 0.0;
         double longitude = 0.0;
         for (final XmlAttribute attribute : waypointElement.getAttributes()) {
@@ -31,9 +39,9 @@ public class GpxElementUtil {
                 longitude = attribute.getValueDouble();
             }
         }
-
         coordinate = new Coordinate(latitude, longitude);
 
+        // Load the remaining values.
         for (final Element element : waypointElement.getChildren()) {
             if (element.is("name")) {
                 code = element.getUnescapedBody();
@@ -54,12 +62,21 @@ public class GpxElementUtil {
             }
         }
 
+        // Create the waypoint instance.
         final Waypoint waypoint = new Waypoint(coordinate, code, description, symbol, type, parent);
         waypoint.setDate(date);
+
         return waypoint;
     }
 
-    static Geocache xmlToCache(Element waypointElement) {
+    /**
+     * Deserialize the given GPX geocache data.
+     *
+     * @param geocacheElement The GPX geocache element to deserialize.
+     * @return The deserialized geocache.
+     */
+    // TODO: Maybe refactor it to avoid the deep nesting.
+    static Geocache xmlToCache(final Element geocacheElement) {
         String code = null;
         String urlName = null;
         String cacheName = null;
@@ -82,9 +99,10 @@ public class GpxElementUtil {
         final List<GeocacheAttribute> attributes = new ArrayList<>();
         final List<GeocacheLog> logs = new ArrayList<>();
 
+        // Load the position.
         double latitude = 0.0;
         double longitude = 0.0;
-        for (final XmlAttribute attribute : waypointElement.getAttributes()) {
+        for (final XmlAttribute attribute : geocacheElement.getAttributes()) {
             if (attribute.is("lat")) {
                 latitude = attribute.getValueDouble();
             } else if (attribute.is("lon")) {
@@ -93,8 +111,9 @@ public class GpxElementUtil {
         }
         coordinate = new Coordinate(latitude, longitude);
 
+        // Load the remaining values.
         boolean groundspeak_cache = false;
-        for (final Element element : waypointElement.getChildren()) {
+        for (final Element element : geocacheElement.getChildren()) {
             if (element.is("name")) {
                 code = element.getUnescapedBody();
             } else if (element.is("urlname")) {
@@ -102,8 +121,10 @@ public class GpxElementUtil {
             } else if (element.is("time")) {
                 dateHidden = element.getUnescapedBody();
             } else if (element.is("groundspeak:cache")) {
+                // GC/Groundspeak elements.
                 groundspeak_cache = true;
 
+                // Load the attributes.
                 for (final XmlAttribute attribute : element.getAttributes()) {
                     if (attribute.is("id")) {
                         try {
@@ -118,6 +139,7 @@ public class GpxElementUtil {
                     }
                 }
 
+                // Load the child elements.
                 for (final Element groundspeakElement : element.getChildren()) {
                     if (groundspeakElement.is("groundspeak:name")) {
                         cacheName = groundspeakElement.getUnescapedBody();
@@ -224,6 +246,7 @@ public class GpxElementUtil {
             container = null;
         }
 
+        // Create the geocache instance.
         final Geocache geocache =
                 new Geocache(
                         code,
@@ -249,8 +272,15 @@ public class GpxElementUtil {
         return geocache;
     }
 
-    static Element waypointToXml(Waypoint waypoint) {
+    /**
+     * Serialize the given waypoint.
+     *
+     * @param waypoint The waypoint to serialize.
+     * @return The serialized waypoint in GPX format.
+     */
+    static Element waypointToXml(final Waypoint waypoint) {
         final Element waypointElement = new Element("wpt");
+
         waypointElement.add(new XmlAttribute("lat", waypoint.getCoordinate().getLatitude()));
         waypointElement.add(new XmlAttribute("lon", waypoint.getCoordinate().getLongitude()));
 
@@ -267,7 +297,13 @@ public class GpxElementUtil {
         return waypointElement;
     }
 
-    static Element cacheToXml(Geocache geocache) {
+    /**
+     * Serialize the given geocache.
+     *
+     * @param waypoint The geocache to serialize.
+     * @return The serialized geocache in GPX format.
+     */
+    static Element cacheToXml(final Geocache geocache) {
         final Element waypoint = new Element("wpt");
         waypoint.add(new XmlAttribute("lat", geocache.getCoordinate().getLatitude()));
         waypoint.add(new XmlAttribute("lon", geocache.getCoordinate().getLongitude()));
@@ -284,7 +320,7 @@ public class GpxElementUtil {
 
         final Element groundspeakAttributes = new Element("groundspeak:attributes");
         groundspeakCache.add(groundspeakAttributes);
-        for (GeocacheAttribute attribute : geocache.getAttributes()) {
+        for (final GeocacheAttribute attribute : geocache.getAttributes()) {
             final Element groundspeakAttribute = new Element("groundspeak:attribute");
             groundspeakAttribute.add(new XmlAttribute("id", attribute.getId()));
             groundspeakAttribute.add(new XmlAttribute("inc", attribute.getInc()));

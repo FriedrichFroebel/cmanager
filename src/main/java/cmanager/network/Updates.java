@@ -14,9 +14,24 @@ import java.util.List;
  */
 public class Updates {
 
+    /**
+     * Whether an update is available.
+     *
+     * <p>This is used for caching the result during one run to avoid having to request the data
+     * multiple times.
+     */
     private static Boolean updateAvailable = null;
+
+    /** The version string for the new version. */
     private static String newVersion = null;
 
+    /**
+     * Check whether an update is available.
+     *
+     * <p>This will fall back to a cached result whenever possible.
+     *
+     * @return Whether an update is available.
+     */
     public static synchronized boolean updateAvailable_block() {
         if (updateAvailable == null) {
             try {
@@ -27,7 +42,7 @@ public class Updates {
 
                 newVersion = Updates.findLatestRelease(root);
                 updateAvailable = Updates.isUpdateAvailable(Version.VERSION, newVersion);
-            } catch (Throwable t) {
+            } catch (Throwable ignored) {
                 // Errors might be due to missing internet connection.
                 // This will be called for not parseable version strings as well.
                 updateAvailable = false;
@@ -37,6 +52,11 @@ public class Updates {
         return updateAvailable;
     }
 
+    /**
+     * Get the name of the new version.
+     *
+     * @return The name of the new version.
+     */
     public static String getNewVersion() {
         return newVersion;
     }
@@ -44,8 +64,8 @@ public class Updates {
     /**
      * Find the name of the latest release.
      *
-     * <p>This requires parsing the XML for all entries and checking the title as Travis might
-     * introduce pre-releases.
+     * <p>This requires parsing the XML for all entries, starting with the latest, and checking the
+     * title as Travis might introduce pre-releases.
      *
      * @param root The root element of the XML file.
      * @return The latest version number.

@@ -27,7 +27,7 @@ public class OcSite {
      *
      * @param site The site to set.
      */
-    public static void setSite(SupportedSite site) {
+    public static void setSite(final SupportedSite site) {
         selectedSite = site;
     }
 

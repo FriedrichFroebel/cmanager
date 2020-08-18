@@ -5,18 +5,22 @@ import cmanager.geo.GeocacheLog;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Filter geocaches by found status. */
 public class NotFoundByFilter extends FilterModel {
 
     private static final long serialVersionUID = 5585453135104325357L;
 
+    /** The list of usernames who are not allowed to have a found log. */
     private List<String> usernames = new ArrayList<>();
 
+    /** Create a new instance of the filter. */
     public NotFoundByFilter() {
         super(FILTER_TYPE.SINGLE_FILTER_VALUE);
         labelLeft2.setText("Not Found by: ");
         runDoModelUpdateNow = this::retrieveUsernames;
     }
 
+    /** Load the usernames from the text field. */
     private void retrieveUsernames() {
         final String input = textField.getText();
         final String[] parts = input.split(",");
@@ -26,8 +30,14 @@ public class NotFoundByFilter extends FilterModel {
         }
     }
 
+    /**
+     * Check whether the given geocache has not been found by any of the given users.
+     *
+     * @param geocache The geocache to check.
+     * @return The check result.
+     */
     @Override
-    protected boolean isGood(Geocache geocache) {
+    protected boolean isGood(final Geocache geocache) {
         for (final GeocacheLog log : geocache.getLogs()) {
             for (final String username : usernames) {
                 if (log.isFoundLog() && log.isAuthor(username)) {

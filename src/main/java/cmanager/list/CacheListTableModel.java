@@ -6,18 +6,31 @@ import cmanager.settings.Settings;
 import java.time.ZonedDateTime;
 import javax.swing.table.AbstractTableModel;
 
+/** Data model for the cache list table. */
 public class CacheListTableModel extends AbstractTableModel {
 
     private static final long serialVersionUID = -6159661237715863643L;
 
+    /** The cache list model. */
     private final CacheListModel cacheListModel;
 
+    /**
+     * Create a new instance with the given model.
+     *
+     * @param cacheListModel The cache list model to use.
+     */
     public CacheListTableModel(CacheListModel cacheListModel) {
         this.cacheListModel = cacheListModel;
     }
 
-    public String getColumnName(int column) {
-        switch (column) {
+    /**
+     * Get the name string for the given column index.
+     *
+     * @param columnIndex The colum index to get the name for.
+     * @return The name string for the given column.
+     */
+    public String getColumnName(final int columnIndex) {
+        switch (columnIndex) {
             case 0:
                 return "Code";
             case 1:
@@ -43,7 +56,13 @@ public class CacheListTableModel extends AbstractTableModel {
         return null;
     }
 
-    public Class<?> getColumnClass(int columnIndex) {
+    /**
+     * Get the data type (class) for the given column index.
+     *
+     * @param columnIndex The colum index to get the name for.
+     * @return The data type (class) for the given column.
+     */
+    public Class<?> getColumnClass(final int columnIndex) {
         switch (columnIndex) {
             case 0:
             case 1:
@@ -69,22 +88,46 @@ public class CacheListTableModel extends AbstractTableModel {
         return null;
     }
 
+    /**
+     * Get the total number of columns.
+     *
+     * @return The total number of columns. This will always be 10.
+     */
     @Override
     public int getColumnCount() {
         return 10;
     }
 
+    /**
+     * Get the number of rows.
+     *
+     * @return The number of rows.
+     */
     @Override
     public int getRowCount() {
         return cacheListModel.THIS.size();
     }
 
-    public Geocache getObject(int row) {
-        return cacheListModel.THIS.get(row);
+    /**
+     * Get the geocache instance for the given row index.
+     *
+     * @param rowIndex The row index to get the geocache instance for.
+     * @return The geocache instance for the given row.
+     */
+    public Geocache getObject(final int rowIndex) {
+        return cacheListModel.THIS.get(rowIndex);
     }
 
+    /**
+     * Get the value for the given table entry.
+     *
+     * @param rowIndex The row index to get the geocache instance with.
+     * @param columnIndex The column index to get the respective field from the geocache instance
+     *     with.
+     * @return The requested cell content.
+     */
     @Override
-    public Object getValueAt(int rowIndex, int columnIndex) {
+    public Object getValueAt(final int rowIndex, final int columnIndex) {
         final Geocache geocache = getObject(rowIndex);
 
         switch (columnIndex) {

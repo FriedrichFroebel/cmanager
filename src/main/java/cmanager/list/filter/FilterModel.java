@@ -6,14 +6,28 @@ import cmanager.util.ThreadStore;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Handle list filtering. */
 public abstract class FilterModel extends CacheListFilterPanel {
 
     private static final long serialVersionUID = 6947085305393841410L;
 
+    /**
+     * Create a new instance with the given filter type.
+     *
+     * @param filterType The type of the filter.
+     */
     public FilterModel(FILTER_TYPE filterType) {
         super(filterType);
     }
 
+    /**
+     * Return a filtered copy of the given list.
+     *
+     * <p>This will use multiple cores for processing.
+     *
+     * @param originalList The list to filter.
+     * @return The filtered list.
+     */
     public List<Geocache> getFiltered(final List<Geocache> originalList) {
         final int listSize = originalList.size();
 
@@ -58,6 +72,16 @@ public abstract class FilterModel extends CacheListFilterPanel {
         return listAll;
     }
 
+    /**
+     * Filter the given list.
+     *
+     * @param originalList The list to filter.
+     * @param lists The output lists, with each sub-list belonging to one core.
+     * @param start The start index to use inside the original list.
+     * @param end The end index to use inside the original list.
+     * @param core The core this filtering is done with. This basically is the index of the sub-list
+     *     to write the data to.
+     */
     private void filterList(
             final List<Geocache> originalList,
             final List<List<Geocache>> lists,
@@ -78,5 +102,11 @@ public abstract class FilterModel extends CacheListFilterPanel {
         }
     }
 
-    protected abstract boolean isGood(Geocache geocache);
+    /**
+     * Check whether the given geocache matches the filter expression.
+     *
+     * @param geocache The geocache to check.
+     * @return The check result.
+     */
+    protected abstract boolean isGood(final Geocache geocache);
 }
