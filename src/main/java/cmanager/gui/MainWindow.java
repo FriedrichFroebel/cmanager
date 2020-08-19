@@ -59,13 +59,21 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.MenuEvent;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+/** The main application window. */
 public class MainWindow extends JFrame {
 
     private static final long serialVersionUID = 6384767256902991990L;
 
+    /** The current instance. */
     private final JFrame THIS = this;
+
+    /** The pane for the list. */
     private final JDesktopPane desktopPane;
+
+    /** The windows menu. */
     private final JMenu menuWindows;
+
+    /** The selected location. */
     private final JComboBox<Location> comboBox;
 
     /** Create the frame. */
@@ -433,6 +441,7 @@ public class MainWindow extends JFrame {
                                 THIS));
     }
 
+    /** Update the available locations. */
     private void updateLocationComboBox() {
         final List<Location> locations = LocationList.getList().getLocations();
 
@@ -442,7 +451,8 @@ public class MainWindow extends JFrame {
         }
     }
 
-    private void openLocationDialog(Geocache geocache) {
+    /** Open the location dialog with the data of the given geocache instance. */
+    private void openLocationDialog(final Geocache geocache) {
         final LocationDialog locationDialog = new LocationDialog(this);
         if (geocache != null) {
             locationDialog.setGeocache(geocache);
@@ -457,11 +467,18 @@ public class MainWindow extends JFrame {
         }
     }
 
+    /** Propagate the currently selected location to all cache list controllers. */
     private void propagateSelectedLocationComboboxEntry() {
         CacheListController.setAllRelativeLocations((Location) comboBox.getSelectedItem());
         repaint(); // Update front-most table.
     }
 
+    /**
+     * Save the list file.
+     *
+     * @param saveAs Set to <code>True</code> to choose another file name, set to <code>False</code>
+     *     to save with the existing filename.
+     */
     private void saveFile(boolean saveAs) {
         final CacheListController cacheListController =
                 CacheListController.getTopViewCacheController(desktopPane);
@@ -530,6 +547,12 @@ public class MainWindow extends JFrame {
                 THIS);
     }
 
+    /**
+     * Open the selected list file.
+     *
+     * @param createNewList Set to <code>True</code> to load the data into a new list, set to <code>
+     *     False</code> to add the data to the existing list.
+     */
     private void openFile(final boolean createNewList) {
         String lastPath = Settings.getString(Settings.Key.FILE_CHOOSER_LOAD_GPX);
         final JFileChooser chooser = new JFileChooser(lastPath);
@@ -570,7 +593,7 @@ public class MainWindow extends JFrame {
      * @param task The task to execute with this wait dialog.
      * @param parent The parent component.
      */
-    public static void actionWithWaitDialog(final Runnable task, Component parent) {
+    public static void actionWithWaitDialog(final Runnable task, final Component parent) {
         MainWindow.actionWithWaitDialog(task, parent, 25);
     }
 
@@ -583,7 +606,7 @@ public class MainWindow extends JFrame {
      *     will not be closed.
      */
     public static void actionWithWaitDialog(
-            final Runnable task, Component parent, final int delayMilliseconds) {
+            final Runnable task, final Component parent, final int delayMilliseconds) {
         final WaitDialog wait = new WaitDialog();
 
         wait.setModalityType(ModalityType.APPLICATION_MODAL);
@@ -607,7 +630,13 @@ public class MainWindow extends JFrame {
         wait.repaint();
     }
 
-    private void findOnOc(User user, String uuid) {
+    /**
+     * Search for duplicates within the top-most list.
+     *
+     * @param user The OKAPI user.
+     * @param uuid The OC user ID to use for ignoring the caches found by the current user.
+     */
+    private void findOnOc(final User user, final String uuid) {
         final DuplicateDialog duplicateDialog =
                 new DuplicateDialog(
                         CacheListController.getTopViewCacheController(desktopPane).getModel(),
@@ -617,6 +646,7 @@ public class MainWindow extends JFrame {
         FrameHelper.showModalFrame(duplicateDialog, THIS);
     }
 
+    /** Search for duplicates within the top-most list and copy the logs. */
     private void syncWithOc() {
         final String usernameGc = Settings.getString(Settings.Key.GC_USERNAME);
         if (usernameGc == null || usernameGc.isEmpty()) {
@@ -652,6 +682,7 @@ public class MainWindow extends JFrame {
         }
     }
 
+    /** Handle distance-based filter requests based upon the currently selected location. */
     private void handleDistanceFilterAction() {
         final DistanceFilter filter = new DistanceFilter();
         CacheListController.getTopViewCacheController(desktopPane).addFilter(filter);
@@ -668,6 +699,7 @@ public class MainWindow extends JFrame {
         filter.addRemoveAction(() -> comboBox.removeActionListener(actionListener));
     }
 
+    /** Show the about dialog. */
     private void showAboutDialog() {
         final AboutDialog dialog = new AboutDialog();
         dialog.setLocationRelativeTo(THIS);
@@ -723,6 +755,11 @@ public class MainWindow extends JFrame {
                 });
     }
 
+    /**
+     * Check for application updates.
+     *
+     * @param buttonUpdate The button to show if updates are available.
+     */
     private void checkForUpdates(final JButton buttonUpdate) {
         new SwingWorker<Void, Boolean>() {
             @Override
@@ -732,7 +769,7 @@ public class MainWindow extends JFrame {
             }
 
             @Override
-            protected void process(List<Boolean> chunks) {
+            protected void process(final List<Boolean> chunks) {
                 // Display update message if there is another version available.
                 if (chunks.get(0)) {
                     setText(
@@ -745,7 +782,7 @@ public class MainWindow extends JFrame {
                 }
             }
 
-            private void setText(String text) {
+            private void setText(final String text) {
                 buttonUpdate.setText(
                         "<HTML><FONT color=\"#008000\"><U>" + text + "</U></FONT></HTML>");
             }

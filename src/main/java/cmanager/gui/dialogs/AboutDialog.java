@@ -15,10 +15,12 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+/** Dialog to show some general application data. */
 public class AboutDialog extends JDialog {
 
     private static final long serialVersionUID = 1L;
 
+    /** The current instance. */
     private final AboutDialog THIS = this;
 
     /** Create the dialog. */
@@ -38,6 +40,7 @@ public class AboutDialog extends JDialog {
         gbcContentPanel.rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
         contentPanel.setLayout(gbcContentPanel);
 
+        // Add the application name.
         final JLabel labelAppName = new JLabel(Constants.APP_NAME);
         labelAppName.setFont(new Font("Dialog", Font.BOLD, 15));
         final GridBagConstraints gbcLabelAppName = new GridBagConstraints();
@@ -47,6 +50,7 @@ public class AboutDialog extends JDialog {
         gbcLabelAppName.gridy = 0;
         contentPanel.add(labelAppName, gbcLabelAppName);
 
+        // Add the version.
         final JLabel labelVersion = new JLabel(Version.VERSION);
         labelVersion.setFont(new Font("Dialog", Font.PLAIN, 12));
         final GridBagConstraints gbcLabelVersion = new GridBagConstraints();
@@ -55,6 +59,7 @@ public class AboutDialog extends JDialog {
         gbcLabelVersion.gridy = 1;
         contentPanel.add(labelVersion, gbcLabelVersion);
 
+        // Add the author data.
         final JLabel labelAuthor =
                 new JLabel(
                         "<html>"
@@ -71,6 +76,7 @@ public class AboutDialog extends JDialog {
         gbcLabelAuthor.gridy = 3;
         contentPanel.add(labelAuthor, gbcLabelAuthor);
 
+        // Add the "Thank you" label.
         final JLabel labelThanks =
                 new JLabel("Special thanks to the great people at forum.opencaching.de.");
         labelThanks.setFont(new Font("Dialog", Font.PLAIN, 12));
@@ -80,6 +86,7 @@ public class AboutDialog extends JDialog {
         gbcLabelThanks.gridy = 5;
         contentPanel.add(labelThanks, gbcLabelThanks);
 
+        // Add the close button.
         final JPanel buttonPane = new JPanel();
         buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
         getContentPane().add(buttonPane, BorderLayout.SOUTH);

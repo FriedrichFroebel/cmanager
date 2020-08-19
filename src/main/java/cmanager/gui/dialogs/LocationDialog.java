@@ -31,30 +31,46 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
+/** Dialog to handle the configured locations. */
 public class LocationDialog extends JDialog {
 
     private static final long serialVersionUID = 1L;
 
+    /** The list of locations. */
     private final JTable table;
+
+    /** The name of the selected location. */
     private final JTextField textName;
+
+    /** The latitude of the selected location. */
     private final JTextField textLatitude;
+
+    /** The longitude of the selected location. */
     private final JTextField textLongitude;
 
+    /** Whether some of the values have been modified. */
     public boolean modified = false;
 
+    /** The current instance. */
     private final LocationDialog THIS = this;
 
-    /** Create the dialog. */
-    public LocationDialog(JFrame owner) {
+    /**
+     * Create the dialog.
+     *
+     * @param owner The parent frame.
+     */
+    public LocationDialog(final JFrame owner) {
         super(owner);
 
         setTitle("Locations");
         getContentPane().setLayout(new BorderLayout());
 
+        // Create the table model.
         final String[] columnNames = {"Name", "Lat", "Lon"};
         final String[][] dataValues = {};
         final DefaultTableModel tableModel = new DefaultTableModel(dataValues, columnNames);
 
+        // Load the table data.
         try {
             final List<Location> locations = LocationList.getList().getLocations();
             for (final Location location : locations) {
@@ -69,11 +85,13 @@ public class LocationDialog extends JDialog {
             ExceptionPanel.showErrorDialog(this, exception);
         }
 
+        // The main panel.
         final JPanel panelMaster = new JPanel();
         panelMaster.setBorder(new EmptyBorder(5, 5, 5, 5));
         getContentPane().add(panelMaster, BorderLayout.CENTER);
         panelMaster.setLayout(new BorderLayout(0, 0));
 
+        // The panel for outer buttons (bottom line).
         final JPanel buttonPaneOuter = new JPanel();
         panelMaster.add(buttonPaneOuter, BorderLayout.SOUTH);
         buttonPaneOuter.setBorder(null);
@@ -92,6 +110,7 @@ public class LocationDialog extends JDialog {
         buttonCancel.addActionListener(actionEvent -> dispose());
         buttonPaneOkCancel.add(buttonCancel);
 
+        // The panel for the edit buttons.
         final JPanel buttonPanelEdit = new JPanel();
         buttonPanelEdit.setBorder(new LineBorder(new Color(0, 0, 0)));
         buttonPaneOuter.add(buttonPanelEdit, BorderLayout.NORTH);
@@ -106,6 +125,7 @@ public class LocationDialog extends JDialog {
         gblPanelText.rowWeights = new double[] {0.0, 0.0, 0.0, Double.MIN_VALUE};
         panelText.setLayout(gblPanelText);
 
+        // The name for the location.
         final JLabel labelName = new JLabel("Name:");
         final GridBagConstraints gbcLabelName = new GridBagConstraints();
         gbcLabelName.fill = GridBagConstraints.BOTH;
@@ -123,6 +143,7 @@ public class LocationDialog extends JDialog {
         panelText.add(textName, gbcTextName);
         textName.setColumns(10);
 
+        // The latitude for the location.
         final JLabel labelLatitude = new JLabel("Lat:");
         final GridBagConstraints gbcLabelLatitude = new GridBagConstraints();
         gbcLabelLatitude.fill = GridBagConstraints.BOTH;
@@ -140,6 +161,7 @@ public class LocationDialog extends JDialog {
         panelText.add(textLatitude, gbcTextLatitude);
         textLatitude.setColumns(10);
 
+        // The longitude for the location.
         final JLabel labelLongitude = new JLabel("Lon:");
         final GridBagConstraints gbcLabelLongitude = new GridBagConstraints();
         gbcLabelLongitude.fill = GridBagConstraints.BOTH;
@@ -156,6 +178,7 @@ public class LocationDialog extends JDialog {
         panelText.add(textLongitude, gbcTextLongitude);
         textLongitude.setColumns(10);
 
+        // Add the edit buttons.
         final JPanel panelButton = new JPanel();
         buttonPanelEdit.add(panelButton, BorderLayout.SOUTH);
 
@@ -180,10 +203,12 @@ public class LocationDialog extends JDialog {
         buttonRetrieve.addActionListener(actionEvent -> retrieveOkapiCoordinates());
         panelButton.add(buttonRetrieve);
 
+        // The panel for the table.
         final JPanel contentPanel = new JPanel();
         panelMaster.add(contentPanel);
         contentPanel.setLayout(new FlowLayout());
         contentPanel.setBorder(null);
+
         table = new JTable(tableModel);
         table.getSelectionModel().addListSelectionListener(listSelectionEvent -> handleSelection());
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -202,12 +227,22 @@ public class LocationDialog extends JDialog {
         threadStore.addAndRun(new Thread(() -> checkOkapiStatus(buttonRetrieve)));
     }
 
-    public void setGeocache(Geocache geocache) {
+    /**
+     * Set the data from the given geocache instance inside the edit area.
+     *
+     * @param geocache The geocache instance to set the data from.
+     */
+    public void setGeocache(final Geocache geocache) {
         textName.setText(geocache.getName());
         textLatitude.setText(geocache.getCoordinate().getLatitude().toString());
         textLongitude.setText(geocache.getCoordinate().getLongitude().toString());
     }
 
+    /**
+     * Apply the changes to the location list.
+     *
+     * <p>This will close the dialog at the end.
+     */
     private void applyChanges() {
         try {
             final ArrayList<Location> locations = new ArrayList<>();
@@ -232,6 +267,7 @@ public class LocationDialog extends JDialog {
         dispose();
     }
 
+    /** Remove the currently selected row. */
     private void removeRow() {
         final int row = table.getSelectedRow();
         if (row == -1) {
@@ -240,6 +276,7 @@ public class LocationDialog extends JDialog {
         ((DefaultTableModel) table.getModel()).removeRow(row);
     }
 
+    /** Update the currently selected row with the data from the edit area. */
     private void updateRow() {
         final int row = table.getSelectedRow();
         if (row == -1) {
@@ -262,6 +299,7 @@ public class LocationDialog extends JDialog {
         defaultTableModel.setValueAt(textLongitude.getText(), row, 2);
     }
 
+    /** Add a new row with the data from the edit area. */
     private void addRow() {
         try {
             new Location(
@@ -280,6 +318,9 @@ public class LocationDialog extends JDialog {
         defaultTableModel.addRow(values);
     }
 
+    /**
+     * Retrieve the home coordinates of the user from the OKAPI and display it inside the edit area.
+     */
     private void retrieveOkapiCoordinates() {
         final User user = User.getOkapiUser();
         try {
@@ -292,6 +333,7 @@ public class LocationDialog extends JDialog {
         }
     }
 
+    /** Show the data of the currently selected row inside the edit area. */
     private void handleSelection() {
         final int row = table.getSelectedRow();
         if (row == -1) {
@@ -303,6 +345,11 @@ public class LocationDialog extends JDialog {
         textLongitude.setText((String) table.getValueAt(row, 2));
     }
 
+    /**
+     * Check the OKAPI login status for the current user.
+     *
+     * @param buttonRetrieve The button to enable if the user has valid login data.
+     */
     private void checkOkapiStatus(final JButton buttonRetrieve) {
         final User user = User.getOkapiUser();
         try {

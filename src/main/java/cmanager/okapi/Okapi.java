@@ -49,13 +49,14 @@ public class Okapi {
      * @throws URISyntaxException The URL is invalid. In theory this should never be the case for
      *     us.
      */
-    public static String usernameToUuid(String username)
+    public static String usernameToUuid(final String username)
             throws IOException, UnexpectedStatusCode, URISyntaxException {
         final String url = OkapiUrlBuilder.getUsernameToUuidUrl(username);
 
         final HttpResponse httpResponse = httpClient.get(url);
         final String responseBody = httpResponse.getBody();
 
+        // Handle errors.
         if (httpResponse.getStatusCode() != 200) {
             final ErrorDocument okapiError = new Gson().fromJson(responseBody, ErrorDocument.class);
             if (okapiError.getParameter().equals("username")) {
@@ -65,7 +66,10 @@ public class Okapi {
             }
         }
 
+        // Deserialize the JSON data.
         final UserDocument document = new Gson().fromJson(responseBody, UserDocument.class);
+
+        // We only need the UUID.
         return document.getUuid();
     }
 
@@ -80,13 +84,14 @@ public class Okapi {
      *     us.
      * @throws NumberFormatException The coordinates could not be parsed.
      */
-    public static Geocache getCache(String code)
+    public static Geocache getCache(final String code)
             throws IOException, UnexpectedStatusCode, URISyntaxException, NumberFormatException {
         final String url = OkapiUrlBuilder.getCacheUrl(code);
 
         final HttpResponse httpResponse = httpClient.get(url);
         final String responseBody = httpResponse.getBody();
 
+        // Handle errors.
         if (httpResponse.getStatusCode() != 200) {
             final ErrorDocument okapiError = new Gson().fromJson(responseBody, ErrorDocument.class);
             if (okapiError.getParameter().equals("cache_code")) {
@@ -96,17 +101,20 @@ public class Okapi {
             }
         }
 
+        // Deserialize the JSON data.
         final GeocacheDocument document = new Gson().fromJson(responseBody, GeocacheDocument.class);
         if (document == null) {
             return null;
         }
 
+        // Parse the coordinate.
         Coordinate coordinate = null;
         if (document.getLocation() != null) {
             final String[] parts = document.getLocation().split("\\|");
             coordinate = new Coordinate(parts[0], parts[1]);
         }
 
+        // Create the geocache instance.
         final Geocache geocache =
                 new Geocache(
                         code,
@@ -118,6 +126,7 @@ public class Okapi {
         geocache.setCodeGc(document.getGcCode());
         geocache.setDateHidden(document.getDateHidden());
 
+        // Set the geocache status.
         final String status = document.getStatus();
         if (status != null) {
             switch (status) {
@@ -153,8 +162,10 @@ public class Okapi {
      *     us.
      * @throws NumberFormatException The geocache coordinates could not be parsed.
      */
-    public static Geocache getCacheBuffered(String code, List<Geocache> okapiRuntimeCache)
+    public static Geocache getCacheBuffered(
+            final String code, final List<Geocache> okapiRuntimeCache)
             throws IOException, UnexpectedStatusCode, URISyntaxException, NumberFormatException {
+        // Try to retrieve the geocache from the runtime cache.
         synchronized (okapiRuntimeCache) {
             final int index = Collections.binarySearch(okapiRuntimeCache, code);
             if (index >= 0) {
@@ -162,6 +173,8 @@ public class Okapi {
             }
         }
 
+        // The geocache is not available inside the cache, so retrieve it and add it to the cache
+        // afterwards.
         final Geocache geocache = getCache(code);
         if (geocache != null) {
             synchronized (okapiRuntimeCache) {
@@ -169,6 +182,7 @@ public class Okapi {
                 okapiRuntimeCache.sort(Comparator.comparing(Geocache::getCode));
             }
         }
+
         return geocache;
     }
 
@@ -182,13 +196,14 @@ public class Okapi {
      * @throws URISyntaxException The URL is invalid. In theory this should never be the case for
      *     us.
      */
-    public static Geocache completeCacheDetails(Geocache geocache)
+    public static Geocache completeCacheDetails(final Geocache geocache)
             throws IOException, UnexpectedStatusCode, URISyntaxException {
         final String url = OkapiUrlBuilder.getCompleteCacheDetailsUrl(geocache);
 
         final HttpResponse httpResponse = httpClient.get(url);
         final String responseBody = httpResponse.getBody();
 
+        // Handle errors.
         if (httpResponse.getStatusCode() != 200) {
             final ErrorDocument okapiError = new Gson().fromJson(responseBody, ErrorDocument.class);
             if (okapiError.getParameter().equals("cache_code")) {
@@ -198,8 +213,10 @@ public class Okapi {
             }
         }
 
+        // Deserialize the JSON data.
         final GeocacheDocument document = new Gson().fromJson(responseBody, GeocacheDocument.class);
 
+        // Set the values.
         geocache.setContainer(document.getSize());
         geocache.setListingShort(document.getShortDescription());
         geocache.setListing(document.getDescription());
@@ -295,14 +312,17 @@ public class Okapi {
      *     us.
      */
     public static List<Geocache> getCachesAround(
-            TokenProviderInterface tokenProvider,
-            String excludeUuid,
-            Geocache geocache,
-            double searchRadius,
-            List<Geocache> okapiRuntimeCache)
+            final TokenProviderInterface tokenProvider,
+            final String excludeUuid,
+            final Geocache geocache,
+            final double searchRadius,
+            final List<Geocache> okapiRuntimeCache)
             throws IOException, UnexpectedStatusCode, URISyntaxException, InterruptedException,
                     ExecutionException {
+        // Retrieve the position.
         final Coordinate coordinate = geocache.getCoordinate();
+
+        // Perform the search itself.
         return getCachesAround(
                 tokenProvider,
                 excludeUuid,
@@ -332,19 +352,24 @@ public class Okapi {
      *     us.
      */
     public static List<Geocache> getCachesAround(
-            TokenProviderInterface tokenProvider,
-            String excludeUuid,
-            Double latitude,
-            Double longitude,
-            Double searchRadius,
-            List<Geocache> okapiCacheDetailsCache)
+            final TokenProviderInterface tokenProvider,
+            final String excludeUuid,
+            final Double latitude,
+            final Double longitude,
+            final Double searchRadius,
+            final List<Geocache> okapiCacheDetailsCache)
             throws IOException, UnexpectedStatusCode, URISyntaxException, InterruptedException,
                     ExecutionException {
+        // Determine whether we need to use OAuth due to excluding geocaches found by the given
+        // user.
         final boolean useOAuth = tokenProvider != null && excludeUuid != null;
+
+        // Build the URL.
         final String url =
                 OkapiUrlBuilder.getCachesAroundUrl(
                         useOAuth, excludeUuid, latitude, longitude, searchRadius);
 
+        // Perform the request.
         String responseBody;
         if (useOAuth) {
             responseBody = authedHttpGet(tokenProvider, url);
@@ -357,24 +382,26 @@ public class Okapi {
             }
         }
 
+        // Deserialize the JSON data.
         final CachesSearchNearestDocument document =
                 new Gson().fromJson(responseBody, CachesSearchNearestDocument.class);
         if (document == null) {
             return null;
         }
 
-        final List<Geocache> caches = new ArrayList<>();
+        // Save the geocache data.
+        final List<Geocache> geocaches = new ArrayList<>();
         for (final String code : document.getResults()) {
             try {
                 final Geocache geocache = getCacheBuffered(code, okapiCacheDetailsCache);
                 if (geocache != null) {
-                    caches.add(geocache);
+                    geocaches.add(geocache);
                 }
             } catch (NumberFormatException exception) {
                 ExceptionPanel.display(exception);
             }
         }
-        return caches;
+        return geocaches;
     }
 
     /**
@@ -388,17 +415,22 @@ public class Okapi {
      * @throws URISyntaxException The URL is invalid. In theory this should never be the case for
      *     us.
      */
-    public static void updateFoundStatus(TokenProviderInterface tokenProvider, Geocache opencache)
+    public static void updateFoundStatus(
+            final TokenProviderInterface tokenProvider, final Geocache opencache)
             throws IOException, InterruptedException, ExecutionException, URISyntaxException {
+        // Without a user updating the found status is impossible.
         if (tokenProvider == null) {
             return;
         }
 
+        // Perform the request.
         final String url = OkapiUrlBuilder.getFoundStatusUrl(opencache);
         final String responseBody = authedHttpGet(tokenProvider, url);
 
+        // Deserialize the JSON data.
         final GeocacheDocument document = new Gson().fromJson(responseBody, GeocacheDocument.class);
 
+        // Set the value.
         opencache.setIsFound(document.isFound());
     }
 
@@ -418,10 +450,13 @@ public class Okapi {
         final String url = OkapiUrlBuilder.getUuidUrl();
         final String responseBody = authedHttpGet(tokenProvider, url);
 
+        // Deserialize the JSON data.
         final UserDocument document = new Gson().fromJson(responseBody, UserDocument.class);
         if (document == null) {
             return null;
         }
+
+        // We only need the UUId.
         return document.getUuid();
     }
 
@@ -436,15 +471,18 @@ public class Okapi {
      * @throws URISyntaxException The URL is invalid. In theory this should never be the case for
      *     us.
      */
-    public static String getUsername(TokenProviderInterface tokenProvider)
+    public static String getUsername(final TokenProviderInterface tokenProvider)
             throws IOException, InterruptedException, ExecutionException, URISyntaxException {
         final String url = OkapiUrlBuilder.getUsernameUrl();
         final String responseBody = authedHttpGet(tokenProvider, url);
 
+        // Deserialize the JSON data.
         final UserDocument document = new Gson().fromJson(responseBody, UserDocument.class);
         if (document == null) {
             return null;
         }
+
+        // We only need the username.
         return document.getUsername();
     }
 
@@ -467,17 +505,18 @@ public class Okapi {
      *     response.
      */
     public static String postLog(
-            TokenProviderInterface tokenProvider,
-            Geocache cache,
-            GeocacheLog log,
-            boolean returnInternalIdInsteadOfUuid)
+            final TokenProviderInterface tokenProvider,
+            final Geocache cache,
+            final GeocacheLog log,
+            final boolean returnInternalIdInsteadOfUuid)
             throws InterruptedException, ExecutionException, IOException, UnexpectedLogStatus,
                     UnexpectedStatusCode, URISyntaxException {
         String url = OkapiUrlBuilder.getLogSubmissionUrl(cache, log);
 
+        // Perform the request.
         final String responseBody = authedHttpGet(tokenProvider, url);
 
-        // Retrieve the responseBody document.
+        // Deserialize the JSON data.
         final LogSubmissionDocument document =
                 new Gson().fromJson(responseBody, LogSubmissionDocument.class);
 
@@ -487,6 +526,7 @@ public class Okapi {
                     "Problems with handling posted log. Response document is null.");
         }
 
+        // Posting the log has not been successful.
         if (document.isSuccess() == null) {
             throw new NullPointerException(responseBody);
         }
@@ -496,6 +536,7 @@ public class Okapi {
             throw new UnexpectedLogStatus(document.getMessage());
         }
 
+        // Return the desired ID.
         if (returnInternalIdInsteadOfUuid) {
             return Okapi.getLogId(document.getLogUuid());
         }
@@ -514,16 +555,19 @@ public class Okapi {
      *     us.
      * @throws CoordinateUnparsableException The coordinates could not be parsed.
      */
-    public static Coordinate getHomeCoordinates(TokenProviderInterface tokenProvider)
+    public static Coordinate getHomeCoordinates(final TokenProviderInterface tokenProvider)
             throws CoordinateUnparsableException, IOException, InterruptedException,
                     ExecutionException, URISyntaxException {
         final String uuid = getUuid(tokenProvider);
 
+        // Perform the request.
         final String url = OkapiUrlBuilder.getHomeCoordinatesUrl(uuid);
         final String responseBody = authedHttpGet(tokenProvider, url);
 
+        // Deserialize the JSON data.
         final UserDocument document = new Gson().fromJson(responseBody, UserDocument.class);
 
+        // We only need the home coordinates.
         return document.getHomeLocationAsCoordinate();
     }
 
@@ -537,25 +581,30 @@ public class Okapi {
      * @throws URISyntaxException The URL is invalid. In theory this should never be the case for
      *     us.
      */
-    public static String getLogId(String logUuid)
+    public static String getLogId(final String logUuid)
             throws IOException, UnexpectedStatusCode, URISyntaxException {
         final String url = OkapiUrlBuilder.getLogIdUrl(logUuid);
 
+        // Perform the request.
         final HttpResponse httpResponse = httpClient.get(url);
         final String responseBody = httpResponse.getBody();
 
+        // Handle errors.
         if (httpResponse.getStatusCode() != 200) {
             throw new UnexpectedStatusCode(httpResponse.getStatusCode(), responseBody);
         }
 
+        // Deserialize the JSON data.
         final LogDocument document = new Gson().fromJson(responseBody, LogDocument.class);
+
+        // We only need the internal ID.
         return document.getInternalId();
     }
 
     /**
      * Delete the log given by its UUID.
      *
-     * <p>This is only needed for the automated tests. It will probably be never implemented in the
+     * <p>This is only needed for the automated tests. It will probably never be implemented in the
      * GUI (and it probably should not be implemented there anyway).
      *
      * @param tokenProvider The OAuth token provider to use.
@@ -573,9 +622,10 @@ public class Okapi {
                     URISyntaxException {
         String url = OkapiUrlBuilder.getLogDeletionUrl(logUuid);
 
+        // Perform the request.
         final String responseBody = authedHttpGet(tokenProvider, url);
 
-        // Retrieve the responseBody document.
+        // Deserialize the JSON data.
         final LogDeletionDocument document =
                 new Gson().fromJson(responseBody, LogDeletionDocument.class);
 
@@ -585,6 +635,7 @@ public class Okapi {
                     "Problems with deletion of log. Response document is null.");
         }
 
+        // Deleting the log has not been successful.
         if (document.isSuccess() == null) {
             throw new NullPointerException(responseBody);
         }

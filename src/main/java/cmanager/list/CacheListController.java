@@ -36,7 +36,7 @@ public class CacheListController {
      * Create a new cache list controller with the given values.
      *
      * @param desktop The pane to add the views to.
-     * @param menuWindows The menu entries.
+     * @param menuWindows The windows menu.
      * @param relativeLocation The relative location.
      * @param path The filepath to the cache list.
      * @param runLocationDialog The location dialog runner.
@@ -146,7 +146,7 @@ public class CacheListController {
      * Load the persistence information.
      *
      * @param desktop The pane to add the views to and to use for displaying errors.
-     * @param menuWindows The menu entries.
+     * @param menuWindows The windows menu.
      * @param relativeLocation The relative location.
      * @param path The filepath to the cache list.
      * @param runLocationDialog The location dialog runner.
@@ -225,7 +225,7 @@ public class CacheListController {
     /** Status variable indicating whether the list is dirty (= modified and unsaved). */
     private Boolean modifiedAndUnsaved = null;
 
-    /** The menu window. */
+    /** The windows menu. */
     private JMenuItem menuWindow = null;
 
     @SuppressWarnings("unused")
@@ -235,7 +235,7 @@ public class CacheListController {
      * Create a new instance with the given values.
      *
      * @param desktop The pane to add the views to.
-     * @param menuWindows The menu entries.
+     * @param menuWindows The windows menu.
      * @param relativeLocation The relative location.
      * @param path The filepath to the cache list.
      * @param runLocationDialog The location dialog runner.

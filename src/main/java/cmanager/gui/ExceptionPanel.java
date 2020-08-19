@@ -15,17 +15,31 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 
+/** Panel for displaying exception messages. */
 public class ExceptionPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
+    /** The current instance. */
     private static ExceptionPanel THIS = null;
 
+    /** The panel with the exception details. */
     private final JPanel panelDetails;
+
+    /** The panel with the error message. */
     private final JPanel panelMessage;
+
+    /** The actual stacktrace data. */
     private final JTextPane textDetails;
+
+    /** Allow scrolling the stacktrace. */
     private final JScrollPane scrollPane;
 
+    /**
+     * Get the panel.
+     *
+     * @return The panel.
+     */
     public static ExceptionPanel getPanel() {
         if (THIS == null) {
             THIS = new ExceptionPanel();
@@ -40,6 +54,7 @@ public class ExceptionPanel extends JPanel {
         panelMessage = new JPanel();
         add(panelMessage, BorderLayout.NORTH);
 
+        // Add button to show/hide exception details.
         final JButton buttonEnlarge =
                 new JButton("One or more exceptions occurred. Click to show/hide.");
         buttonEnlarge.setForeground(Color.RED);
@@ -47,13 +62,14 @@ public class ExceptionPanel extends JPanel {
         buttonEnlarge.setContentAreaFilled(false);
         buttonEnlarge.addActionListener(
                 new ActionListener() {
-                    public void actionPerformed(ActionEvent actionEvent) {
+                    public void actionPerformed(final ActionEvent actionEvent) {
                         panelDetails.setVisible(!panelDetails.isVisible());
                     }
                 });
         panelMessage.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
         panelMessage.add(buttonEnlarge);
 
+        // Add button to close the panel.
         final JButton buttonClose = new JButton("x");
         panelMessage.add(buttonClose);
         buttonClose.addActionListener(actionEvent -> hideUs());
@@ -62,6 +78,7 @@ public class ExceptionPanel extends JPanel {
         add(panelDetails, BorderLayout.CENTER);
         panelDetails.setLayout(new BorderLayout(0, 0));
 
+        // Add the details container.
         textDetails = new JTextPane();
         textDetails.setForeground(Color.RED);
         scrollPane =
@@ -73,22 +90,29 @@ public class ExceptionPanel extends JPanel {
 
         this.addComponentListener(
                 new ComponentAdapter() {
-                    public void componentResized(ComponentEvent componentEvent) {
+                    public void componentResized(final ComponentEvent componentEvent) {
                         final Dimension dimension = new Dimension(THIS.getWidth(), 200);
                         scrollPane.setPreferredSize(dimension);
                     }
                 });
 
+        // Hide at the beginning.
         hideUs();
     }
 
+    /** Hide the panel and remove the text. */
     private void hideUs() {
         panelDetails.setVisible(false);
         panelMessage.setVisible(false);
         textDetails.setText("");
     }
 
-    private void displayInternal(String string) {
+    /**
+     * Append the given string and make the panel visible.
+     *
+     * @param string The string to append.
+     */
+    private void displayInternal(final String string) {
         String text = textDetails.getText();
         if (text.length() > 0) {
             text += "\n";
@@ -99,7 +123,12 @@ public class ExceptionPanel extends JPanel {
         panelMessage.setVisible(true);
     }
 
-    public static void display(Exception exception) {
+    /**
+     * Display the given exception.
+     *
+     * @param exception The exception to display.
+     */
+    public static void display(final Exception exception) {
         exception.printStackTrace();
 
         String string = exception.getClass().getName() + "\n";
@@ -110,20 +139,44 @@ public class ExceptionPanel extends JPanel {
         THIS.displayInternal(string);
     }
 
-    public static void display(StackTraceElement[] stack) {
+    /**
+     * Display the given stacktrace.
+     *
+     * @param stack The stacktrace to display.
+     */
+    public static void display(final StackTraceElement[] stack) {
         THIS.displayInternal(toString(stack));
     }
 
-    public static void display(String string) {
+    /**
+     * Display the given string.
+     *
+     * @param string The string to display.
+     */
+    public static void display(final String string) {
         System.err.println(string);
         THIS.displayInternal(string);
     }
 
-    public static void showErrorDialog(Component parent, String errorMessage, String title) {
+    /**
+     * Show an error dialog with the given message.
+     *
+     * @param parent The parent frame/component.
+     * @param errorMessage The error message to show.
+     * @param title The title of the dialog.
+     */
+    public static void showErrorDialog(
+            final Component parent, final String errorMessage, final String title) {
         JOptionPane.showMessageDialog(parent, errorMessage, title, JOptionPane.ERROR_MESSAGE);
     }
 
-    public static void showErrorDialog(Component parent, Throwable exceptionError) {
+    /**
+     * Show an error dialog for the given exception.
+     *
+     * @param parent The parent frame/component.
+     * @param exceptionError The error to show.
+     */
+    public static void showErrorDialog(final Component parent, final Throwable exceptionError) {
         String errorMessage = exceptionError.getMessage();
         errorMessage = errorMessage != null ? errorMessage : exceptionError.getClass().getName();
         errorMessage =
@@ -142,29 +195,49 @@ public class ExceptionPanel extends JPanel {
         }
     }
 
-    public static String toShortString(Throwable throwable) {
-        final StringBuilder res = new StringBuilder();
+    /**
+     * Convert the given throwable into a shortened string.
+     *
+     * @param throwable The throwable to convert.
+     * @return The short string for the given throwable.
+     */
+    public static String toShortString(final Throwable throwable) {
+        final StringBuilder stringBuilder = new StringBuilder();
         int lineNumber = 0;
+
         for (final StackTraceElement stackTraceElement : throwable.getStackTrace()) {
             lineNumber++;
-            res.append(stackTraceElement.toString()).append("\n");
+            stringBuilder.append(stackTraceElement.toString()).append("\n");
             if (lineNumber == 12) {
-                res.append("...");
+                stringBuilder.append("...");
                 break;
             }
         }
-        return res.toString();
+
+        return stringBuilder.toString();
     }
 
-    public static String toString(Throwable throwable) {
+    /**
+     * Convert the given throwable to a string.
+     *
+     * @param throwable The throwable to convert.
+     * @return The string for the given throwable.
+     */
+    public static String toString(final Throwable throwable) {
         return toString(throwable.getStackTrace());
     }
 
-    public static String toString(StackTraceElement[] stack) {
-        final StringBuilder res = new StringBuilder();
+    /**
+     * Convert the given stacktrace to a string.
+     *
+     * @param stack The stacktrace to convert.
+     * @return The string for the given stacktrace.
+     */
+    public static String toString(final StackTraceElement[] stack) {
+        final StringBuilder stringBuilder = new StringBuilder();
         for (final StackTraceElement stackTraceElement : stack) {
-            res.append(stackTraceElement.toString()).append("\n");
+            stringBuilder.append(stackTraceElement.toString()).append("\n");
         }
-        return res.toString();
+        return stringBuilder.toString();
     }
 }

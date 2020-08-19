@@ -7,8 +7,14 @@ import cmanager.util.ForkUtil;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+/** The main entry point. */
 public class Main {
 
+    /**
+     * The main method.
+     *
+     * @param arguments The terminal arguments passed to the application.
+     */
     public static void main(String[] arguments) {
         try {
             ForkUtil.forkWithResizedHeapAndExit(arguments);

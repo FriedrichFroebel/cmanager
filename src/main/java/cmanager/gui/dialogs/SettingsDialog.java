@@ -28,28 +28,47 @@ import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+/** Dialog to handle the settings. */
 public class SettingsDialog extends JDialog {
 
     private static final long serialVersionUID = -6008083400079798934L;
 
+    /** The current instance. */
     private final JDialog THIS = this;
+
+    /** The label displaying the OKAPI token status. */
     private final JLabel labelOkapiToken;
+
+    /** The label with the username on OC. */
     private final JLabel labelUsernameOc;
+
+    /** The button to request a new OKAPI token. */
     private final JButton buttonRequestNewToken;
+
+    /** The text field for the username on GC. */
     private final JTextField textUsernameGc;
+
+    /** The text field for the heap size. */
     private final JTextField textHeapSize;
 
-    /** Create the frame. */
-    public SettingsDialog(JFrame owner) {
+    /**
+     * Create the dialog.
+     *
+     * @param owner The parent frame.
+     */
+    public SettingsDialog(final JFrame owner) {
         super(owner);
 
         setTitle("Settings");
         setBounds(100, 100, 450, 300);
+
+        // Basic container.
         final JPanel contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         setContentPane(contentPane);
         contentPane.setLayout(new BorderLayout(0, 0));
 
+        // Buttons inside the footer.
         final JPanel panelButtons = new JPanel();
         contentPane.add(panelButtons, BorderLayout.SOUTH);
         panelButtons.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
@@ -62,9 +81,11 @@ public class SettingsDialog extends JDialog {
         buttonDiscard.addActionListener(actionEvent -> THIS.setVisible(false));
         panelButtons.add(buttonDiscard);
 
+        // Configuration tabs.
         final JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         contentPane.add(tabbedPane, BorderLayout.CENTER);
 
+        // OC tab.
         final JPanel panelOc = new JPanel();
         panelOc.setBorder(new EmptyBorder(10, 10, 10, 10));
         tabbedPane.addTab("opencaching.de", null, panelOc, null);
@@ -115,6 +136,7 @@ public class SettingsDialog extends JDialog {
         labelUsernameOc.setText(Settings.getString(Settings.Key.OC_USERNAME));
         panelOc.add(labelUsernameOc);
 
+        // GC tab.
         final JPanel panelGc = new JPanel();
         tabbedPane.addTab("geocaching.com", null, panelGc, null);
         final GridBagLayout gblPanelGc = new GridBagLayout();
@@ -144,9 +166,11 @@ public class SettingsDialog extends JDialog {
         panelGc.add(textUsernameGc, gbcTextUsernameGc);
         textUsernameGc.setColumns(10);
 
+        // Load the data from the settings.
         displayOkapiTokenStatus();
         textUsernameGc.setText(Settings.getString(Settings.Key.GC_USERNAME));
 
+        // General settings tab.
         final JPanel panelGeneral = new JPanel();
         panelGeneral.setBorder(new EmptyBorder(10, 10, 10, 10));
         tabbedPane.addTab("General", null, panelGeneral, null);
@@ -222,12 +246,14 @@ public class SettingsDialog extends JDialog {
         panelGeneral.add(labelCurrentHeapSizeText, gbcLabelCurrentHeapSizeText);
     }
 
+    /** Display the OKAPI token status. */
     private void displayOkapiTokenStatus() {
         labelOkapiToken.setText("missing or offline");
         Font font = labelOkapiToken.getFont();
         labelOkapiToken.setFont(font.deriveFont(font.getStyle() | Font.ITALIC));
         buttonRequestNewToken.setVisible(true);
 
+        // Indicate when there is an OKAPI token available and disable the request button.
         final User user = User.getOkapiUser();
         try {
             if (user.getOkapiToken() != null && Okapi.getUuid(user) != null) {
@@ -244,9 +270,11 @@ public class SettingsDialog extends JDialog {
         }
     }
 
+    /** Apply the changes to the settings. */
     private void applyChanges() {
         boolean changesWhichNeedRestart = false;
 
+        // Check if a restart is required due to a changed heap size.
         final String newHeapSize = textHeapSize.getText();
         final String oldHeapSize = Settings.getString(Settings.Key.HEAP_SIZE);
         if ((oldHeapSize != null && !oldHeapSize.equals(newHeapSize))
@@ -254,9 +282,11 @@ public class SettingsDialog extends JDialog {
             changesWhichNeedRestart = true;
         }
 
+        // Save the non-OC settings.
         Settings.set(Settings.Key.GC_USERNAME, textUsernameGc.getText());
         Settings.set(Settings.Key.HEAP_SIZE, newHeapSize);
 
+        // Request a restart.
         if (changesWhichNeedRestart) {
             final String message =
                     "You have made changes which need cmanager to restart in order be applied.\n"
@@ -272,8 +302,8 @@ public class SettingsDialog extends JDialog {
             if (dialogResult == JOptionPane.YES_OPTION) {
                 try {
                     ForkUtil.runCopyAndExit();
-                } catch (Throwable t) {
-                    ExceptionPanel.showErrorDialog(THIS, t);
+                } catch (Throwable throwable) {
+                    ExceptionPanel.showErrorDialog(THIS, throwable);
                 }
             }
         }
@@ -281,6 +311,7 @@ public class SettingsDialog extends JDialog {
         THIS.setVisible(false);
     }
 
+    /** Request the OKAPI token. */
     private void requestOkapiToken() {
         try {
             User.getOkapiUser()
@@ -294,7 +325,7 @@ public class SettingsDialog extends JDialog {
                                 }
 
                                 @Override
-                                public void redirectUrlToUser(String authUrl) {
+                                public void redirectUrlToUser(final String authUrl) {
                                     DesktopUtil.openUrl(authUrl);
                                 }
                             });

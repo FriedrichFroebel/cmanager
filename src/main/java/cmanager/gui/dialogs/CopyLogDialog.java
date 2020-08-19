@@ -36,16 +36,33 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.border.EmptyBorder;
 
+/** Dialog for copying a log. */
 public class CopyLogDialog extends JFrame {
 
     private static final long serialVersionUID = 363313395887255591L;
 
+    /** The current instance. */
     private final CopyLogDialog THIS = this;
+
+    /** The left panel. */
     private final JSplitPane splitPane1;
+
+    /** The right panel. */
     private final JSplitPane splitPane2;
+
+    /** The scroll container for the log entries (right column). */
     private final JScrollPane scrollPane;
 
-    /** Create the dialog. */
+    /**
+     * Create the dialog.
+     *
+     * @param gc The GC geocache instance.
+     * @param oc The OC geocache instance.
+     * @param logsCopied The list of logs already copied. This will be updated after submitting a
+     *     successful log.
+     * @param shadowList The shadow list instance to use for posting after having submitted a
+     *     successful log.
+     */
     public CopyLogDialog(
             final Geocache gc,
             final Geocache oc,
@@ -57,6 +74,7 @@ public class CopyLogDialog extends JFrame {
         setTitle("Copy Logs");
         setBounds(100, 100, 850, 500);
         getContentPane().setLayout(new BorderLayout());
+
         final JPanel contentPanel = new JPanel();
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -68,11 +86,13 @@ public class CopyLogDialog extends JFrame {
         splitPane2 = new JSplitPane();
         splitPane1.setRightComponent(splitPane2);
 
+        // The left column contains the GC listing.
         final CachePanel panelGc = new CachePanel();
         panelGc.setMinimumSize(new Dimension(100, 100));
         panelGc.setCache(gc, false);
         panelGc.colorize(oc);
 
+        // The middle column contains the OC listing.
         final CachePanel panelOc = new CachePanel();
         panelOc.setMinimumSize(new Dimension(100, 100));
         panelOc.setCache(oc, false);
@@ -81,6 +101,7 @@ public class CopyLogDialog extends JFrame {
         splitPane1.setLeftComponent(panelGc);
         splitPane2.setLeftComponent(panelOc);
 
+        // The right column contains the log copy functionality.
         final JPanel panelLogs = new JPanel();
         panelLogs.setLayout(new GridBagLayout());
 
@@ -91,20 +112,25 @@ public class CopyLogDialog extends JFrame {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.BOTH;
 
+        // Add an entry for each found log.
         for (final GeocacheLog log : gc.getLogs()) {
+            // Skip non-found logs.
             if (!log.isFoundLog()) {
                 continue;
             }
 
+            // Skip already posted logs.
             if (logsCopied.contains(log)) {
                 continue;
             }
 
+            // Skip logs where the GC user is not the author of.
             final String gcUsername = Settings.getString(Settings.Key.GC_USERNAME);
             if (!log.isAuthor(gcUsername)) {
                 continue;
             }
 
+            // Add the panel for the current log.
             final LogPanel logPanel = new LogPanel(log);
             panelLogs.add(logPanel, gbc);
             gbc.gridy++;
@@ -115,14 +141,15 @@ public class CopyLogDialog extends JFrame {
             gbcButton.insets = new Insets(0, 10, 10, 0);
             gbc.gridy++;
 
+            // Add the copy button.
             final JButton button = new JButton("Copy log to opencaching.de");
             if (GeocacheComparator.calculateSimilarity(gc, oc) != 1) {
                 button.setBackground(Color.RED);
             }
             button.addActionListener(
                     new ActionListener() {
-
-                        public void actionPerformed(ActionEvent actionEvent) {
+                        // Perform the actual copy operation.
+                        public void actionPerformed(final ActionEvent actionEvent) {
                             MainWindow.actionWithWaitDialog(
                                     () ->
                                             copyLog(
@@ -139,7 +166,7 @@ public class CopyLogDialog extends JFrame {
                         private Geocache oc;
                         private GeocacheLog log;
 
-                        public ActionListener set(Geocache oc, GeocacheLog log) {
+                        public ActionListener set(final Geocache oc, final GeocacheLog log) {
                             this.oc = oc;
                             this.log = log;
                             return this;
@@ -148,6 +175,7 @@ public class CopyLogDialog extends JFrame {
             panelLogs.add(button, gbcButton);
         }
 
+        // Wrap the log entries with a scroll panel.
         scrollPane = new JScrollPane(panelLogs);
         scrollPane.addComponentListener(
                 new ComponentAdapter() {
@@ -158,6 +186,7 @@ public class CopyLogDialog extends JFrame {
                 });
         splitPane2.setRightComponent(scrollPane);
 
+        // Add the return button.
         final JPanel buttonPane = new JPanel();
         buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
         getContentPane().add(buttonPane, BorderLayout.SOUTH);
@@ -166,18 +195,30 @@ public class CopyLogDialog extends JFrame {
         buttonPane.add(buttonReturn);
         buttonReturn.addActionListener(actionEvent -> THIS.setVisible(false));
 
+        // Fix the split panes on initialization and when resizing the window.
         THIS.addComponentListener(
                 new ComponentAdapter() {
-                    public void componentShown(ComponentEvent componentEvent) {
+                    public void componentShown(final ComponentEvent componentEvent) {
                         CacheListView.fixSplitPanes(splitPane1, splitPane2);
                     }
 
-                    public void componentResized(ComponentEvent componentEvent) {
+                    public void componentResized(final ComponentEvent componentEvent) {
                         CacheListView.fixSplitPanes(splitPane1, splitPane2);
                     }
                 });
     }
 
+    /**
+     * Copy the given log.
+     *
+     * @param shadowList The shadow list instance to post the duplicate to.
+     * @param gc The GC geocache instance.
+     * @param oc The OC geocache instance.
+     * @param log The log entry to copy.
+     * @param logPanel The panel with the current log.
+     * @param button The log copying button.
+     * @param logsCopied The list of logs already copied.
+     */
     private void copyLog(
             final ShadowList shadowList,
             final Geocache gc,

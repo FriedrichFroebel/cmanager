@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
+/** Dialog to show while a long running task is active. */
 public class WaitDialog extends JDialog {
 
     private static final long serialVersionUID = -1281433856562055074L;

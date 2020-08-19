@@ -18,18 +18,23 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
+/** Utility methods for Opencaching. */
 public class OcUtil {
 
+    /** Logger instance to use for information messages. */
     private static final Logger LOGGER = LoggingUtil.getLogger(OcUtil.class);
 
+    /** Local data cache for caching geocache instances already requested from the OKAPI. */
     static final List<Geocache> OKAPI_RUNTIME_CACHE = new ArrayList<>();
 
     /**
-     * @param stopBackgroundThread Processing is interrupted if this boolean is set true
-     * @param cacheListModel The model supplying the caches to check
-     * @param outputInterface Callback functions
-     * @param user OCUser object for OKAPI authentication
-     * @param uuid The uuid of the OC user to exclude caches already found by this user
+     * Check the given GC geocaches against the OKAPI to find their possible duplicates on OC.
+     *
+     * @param stopBackgroundThread Processing is interrupted if this boolean is set true.
+     * @param cacheListModel The model supplying the caches to check.
+     * @param outputInterface Callback functions.
+     * @param user OC user for OKAPI authentication.
+     * @param uuid The UUID of the OC user to exclude caches already found by this user.
      * @throws Throwable Something went wrong.
      */
     public static void findOnOc(
@@ -40,7 +45,7 @@ public class OcUtil {
             final String uuid,
             final ShadowList shadowList)
             throws Throwable {
-        // Number of found duplicates.
+        // Number of handled geocaches.
         final AtomicInteger count = new AtomicInteger(0);
         // Thread pool which establishes 10 concurrent connection at max.
         final ExecutorService service = Executors.newFixedThreadPool(10);
@@ -85,6 +90,21 @@ public class OcUtil {
                 cacheListModel.getList().size(), cacheListModel.getList().size());
     }
 
+    /**
+     * Check the given GC geocache against the OKAPI to find its possible duplicates on OC.
+     *
+     * @param stopBackgroundThread Processing is interrupted if this boolean is set true.
+     * @param cacheListModel The model supplying the caches to check. This is required for providing
+     *     progress messages only.
+     * @param outputInterface Callback functions.
+     * @param user OC user for OKAPI authentication.
+     * @param uuid The UUID of the OC user to exclude caches already found by this user.
+     * @param shadowList The shadow list instance providing a reverse mapping GC -> OC to speed up
+     *     the search.
+     * @param count The current number of handled geocaches.
+     * @param geocache The GC geocache instance to search for on OC.
+     * @param throwableReference Communicate errors back to the caller.
+     */
     public static Void findSingleGeocache(
             final AtomicBoolean stopBackgroundThread,
             final CacheListModel cacheListModel,
@@ -95,26 +115,29 @@ public class OcUtil {
             final AtomicInteger count,
             final Geocache geocache,
             final AtomicReference<Throwable> throwableReference) {
+        // Stop processing if requested.
         if (stopBackgroundThread.get()) {
             return null;
         }
 
         try {
+            // Set the current progress data.
             outputInterface.setProgress(count.get(), cacheListModel.getList().size());
             count.getAndIncrement();
 
+            // Use the search cache for empty searches for speed improvements.
             if (SearchCache.isEmptySearch(geocache, uuid)) {
                 return null;
             }
 
-            // Search shadow list for a duplicate.
+            // Search the shadow list for a duplicate.
             // TODO: Enable if API works again.
             /*final String ocCode = shadowList.getMatchingOcCode(geocache.getCode());
             if (ocCode != null) {
                 Geocache oc = Okapi.getCacheBuffered(ocCode, OKAPI_RUNTIME_CACHE);
                 Okapi.completeCacheDetails(oc);
                 Okapi.updateFoundStatus(user, oc);
-                // Found status can not be retrieved without user so we have a match when there is
+                // Found status cannot be retrieved without a user so we have a match when there is
                 // no user or the user has not found the cache.
                 if (user == null || !oc.getIsFound()) {
                     outputInterface.match(geocache, oc);
@@ -122,7 +145,7 @@ public class OcUtil {
                 }
             }*/
 
-            // Search for duplicate using the OKAPI.
+            // Search for duplicates using the OKAPI.
             final double searchRadius = geocache.hasVolatileStart() ? 1 : 0.05;
             final List<Geocache> similar =
                     Okapi.getCachesAround(user, uuid, geocache, searchRadius, OKAPI_RUNTIME_CACHE);
@@ -141,6 +164,7 @@ public class OcUtil {
                 }
             }
 
+            // If there is no match, remember that this is the case.
             if (!match) {
                 SearchCache.setEmptySearch(geocache, uuid);
             }

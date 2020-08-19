@@ -9,16 +9,29 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
+/** Panel for showing one geocache log entry. */
 public class LogPanel extends JPanel {
 
     private static final long serialVersionUID = 6835060632928395055L;
 
+    /** The log date. */
     private JLabel labelDate;
+
+    /** The log author. */
     private JLabel labelAuthor;
+
+    /** The log type. */
     private JLabel labelType;
+
+    /** The log text. */
     private JEditorPane editorLog;
 
-    public LogPanel(GeocacheLog log) {
+    /**
+     * Create an instance for the given geocache log.
+     *
+     * @param log The geocache log to display.
+     */
+    public LogPanel(final GeocacheLog log) {
         initComponents();
 
         labelDate.setText(log.getDateStr());
@@ -28,10 +41,18 @@ public class LogPanel extends JPanel {
         editorLog.setText(log.getText());
     }
 
+    /**
+     * Get the display log text.
+     *
+     * <p>This is mainly used to allow edits of the log text before submitting a duplicate log.
+     *
+     * @return The displayed log text.
+     */
     public String getLogText() {
         return editorLog.getText();
     }
 
+    /** Initialize all components. */
     // This has been created automatically by NetBeans IDE, but with manual cleanup afterwards.
     private void initComponents() {
         setLayout(new GridBagLayout());

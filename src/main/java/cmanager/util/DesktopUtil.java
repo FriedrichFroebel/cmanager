@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+/** Utility methods for desktop actions. */
 public class DesktopUtil {
 
     /**
@@ -13,7 +14,7 @@ public class DesktopUtil {
      *
      * @param uriString The URL to open as a string.
      */
-    public static void openUrl(String uriString) {
+    public static void openUrl(final String uriString) {
         // First step: Validate the given URI and abort on error.
         URI uri;
         try {
@@ -53,7 +54,7 @@ public class DesktopUtil {
      * @throws UnsupportedOperationException The operating system is unknown.
      * @throws IOException Executing the command itself failed.
      */
-    private static void openUrlFallback(String uriString)
+    private static void openUrlFallback(final String uriString)
             throws UnsupportedOperationException, IOException {
         // Retrieve the name of the operating system.
         final String os = System.getProperty("os.name").toLowerCase();

@@ -38,28 +38,58 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
+/** Dialog to show available duplicates. */
 public class DuplicateDialog extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
+    /** The current instance. */
     private final JFrame THIS = this;
+
+    /** The main data container. */
     private final JPanel contentPanel = new JPanel();
+
+    /** The tree structure with the duplicates. */
     private final JTree tree;
+
+    /** The root node of the tree. */
     private final DefaultMutableTreeNode rootNode;
+
+    /** The progress bar for the duplicate check. */
     private final JProgressBar progressBar;
+
+    /** The URL for the currently selected tree node. */
     private String selectedUrl;
+
+    /** The button to open the currently selected geocache inside the web browser. */
     private final JButton buttonUrl;
+
+    /** The number of candidates found. */
     private final JLabel labelCandidates;
 
+    /** Whether to stop the thread working in the background. */
     private final AtomicBoolean stopBackgroundThread = new AtomicBoolean(false);
+
+    /** The thread working in the background. */
     private Thread backgroundThread = null;
 
+    /** The list of geocache log already copied. */
     private final List<GeocacheLog> logsCopied = new ArrayList<>();
+
+    /** The shadow list instance to use. */
     private ShadowList shadowList = null;
 
+    /** Whether this is a dialog for just viewing duplicates or copying duplicate logs over. */
     private final boolean isCopyDialog;
 
-    /** Create the dialog. */
+    /**
+     * Create the dialog.
+     *
+     * @param cacheListModel The currently selected cache list to search for duplicates with.
+     * @param user The current OKAPI user. Set to <code>null</code> when the logs will not be
+     *     copied.
+     * @param uuid The OC user ID. Set to <code>null</code> when the logs will not be copied.
+     */
     public DuplicateDialog(
             final CacheListModel cacheListModel, final User user, final String uuid) {
         // We are passing `user = null` and `uuid = null` for "Find on OC", so we are able to detect
@@ -76,9 +106,10 @@ public class DuplicateDialog extends JFrame {
         getContentPane().add(contentPanel, BorderLayout.CENTER);
         contentPanel.setLayout(new CardLayout(0, 0));
 
+        // The progress panel.
         final JPanel panelProgress = new JPanel();
         panelProgress.setBorder(new EmptyBorder(5, 5, 5, 5));
-        contentPanel.add(panelProgress, "name_449323361533634");
+        contentPanel.add(panelProgress, "progress");
         panelProgress.setLayout(new BorderLayout(0, 0));
 
         final JPanel panelBorder = new JPanel();
@@ -93,9 +124,10 @@ public class DuplicateDialog extends JFrame {
         rootNode = new DefaultMutableTreeNode("Root");
 
         final JPanel panelTree = new JPanel();
-        contentPanel.add(panelTree, "2");
+        contentPanel.add(panelTree, "tree");
         panelTree.setLayout(new BorderLayout(0, 0));
 
+        // The panel for the URL and clipboard copy button.
         final JPanel panelUrl = new JPanel();
         panelTree.add(panelUrl, BorderLayout.SOUTH);
         panelUrl.setLayout(new BorderLayout(0, 0));
@@ -120,11 +152,13 @@ public class DuplicateDialog extends JFrame {
         panelClipboard.add(buttonClipboard);
         buttonClipboard.addActionListener(actionEvent -> copyToClipboard());
 
+        // Initialize the tree.
         tree = new JTree(rootNode);
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         tree.addTreeSelectionListener(new CacheTreeSelectionListener());
         tree.addMouseListener(new CacheMouseAdapter(uuid));
 
+        // Make the tree scrollable.
         JScrollPane scrollPaneTree =
                 new JScrollPane(
                         tree,
@@ -132,6 +166,7 @@ public class DuplicateDialog extends JFrame {
                         JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         panelTree.add(scrollPaneTree);
 
+        // Add the panel for copying logs and hide if it not needed.
         final JPanel panelCopyMessage = new JPanel();
         panelTree.add(panelCopyMessage, BorderLayout.NORTH);
         if (!isCopyDialog) {
@@ -143,6 +178,7 @@ public class DuplicateDialog extends JFrame {
         labelDoubleClick.setHorizontalAlignment(SwingConstants.CENTER);
         panelCopyMessage.add(labelDoubleClick);
 
+        // The bottom panel with the candidates count and the close button.
         final JPanel panelBottom = new JPanel();
         getContentPane().add(panelBottom, BorderLayout.SOUTH);
         panelBottom.setLayout(new BorderLayout(0, 0));
@@ -172,24 +208,29 @@ public class DuplicateDialog extends JFrame {
         final JLabel labelHits = new JLabel("Candidates");
         panelDuplicateCount.add(labelHits);
 
+        // Start the actual duplicate search.
         backgroundThread = new Thread(() -> findDuplicates(cacheListModel, user, uuid));
         backgroundThread.start();
     }
 
+    /** Show the results card. */
     private void switchCards() {
         final CardLayout cardLayout = (CardLayout) (contentPanel.getLayout());
-        cardLayout.show(contentPanel, "2");
+        cardLayout.show(contentPanel, "tree");
     }
 
+    /** Copy the search results to the clipboard. */
     private void copyToClipboard() {
         final StringBuilder stringBuilder = new StringBuilder();
 
+        // Handle all GC caches.
         for (int i = 0; i < rootNode.getChildCount(); i++) {
             final DefaultMutableTreeNode mutableTreeNode =
                     (DefaultMutableTreeNode) rootNode.getChildAt(i);
             final Geocache geocache = (Geocache) mutableTreeNode.getUserObject();
             stringBuilder.append(geocache.toString()).append(System.lineSeparator());
 
+            // Add all of their OC duplicate candidates.
             for (int j = 0; j < mutableTreeNode.getChildCount(); j++) {
                 final DefaultMutableTreeNode child =
                         (DefaultMutableTreeNode) mutableTreeNode.getChildAt(j);
@@ -202,22 +243,32 @@ public class DuplicateDialog extends JFrame {
             stringBuilder.append(System.lineSeparator());
         }
 
+        // Copy the result to the clipboard.
         final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(new StringSelection(stringBuilder.toString()), null);
     }
 
+    /**
+     * Find the duplicates for the given cache list.
+     *
+     * @param cacheListModel The cache list to search for.
+     * @param user OC user for OKAPI authentication.
+     * @param uuid The UUID of the OC user to exclude caches already found by this user.
+     */
     private void findDuplicates(
             final CacheListModel cacheListModel, final User user, final String uuid) {
         try {
-            // Update local copy of shadow list and load it.
+            // Update the local copy of the shadow list and load it.
             ShadowList.updateShadowList();
             shadowList = ShadowList.loadShadowList();
 
+            // Perform the actual search.
             OcUtil.findOnOc(
                     stopBackgroundThread,
                     cacheListModel,
                     new OutputInterface() {
-                        public void setProgress(Integer count, Integer max) {
+                        // Update the progress display.
+                        public void setProgress(final Integer count, final Integer max) {
                             progressBar.setMaximum(max);
                             progressBar.setValue(count);
                             progressBar.setString(count.toString() + "/" + max.toString());
@@ -228,7 +279,8 @@ public class DuplicateDialog extends JFrame {
                         private DefaultMutableTreeNode lastNode = null;
                         private Integer candidates = 0;
 
-                        public void match(Geocache gc, Geocache oc) {
+                        // Handle a possible match.
+                        public void match(final Geocache gc, final Geocache oc) {
                             // Make sure that for the copy dialog at least one log of the specified
                             // user is present.
                             if (isCopyDialog && !gc.hasFoundLogByGcUser()) {
@@ -249,13 +301,15 @@ public class DuplicateDialog extends JFrame {
                     user,
                     uuid,
                     shadowList);
+
+            // Show the results.
             switchCards();
 
             if (stopBackgroundThread.get()) {
                 return;
             }
 
-            // Sort.
+            // Prepare result sorting.
             final List<DefaultMutableTreeNode> sortedList = new ArrayList<>();
             final List<DefaultMutableTreeNode> list = new ArrayList<>();
 
@@ -265,7 +319,7 @@ public class DuplicateDialog extends JFrame {
             }
             rootNode.removeAllChildren();
 
-            // Sort.
+            // Perform the actual sorting.
             final String gcUsername = Settings.getString(Settings.Key.GC_USERNAME);
             while (!list.isEmpty()) {
                 DefaultMutableTreeNode next = null;
@@ -324,9 +378,8 @@ public class DuplicateDialog extends JFrame {
                 tree.setVisible(false);
             }
         } catch (Throwable throwable) {
-            // Since Thread.stop() is used, the threads will most likely
-            // complain in weird ways. We do not care about these
-            // exceptions.
+            // Since Thread.stop() is used, the threads will most likely complain in weird ways. We
+            // do not care about these exceptions.
             if (!stopBackgroundThread.get()) {
                 ExceptionPanel.showErrorDialog(THIS, throwable);
             }
@@ -334,9 +387,15 @@ public class DuplicateDialog extends JFrame {
         }
     }
 
+    /** Handler for selection of tree nodes. */
     private class CacheTreeSelectionListener implements TreeSelectionListener {
 
-        public void valueChanged(TreeSelectionEvent treeSelectionEvent) {
+        /**
+         * If the selected entry has been changed, update the button URL.
+         *
+         * @param treeSelectionEvent The selection event.
+         */
+        public void valueChanged(final TreeSelectionEvent treeSelectionEvent) {
             final DefaultMutableTreeNode node =
                     (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
             if (node == null) {
@@ -350,7 +409,12 @@ public class DuplicateDialog extends JFrame {
             }
         }
 
-        private void url2Button(String url) {
+        /**
+         * Set the URL for the URL button.
+         *
+         * @param url The URL to set.
+         */
+        private void url2Button(final String url) {
             selectedUrl = url;
             buttonUrl.setText("<HTML><FONT color=\"#000099\"><U>" + url + "</U></FONT></HTML>");
         }
@@ -358,29 +422,47 @@ public class DuplicateDialog extends JFrame {
 
     private class CacheMouseAdapter extends MouseAdapter {
 
+        /** The Opencaching user ID. */
         private final String uuid;
 
-        public CacheMouseAdapter(String uuid) {
+        /**
+         * Set the user ID.
+         *
+         * @param uuid The UUID to set.
+         */
+        public CacheMouseAdapter(final String uuid) {
             this.uuid = uuid;
         }
 
-        public void mousePressed(MouseEvent mouseEvent) {
+        /**
+         * Open the dialog for copying logs on double click.
+         *
+         * @param mouseEvent The event.
+         */
+        public void mousePressed(final MouseEvent mouseEvent) {
+            // Single clicks indicate selection changes, so require at least two clicks.
             if (mouseEvent.getClickCount() >= 2) {
+                // Retrieve the current selection.
                 final DefaultMutableTreeNode node =
                         (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
                 if (node == null) {
                     return;
                 }
 
+                // Check if a geocache instance has been selected.
                 final Object userObject = node.getUserObject();
                 if (userObject instanceof Geocache) {
+                    // An geocache instance has been selected.
                     final Geocache oc = (Geocache) userObject;
 
+                    // Make sure that an UUID is set and it actually is an OC geocache instance.
                     if (uuid != null && oc.isOc()) {
+                        // Retrieve the corresponding GC geocache instance.
                         final DefaultMutableTreeNode parent =
                                 (DefaultMutableTreeNode) node.getParent();
                         final Geocache gc = (Geocache) parent.getUserObject();
 
+                        // Open the actual copy dialog.
                         try {
                             final CopyLogDialog copyLogDialog =
                                     new CopyLogDialog(gc, oc, logsCopied, shadowList);

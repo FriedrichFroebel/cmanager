@@ -6,14 +6,18 @@ import java.io.File;
 import java.io.IOException;
 import javax.swing.JOptionPane;
 
+/** Handle restarts of the own applications with modified parameters. */
 public class ForkUtil {
 
+    /** Argument to indicate that the heap has already been resized. */
     private static final String PARAM_HEAP_RESIZED = "--memory-already-resized";
 
     /**
-     * Returns the folder containing the .class file.
+     * Return the directory containing the .class file.
      *
      * <p>This is the JAR path if run from a JAR.
+     *
+     * @return The directory containing the class file.
      */
     public static String getCodeSource() {
         final File jarFile =
@@ -22,7 +26,12 @@ public class ForkUtil {
         return jarFile.getAbsolutePath();
     }
 
-    private static void showInvalidJarPathMessage(String jarPath) {
+    /**
+     * Report an error with restarting the application.
+     *
+     * @param jarPath The JAR path to display in the report.
+     */
+    private static void showInvalidJarPathMessage(final String jarPath) {
         final String message =
                 "Unable to restart cmanager. Settings could not be applied.\n"
                         + "Expected path: "
@@ -30,6 +39,11 @@ public class ForkUtil {
         JOptionPane.showMessageDialog(null, message, "jar path", JOptionPane.ERROR_MESSAGE);
     }
 
+    /**
+     * Run a copy of the application itself and exit the current application.
+     *
+     * @throws IOException Something went wrong when trying to do so.
+     */
     public static void runCopyAndExit() throws IOException {
         final String jarPath = getCodeSource();
         if (!new File(jarPath).exists()) {
@@ -37,14 +51,22 @@ public class ForkUtil {
             return;
         }
 
-        // Run new VM.
+        // Run a new VM.
         ProcessBuilder processBuilder = new ProcessBuilder("java", "-jar", jarPath);
         processBuilder.start();
 
+        // Exit the old application.
         System.exit(0);
     }
 
+    /**
+     * Run a copy of the application with a resized heap and exit the current application.
+     *
+     * @param arguments The terminal arguments passed to the application.
+     * @throws IOException Something went wrong when trying to do so.
+     */
     public static void forkWithResizedHeapAndExit(String[] arguments) throws IOException {
+        // Only do this once.
         for (final String argument : arguments) {
             if (argument.equals(PARAM_HEAP_RESIZED)) {
                 return;
@@ -70,7 +92,7 @@ public class ForkUtil {
             return;
         }
 
-        // Run new VM.
+        // Run a new VM.
         final String originalArguments = String.join(" ", arguments);
         final ProcessBuilder processBuilder =
                 new ProcessBuilder()

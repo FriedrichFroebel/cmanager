@@ -23,41 +23,89 @@ import javax.swing.JViewport;
 import javax.swing.LayoutStyle;
 import javax.swing.SwingConstants;
 
+/** Panel for showing one geocache entry. */
 public class CachePanel extends JPanel {
 
     private static final long serialVersionUID = -4848832298041708795L;
 
+    /** The associated geocache instance. */
     private Geocache geocache = null;
 
+    /** The main scroll pane. */
     private JScrollPane scrollPaneMain;
 
+    /** The geocache name. */
     private JLabel labelName;
+
+    /** The geocache code. */
     private JLabel labelCode;
+
+    /** The geocache coordinates. */
     private JLabel labelCoordinates;
+
+    /** The geocache type. */
     private JLabel labelType;
+
+    /** The difficulty rating. */
     private JLabel labelDifficulty;
+
+    /** The terrain rating. */
     private JLabel labelTerrain;
+
+    /** The container size. */
     private JLabel labelContainer;
+
+    /** The geocache status. */
     private JLabel labelStatus;
+
+    /** The owner name. */
     private JLabel labelOwner;
 
+    /** The overview panel with the basic data like the container size, ratings etc. */
     private JPanel panelOverview;
+
+    /** The panel with the button to open the geocache online. */
     private JPanel panelLink;
+
+    /** The panel for the complete listing. */
     private JPanel panelListing;
+
+    /** The panel for the listing text. */
     private JPanel panelListingText;
+
+    /** The actual listing text. */
     private JEditorPane editorListing;
+
+    /** The panel for the geocache logs. */
     private JPanel panelLogs;
 
-    public void setCache(Geocache geocache) {
+    /**
+     * Set the geocache instance for the panel.
+     *
+     * <p>This will show the logs.
+     *
+     * @param geocache The geocache instance to set.
+     */
+    public void setCache(final Geocache geocache) {
         setCache(geocache, true);
     }
 
-    public void setCache(Geocache geocache, boolean showLogs) {
+    /**
+     * Set the geocache instance for the panel.
+     *
+     * @param geocache The geocache instance to set.
+     * @param showLogs Whether to show the log. This usually is <code>False</code> for log copying
+     *     and <code>True</code> within the list view.
+     */
+    public void setCache(final Geocache geocache, final boolean showLogs) {
         this.geocache = geocache;
 
         if (this.geocache == null) {
+            // Hide the listing if no geocache instance is set.
             panelListing.setVisible(false);
         } else {
+            // Display the data of the geocache instance.
+
             labelName.setText(this.geocache.getName());
             labelCode.setText(this.geocache.getCode());
 
@@ -76,6 +124,7 @@ public class CachePanel extends JPanel {
 
             String listing = this.geocache.getListingShort();
             if (listing != null && !listing.equals("")) {
+                // If there is a short listing text, separate it by two empty lines.
                 listing += "<br><br>";
             } else {
                 listing = "";
@@ -109,7 +158,13 @@ public class CachePanel extends JPanel {
         }
     }
 
-    public void colorize(Geocache geocache2) {
+    /**
+     * Show common and different values between the displayed geocache instance and the given
+     * geocache instance.
+     *
+     * @param geocache2 The geocache instance to compare the current instance against.
+     */
+    public void colorize(final Geocache geocache2) {
         if (geocache.getCoordinate() != null) {
             colorize(labelCoordinates, geocache.getCoordinate().equals(geocache2.getCoordinate()));
         }
@@ -133,7 +188,14 @@ public class CachePanel extends JPanel {
         colorize(labelContainer, geocache.getContainer().equals(geocache2.getContainer()));
     }
 
-    private void colorize(final JLabel label, boolean good) {
+    /**
+     * Set the color for the given label.
+     *
+     * @param label The label to colorize.
+     * @param good Set to <code>True</code> to use green color, set to <code>False</code> to use red
+     *     color.
+     */
+    private void colorize(final JLabel label, final boolean good) {
         label.setOpaque(true);
         if (good) {
             label.setBackground(Color.GREEN);
@@ -142,6 +204,7 @@ public class CachePanel extends JPanel {
         }
     }
 
+    /** Adjust the containers to their optimal width. */
     public void adjustToOptimalWidth() {
         int width = scrollPaneMain.getViewport().getVisibleRect().width;
         if (width <= 0) {
@@ -168,6 +231,7 @@ public class CachePanel extends JPanel {
         panelLogs.validate();
     }
 
+    /** Create a new cache panel. */
     public CachePanel() {
         initComponents();
 
@@ -192,6 +256,7 @@ public class CachePanel extends JPanel {
         setCache(null);
     }
 
+    /** Initialize all components. */
     // This has been created automatically by NetBeans IDE, but with manual cleanup afterwards.
     private void initComponents() {
         setLayout(new BorderLayout());
@@ -567,11 +632,21 @@ public class CachePanel extends JPanel {
         add(scrollPaneMain, BorderLayout.CENTER);
     }
 
-    private void buttonViewOnlineActionPerformed(ActionEvent actionEvent) {
+    /**
+     * Handle requests from the user to open the current geocache instance inside the web browser.
+     *
+     * @param actionEvent The button event.
+     */
+    private void buttonViewOnlineActionPerformed(final ActionEvent actionEvent) {
         DesktopUtil.openUrl(geocache.getUrl());
     }
 
-    private void panelOverviewComponentResized(ComponentEvent componentEvent) {
+    /**
+     * Scroll to the top when the overview panel has been resized.
+     *
+     * @param componentEvent The panel event.
+     */
+    private void panelOverviewComponentResized(final ComponentEvent componentEvent) {
         scrollPaneMain.getVerticalScrollBar().setValue(0);
     }
 }
