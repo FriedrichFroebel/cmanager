@@ -8,14 +8,15 @@ install: true
 os: linux
 dist: bionic
 
-# Run compilation tests using the OpenJDK in version 11 and version 14 (the latest one at the time
-# of writing).
+# Run compilation tests using the OpenJDK in version 11, 14 and 15.
+# The format checker requires at least Java 11, while Java 14 and 15 are more recent.
 # Please note that we still support Java versions starting with Java 8, but we cannot compile our
 # code with Java 8 as they miss the newer APIs we reference inside the `Compatibility.java` file.
 jobs:
   include:
     - jdk: openjdk11
     - jdk: openjdk14
+    - jdk: openjdk15
 
 # The stuff to execute.
 # By adding the executable bit, we ensure that we can call the Gradle wrapper script directly.
