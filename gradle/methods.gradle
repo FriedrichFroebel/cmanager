@@ -4,9 +4,7 @@
 
 // Check if we are running on Travis CI.
 ext.isTravis = { ->
-    if (System.getenv('USER') != 'travis') return false
-    if (System.getenv('HAS_JOSH_K_SEAL_OF_APPROVAL') != 'true') return false
-    return true
+    return (System.getenv('CI') == 'true')
 }
 
 // Retrieve the system string for indicating the package content.

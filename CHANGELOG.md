@@ -2,6 +2,7 @@
 
 * More deterministic handling of empty searches by using a fixed age of 6 months.
 * Add missing Javadoc comments.
+* Switch from Travis CI to GitHub Actions.
 
 # Version 0.5.3 - 2020-08-05
 

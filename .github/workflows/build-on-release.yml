@@ -1,0 +1,112 @@
+# Build a Java project with Gradle for every release.
+# Based upon https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle.
+
+name: Build for every release
+
+# Run this on every release publish.
+on:
+  release:
+    types: [published]
+
+
+jobs:
+  # The Ubuntu-based build job.
+  build:
+    runs-on: ubuntu-latest
+
+    # Our global environment variables used as a replacement for providing an `oc_okapi.properties` file.
+    env:
+      OC_OKAPI_DE_CONSUMER_KEY: ${{ secrets.OC_OKAPI_DE_CONSUMER_KEY }}
+      OC_OKAPI_DE_CONSUMER_SECRET: ${{ secrets.OC_OKAPI_DE_CONSUMER_SECRET }}
+
+    # Run compilation tests using the OpenJDK in version 11, 14 and 15.
+    # The format checker requires at least Java 11, while Java 14 and 15 are more recent.
+    # Please note that we still support Java versions starting with Java 8, but we cannot compile our
+    # code with Java 8 as they miss the newer APIs we reference inside the `Compatibility.java` file.
+    strategy:
+      matrix:
+        java: [11, 14, 15]
+
+    # Use a better name.
+    name: Linux Build with Java ${{ matrix.java }}
+
+    # The actual build process.
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      # Use OpenJDK from https://jdk.java.net/.
+      # See https://github.com/sormuras/download-jdk
+      - name: Download JDK
+        uses: sormuras/download-jdk@v1
+        id: jdk
+        with:
+          feature: ${{ matrix.java }}
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ steps.jdk.outputs.version }}
+          jdkFile: ${{ steps.jdk.outputs.file }}
+      - name: Display Java Version
+        run: java --version
+
+      # Cache some Gradle files.
+      - name: Cache Gradle Wrapper
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+      - name: Cache Gradle Packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+
+      # Run the actual steps after the preparations.
+      - name: Grant Execute Permission for gradlew
+        run: chmod +x gradlew
+      - name: Clean Build Area
+        run: ./gradlew clean
+      - name: Build JAR
+        run: ./gradlew jar
+
+      # Upload the artifact to access it for deployment.
+      - name: Upload Artifact
+        if: ${{ matrix.java == '14' && !github.event.release.prerelease }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: cm-ci.jar
+          path: build/libs/cm-ci.jar
+
+  # Deploy the release.
+  deploy:
+    runs-on: ubuntu-latest
+
+    name: Deploy Release
+
+    # Run after the build.
+    needs: build
+
+    # Do not run on pre-releases.
+    if: "!github.event.release.prerelease"
+
+    # Perform the deployment.
+    steps:
+      # Download the artifact.
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: cm-ci.jar
+          path: artifacts/
+
+      # Upload the asset.
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: artifacts/cm-ci.jar
+          asset_name: cm-${{ github.event.release.name }}.jar        
+          asset_content_type: application/x-java-archive
