@@ -9,11 +9,10 @@
 ext.retrieveOcOkapiProperties = { ->
     // Use dummy values as secret environment variables are not available on CI for external
     // pull requests.
-    if (project.isCi() &&
-            (
+    if (project.isCi() && (
                 (System.getenv('GITHUB_EVENT_NAME') == 'pull_request') ||
                 (System.getenv('TRAVIS_PULL_REQUEST') != 'false')
-            ) {
+       )) {
         ext.oc_okapi_de_consumer_key = 'DUMMY'
         ext.oc_okapi_de_consumer_secret = 'DUMMY'
         ext.oc_de_test_client_username = 'DUMMY'
