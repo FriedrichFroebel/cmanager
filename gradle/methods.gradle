@@ -2,8 +2,8 @@
  * Basic helper methods for the Gradle build.
  */
 
-// Check if we are running on Travis CI.
-ext.isTravis = { ->
+// Check if we are running in a CI environment.
+ext.isCi = { ->
     return (System.getenv('CI') == 'true')
 }
 

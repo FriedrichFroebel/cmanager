@@ -7,9 +7,10 @@
 
 // Allow retrieving the configuration values from environment variables as well.
 ext.retrieveOcOkapiProperties = { ->
-    // Use dummy values as secret environment variables are not available on Travis CI for external
+    // Use dummy values as secret environment variables are not available on CI for external
     // pull requests.
-    if (project.isTravis() && System.getenv('TRAVIS_PULL_REQUEST') != 'false') {
+    logger.quiet(System.getenv('GITHUB_EVENT_NAME'))
+    if (project.isCi()) {
         ext.oc_okapi_de_consumer_key = 'DUMMY'
         ext.oc_okapi_de_consumer_secret = 'DUMMY'
         ext.oc_test_client_username = 'DUMMY'
