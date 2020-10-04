@@ -124,7 +124,7 @@ clean.doFirst {
 
 jar {
     archiveBaseName = 'cm'
-    if (project.isTravis()) {
+    if (project.isCi()) {
         archiveVersion = 'ci'
     }
     manifest {

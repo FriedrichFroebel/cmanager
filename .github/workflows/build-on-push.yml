@@ -1,0 +1,224 @@
+# Build a Java project with Gradle for every push.
+# Based upon https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle.
+
+# TODO:
+#   * Add test support.
+
+name: Build for every push
+
+# Run this on every push to the `master` branch.
+on:
+  push:
+    branches:
+      - master
+
+
+jobs:
+  # The Ubuntu-based build job.
+  buildLinux:
+    runs-on: ubuntu-latest
+
+    # Our global environment variables used as a replacement for providing an `oc_okapi.properties` file.
+    env:
+      OC_OKAPI_DE_CONSUMER_KEY: ${{ secrets.OC_OKAPI_DE_CONSUMER_KEY }}
+      OC_OKAPI_DE_CONSUMER_SECRET: ${{ secrets.OC_OKAPI_DE_CONSUMER_SECRET }}
+
+    # Run compilation tests using the OpenJDK in version 11, 14 and 15.
+    # The format checker requires at least Java 11, while Java 14 and 15 are more recent.
+    # Please note that we still support Java versions starting with Java 8, but we cannot compile our
+    # code with Java 8 as they miss the newer APIs we reference inside the `Compatibility.java` file.
+    strategy:
+      matrix:
+        java: [11, 14, 15]
+
+    # Use a better name.
+    name: Linux Build with Java ${{ matrix.java }}
+
+    # The actual build process.
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      # Use OpenJDK from https://jdk.java.net/.
+      # See https://github.com/sormuras/download-jdk
+      - name: Download JDK
+        uses: sormuras/download-jdk@v1
+        id: jdk
+        with:
+          feature: ${{ matrix.java }}
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ steps.jdk.outputs.version }}
+          jdkFile: ${{ steps.jdk.outputs.file }}
+      - name: Display Java Version
+        run: java --version
+
+      # Cache some Gradle files.
+      - name: Cache Gradle Wrapper
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+      - name: Cache Gradle Packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+
+      # Run the actual steps after the preparations.
+      - name: Grant Execute Permission for gradlew
+        run: chmod +x gradlew
+      - name: Clean Build Area
+        run: ./gradlew clean
+      - name: Verify Code Format
+        run: ./gradlew verifyGoogleJavaFormat
+      - name: Build JAR
+        run: ./gradlew jar
+
+      # Clean some files before caching.
+      - name: Cache Cleanup
+        run: |
+          rm -f  ~/.gradle/caches/modules-2/modules-2.lock
+          rm -fr ~/.gradle/caches/*/plugin-resolution/    
+
+      # Upload the artifact to access it for deployment.
+      - name: Upload Artifact
+        if: ${{ matrix.java == '14' }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: cm-ci.jar
+          path: build/libs/cm-ci.jar
+
+  # The Windows-based build job.
+  buildWindows:
+    runs-on: windows-latest
+
+    # Our global environment variables used as a replacement for providing an `oc_okapi.properties` file.
+    env:
+      OC_OKAPI_DE_CONSUMER_KEY: ${{ secrets.OC_OKAPI_DE_CONSUMER_KEY }}
+      OC_OKAPI_DE_CONSUMER_SECRET: ${{ secrets.OC_OKAPI_DE_CONSUMER_SECRET }}
+
+    # Run compilation tests using the OpenJDK in version 11, 14 and 15.
+    # The format checker requires at least Java 11, while Java 14 and 15 are more recent.
+    # Please note that we still support Java versions starting with Java 8, but we cannot compile our
+    # code with Java 8 as they miss the newer APIs we reference inside the `Compatibility.java` file.
+    # NOTE: We only use Java 14 here, as this should be enough for now.
+    strategy:
+      matrix:
+        java: [14] # , 11, 15]
+
+    # Use a better name.
+    name: Windows Build with Java ${{ matrix.java }}
+
+    # The actual build process.
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      # Use OpenJDK from https://jdk.java.net/.
+      # See https://github.com/sormuras/download-jdk
+      # We have to use the `master` branch here as the required fix has been introduced after the first release.
+      - name: Download JDK
+        uses: sormuras/download-jdk@master
+        id: jdk
+        with:
+          feature: ${{ matrix.java }}
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ steps.jdk.outputs.version }}
+          jdkFile: ${{ steps.jdk.outputs.file }}
+      - name: Display Java Version
+        run: java --version
+
+      # Cache some Gradle files.
+      - name: Cache Gradle Wrapper
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+      - name: Cache Gradle Packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+
+      # Run the actual steps after the preparations.
+      - name: Clean Build Area
+        run: ./gradlew clean
+      - name: Verify Code Format
+        run: ./gradlew verifyGoogleJavaFormat
+      - name: Build JAR
+        run: ./gradlew jar
+
+      # Clean some files before caching.
+      # We have to stop the Gradle daemon beforehand, as the `modules-2.lock` file would be locked otherwise.
+      - name: Cache Cleanup
+        run: |
+          ./gradlew --stop
+          rm ~/.gradle/caches/modules-2/modules-2.lock
+          rm -r ~/.gradle/caches/*/plugin-resolution
+
+  # Deploy the pre-release.
+  deploy:
+    runs-on: ubuntu-latest
+
+    name: Deploy Pre-Release
+
+    # Run after the build.
+    needs: buildLinux
+
+    # Perform the deployment.
+    steps:
+      # Delete the old pre-release.
+      # https://github.com/marketplace/actions/rollback-release
+      - name: Delete old Pre-Release
+        uses: author/action-rollback@stable
+        with:
+          tag: prerelease
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Retrieve some environment variables.
+      # Please note that we cannot use `git rev-parse --short HEAD` for the short commit hash here, as we do not checkout
+      # the code in this job.
+      - name: Retrieve Long Commit Hash
+        run: echo ::set-env name=LONG_HASH::$(echo $GITHUB_SHA)
+      - name: Retrieve Short Commit Hash
+        run: echo ::set-env name=SHORT_HASH::$(echo $GITHUB_SHA | cut -c 1-7)
+      - name: Retrieve Timestamp
+        run: echo ::set-env name=TIMESTAMP::$(date +'%F %T %Z')
+
+      # Create the pre-release.
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: prerelease
+          release_name: Development build
+          body: |
+            Automated build of the master branch (commit ${{ env.LONG_HASH }}) using GitHub Actions on ${{ env.TIMESTAMP }}.
+          draft: false
+          prerelease: true
+
+      # Download the artifact and add it to the release.
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: cm-ci.jar
+          path: artifacts/
+      - name: Upload Release Asset
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: artifacts/cm-ci.jar
+          asset_name: cm-${{ env.SHORT_HASH }}.jar
+          asset_content_type: application/x-java-archive

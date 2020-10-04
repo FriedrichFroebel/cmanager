@@ -2,11 +2,9 @@
  * Basic helper methods for the Gradle build.
  */
 
-// Check if we are running on Travis CI.
-ext.isTravis = { ->
-    if (System.getenv('USER') != 'travis') return false
-    if (System.getenv('HAS_JOSH_K_SEAL_OF_APPROVAL') != 'true') return false
-    return true
+// Check if we are running in a CI environment.
+ext.isCi = { ->
+    return (System.getenv('CI') == 'true')
 }
 
 // Retrieve the system string for indicating the package content.
