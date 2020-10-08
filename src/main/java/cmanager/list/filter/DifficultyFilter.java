@@ -1,6 +1,7 @@
 package cmanager.list.filter;
 
 import cmanager.geo.Geocache;
+import cmanager.list.CacheListFilterType;
 
 /** Filter geocaches by difficulty rating. */
 public class DifficultyFilter extends FilterModel {
@@ -15,7 +16,7 @@ public class DifficultyFilter extends FilterModel {
 
     /** Create a new instance of the filter. */
     public DifficultyFilter() {
-        super(FILTER_TYPE.BETWEEN_ONE_AND_FIVE_FILTER_VALUE);
+        super(CacheListFilterType.BETWEEN_ONE_AND_FIVE_FILTER_VALUE);
         getLabelLeft().setText("min Difficulty:");
         getLabelRight().setText("max Difficulty:");
 

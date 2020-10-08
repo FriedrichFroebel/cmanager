@@ -91,8 +91,8 @@ class OkapiUrlBuilder {
      *
      * @param useOAuth Whether OAuth is required as caches ignored by the given user UUID should be
      *     skipped.
-     * @param excludeUuuid The user UUID to use for ignoring caches. This may be null if OAuth is
-     *     disabled.
+     * @param excludeUuuid The user UUID to use for ignoring caches. Additionally own caches will be
+     *     ignored. This may be null if OAuth is disabled.
      * @param latitude The latitude of the search center.
      * @param longitude The longitude of the search center.
      * @param searchRadius The search radius to use.
@@ -117,7 +117,8 @@ class OkapiUrlBuilder {
 
         if (useOAuth && excludeUuuid != null) {
             builder.addParameter("ignored_status", "notignored_only")
-                    .addParameter("not_found_by", excludeUuuid);
+                    .addParameter("not_found_by", excludeUuuid)
+                    .addParameter("exclude_my_own", "true");
         }
 
         return builder.toString();

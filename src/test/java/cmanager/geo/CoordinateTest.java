@@ -49,13 +49,13 @@ public class CoordinateTest {
      *
      * @param string The coordinate to parse as a string.
      * @param latitude The expected latitude of the coordinate.
-     * @param lonigtude The expected longitude of the coordinate.
+     * @param longitude The expected longitude of the coordinate.
      */
-    private void parse(String string, double latitude, double lonigtude) {
+    private void parse(final String string, final double latitude, final double longitude) {
         try {
             final Coordinate coordinate = new Coordinate(string);
             assertEquals(latitude, coordinate.getLatitude(), 0.0);
-            assertEquals(lonigtude, coordinate.getLongitude(), 0.00009);
+            assertEquals(longitude, coordinate.getLongitude(), 0.00009);
         } catch (CoordinateUnparsableException exception) {
             fail(Arrays.toString(exception.getStackTrace()));
         }
@@ -67,7 +67,7 @@ public class CoordinateTest {
      *
      * @param string The coordinate to parse as a string.
      */
-    private void parse(String string) {
+    private void parse(final String string) {
         parse(string, 53.1073, 8.12945);
     }
 

@@ -3,6 +3,7 @@ package cmanager.list;
 import cmanager.geo.Geocache;
 import cmanager.geo.GeocacheLog;
 import cmanager.settings.Settings;
+import cmanager.settings.SettingsKey;
 import java.time.ZonedDateTime;
 import javax.swing.table.AbstractTableModel;
 
@@ -156,8 +157,8 @@ public class CacheListTableModel extends AbstractTableModel {
             case 9:
                 final ZonedDateTime date =
                         geocache.getMostRecentFoundLog(
-                                Settings.getString(Settings.Key.GC_USERNAME),
-                                Settings.getString(Settings.Key.OC_USERNAME));
+                                Settings.getString(SettingsKey.GC_USERNAME),
+                                Settings.getString(SettingsKey.OC_USERNAME));
                 return date == null ? null : GeocacheLog.getDateStrIso8601NoTime(date);
 
             default:

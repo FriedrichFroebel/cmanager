@@ -1,6 +1,7 @@
 package cmanager.list.filter;
 
 import cmanager.geo.Geocache;
+import cmanager.list.CacheListFilterType;
 
 /** Filter geocaches by their name. */
 public class CacheNameFilter extends FilterModel {
@@ -12,7 +13,7 @@ public class CacheNameFilter extends FilterModel {
 
     /** Create a new instance of the filter. */
     public CacheNameFilter() {
-        super(FILTER_TYPE.SINGLE_FILTER_VALUE);
+        super(CacheListFilterType.SINGLE_FILTER_VALUE);
         labelLeft2.setText("Cache name contains: ");
         runDoModelUpdateNow = () -> filterString = textField.getText().toLowerCase();
     }

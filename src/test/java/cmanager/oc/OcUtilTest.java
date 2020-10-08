@@ -7,11 +7,13 @@ import cmanager.geo.Geocache;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+/** Test Opencaching utilities. */
 public class OcUtilTest {
 
+    /** Test retrieving the log URL for a given opencache log. */
     @Test
     @DisplayName("Test coordinate constructor")
-    public void testLogUrlRetrieval() throws Exception {
+    public void testLogUrlRetrieval() {
         final Geocache opencache =
                 new Geocache("", "", new Coordinate(0.0, 0.0), 1.0, 1.0, "Traditional");
         opencache.setInternalId("103011");

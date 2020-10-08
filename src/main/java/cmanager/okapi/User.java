@@ -1,6 +1,7 @@
 package cmanager.okapi;
 
 import cmanager.settings.Settings;
+import cmanager.settings.SettingsKey;
 import com.github.scribejava.core.model.OAuth1AccessToken;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
@@ -35,8 +36,8 @@ public class User implements TokenProviderInterface {
         try {
             okapiAccessToken =
                     new OAuth1AccessToken(
-                            Settings.getString(Settings.Key.OKAPI_TOKEN),
-                            Settings.getString(Settings.Key.OKAPI_TOKEN_SECRET));
+                            Settings.getString(SettingsKey.OKAPI_TOKEN),
+                            Settings.getString(SettingsKey.OKAPI_TOKEN_SECRET));
         } catch (IllegalArgumentException e) {
             okapiAccessToken = null;
         }
@@ -64,8 +65,8 @@ public class User implements TokenProviderInterface {
         okapiAccessToken = Okapi.requestAuthorization(callback);
 
         if (okapiAccessToken != null) {
-            Settings.set(Settings.Key.OKAPI_TOKEN, okapiAccessToken.getToken());
-            Settings.set(Settings.Key.OKAPI_TOKEN_SECRET, okapiAccessToken.getTokenSecret());
+            Settings.set(SettingsKey.OKAPI_TOKEN, okapiAccessToken.getToken());
+            Settings.set(SettingsKey.OKAPI_TOKEN_SECRET, okapiAccessToken.getTokenSecret());
         }
     }
 }

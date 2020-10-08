@@ -1,6 +1,7 @@
 package cmanager.geo;
 
 import cmanager.settings.Settings;
+import cmanager.settings.SettingsKey;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,7 @@ public class LocationList {
 
     /** Load the location list from the settings. */
     private void load() throws ClassNotFoundException, IOException {
-        locations = Settings.getSerialized(Settings.Key.LOCATION_LIST);
+        locations = Settings.getSerialized(SettingsKey.LOCATION_LIST);
     }
 
     /**
@@ -61,7 +62,7 @@ public class LocationList {
      * @param newLocations The locations to set.
      */
     public void setLocations(final ArrayList<Location> newLocations) throws IOException {
-        Settings.setSerialized(Settings.Key.LOCATION_LIST, newLocations);
+        Settings.setSerialized(SettingsKey.LOCATION_LIST, newLocations);
         locations = newLocations;
     }
 }

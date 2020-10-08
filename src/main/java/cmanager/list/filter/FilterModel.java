@@ -2,6 +2,7 @@ package cmanager.list.filter;
 
 import cmanager.geo.Geocache;
 import cmanager.gui.components.CacheListFilterPanel;
+import cmanager.list.CacheListFilterType;
 import cmanager.util.ThreadStore;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,7 @@ public abstract class FilterModel extends CacheListFilterPanel {
      *
      * @param filterType The type of the filter.
      */
-    public FilterModel(FILTER_TYPE filterType) {
+    public FilterModel(CacheListFilterType filterType) {
         super(filterType);
     }
 

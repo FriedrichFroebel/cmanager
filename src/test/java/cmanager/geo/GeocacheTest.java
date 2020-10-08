@@ -18,7 +18,7 @@ public class GeocacheTest {
 
     /** Set the OC site. */
     @BeforeAll
-    public static void setUp() throws Exception {
+    public static void setUp() {
         // Set the correct site.
         OcSite.setSite(SupportedSite.OPENCACHING_DE);
     }

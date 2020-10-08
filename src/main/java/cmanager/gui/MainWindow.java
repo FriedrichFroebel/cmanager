@@ -21,6 +21,7 @@ import cmanager.network.Updates;
 import cmanager.okapi.Okapi;
 import cmanager.okapi.User;
 import cmanager.settings.Settings;
+import cmanager.settings.SettingsKey;
 import cmanager.util.DesktopUtil;
 import cmanager.util.FileHelper;
 import java.awt.BorderLayout;
@@ -492,7 +493,7 @@ public class MainWindow extends JFrame {
 
         if (saveAs) {
             if (pathString == null) {
-                pathString = Settings.getString(Settings.Key.FILE_CHOOSER_LOAD_GPX);
+                pathString = Settings.getString(SettingsKey.FILE_CHOOSER_LOAD_GPX);
             }
             final JFileChooser chooser = new JFileChooser(pathString);
             chooser.setFileFilter(new FileNameExtensionFilter("ZIP Archive", "zip"));
@@ -523,7 +524,7 @@ public class MainWindow extends JFrame {
             }
 
             Settings.set(
-                    Settings.Key.FILE_CHOOSER_LOAD_GPX,
+                    SettingsKey.FILE_CHOOSER_LOAD_GPX,
                     Paths.get(pathString).getParent().toString());
         }
 
@@ -554,7 +555,7 @@ public class MainWindow extends JFrame {
      *     False</code> to add the data to the existing list.
      */
     private void openFile(final boolean createNewList) {
-        String lastPath = Settings.getString(Settings.Key.FILE_CHOOSER_LOAD_GPX);
+        String lastPath = Settings.getString(SettingsKey.FILE_CHOOSER_LOAD_GPX);
         final JFileChooser chooser = new JFileChooser(lastPath);
         chooser.setDialogType(JFileChooser.OPEN_DIALOG);
         chooser.setFileFilter(
@@ -563,7 +564,7 @@ public class MainWindow extends JFrame {
         if (chooser.showOpenDialog(THIS) == JFileChooser.APPROVE_OPTION) {
             lastPath = chooser.getSelectedFile().getPath();
             Settings.set(
-                    Settings.Key.FILE_CHOOSER_LOAD_GPX, Paths.get(lastPath).getParent().toString());
+                    SettingsKey.FILE_CHOOSER_LOAD_GPX, Paths.get(lastPath).getParent().toString());
 
             actionWithWaitDialog(
                     () -> {
@@ -648,7 +649,7 @@ public class MainWindow extends JFrame {
 
     /** Search for duplicates within the top-most list and copy the logs. */
     private void syncWithOc() {
-        final String usernameGc = Settings.getString(Settings.Key.GC_USERNAME);
+        final String usernameGc = Settings.getString(SettingsKey.GC_USERNAME);
         if (usernameGc == null || usernameGc.isEmpty()) {
             JOptionPane.showMessageDialog(
                     THIS,

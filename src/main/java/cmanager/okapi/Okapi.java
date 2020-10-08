@@ -336,8 +336,8 @@ public class Okapi {
      * Get the opencaches around the given center.
      *
      * @param tokenProvider The OAuth token provider to use.
-     * @param excludeUuid Set to an user UUID to exclude caches ignored by this user. If this is
-     *     set, the token provider cannot be null.
+     * @param excludeUuid Set to an user UUID to exclude caches ignored by this user. Additionally
+     *     own caches will be ignored. If this is set, the token provider cannot be null.
      * @param latitude The latitude of the search center.
      * @param longitude The longitude of the search center.
      * @param searchRadius The search radius to use.

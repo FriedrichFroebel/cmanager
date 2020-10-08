@@ -62,9 +62,9 @@ public class TestClient implements TokenProviderInterface {
     }
 
     /**
-     * Request the OAuth access token from the Opencaching.de site. This is an automated way of
-     * getting the required PIN without the user having to manually do anything (at least if
-     * everything works fine).
+     * Request the OAuth access token from an Opencaching site. This is an automated way of getting
+     * the required PIN without the user having to manually do anything (at least if everything
+     * works fine).
      *
      * @return The access token to use.
      * @throws IOException Something I/O-related failed - maybe the internet connection is not

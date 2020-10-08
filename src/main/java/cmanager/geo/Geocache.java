@@ -2,6 +2,7 @@ package cmanager.geo;
 
 import cmanager.oc.OcSite;
 import cmanager.settings.Settings;
+import cmanager.settings.SettingsKey;
 import cmanager.util.DateTimeUtil;
 import cmanager.util.ObjectHelper;
 import java.io.Serializable;
@@ -452,14 +453,14 @@ public class Geocache implements Serializable, Comparable<String> {
      * @param usernameOc The name of the user on OC.
      * @return The date of the most recent found log for the given user.
      */
-    public ZonedDateTime getMostRecentFoundLog(final String usernameGC, final String usernameOc) {
+    public ZonedDateTime getMostRecentFoundLog(final String usernameGc, final String usernameOc) {
         GeocacheLog mostRecentLog = null;
 
         for (final GeocacheLog log : logs) {
             if (log.isFoundLog()) {
                 // TODO: Why is there no check for the platform here? In some edge cases this might
                 // be a problem.
-                if ((usernameGC != null && log.isAuthor(usernameGC))
+                if ((usernameGc != null && log.isAuthor(usernameGc))
                         || (usernameOc != null && log.isAuthor(usernameOc))) {
                     if (mostRecentLog == null) {
                         mostRecentLog = log;
@@ -844,7 +845,7 @@ public class Geocache implements Serializable, Comparable<String> {
 
         // Get the configured username.
         // Abort if the value appears to be unset.
-        final String usernameGc = Settings.getString(Settings.Key.GC_USERNAME);
+        final String usernameGc = Settings.getString(SettingsKey.GC_USERNAME);
         if (usernameGc == null || usernameGc.isEmpty()) {
             return false;
         }

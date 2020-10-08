@@ -7,6 +7,7 @@ import cmanager.gui.components.CacheListView;
 import cmanager.gui.interfaces.RunLocationDialogInterface;
 import cmanager.list.filter.FilterModel;
 import cmanager.settings.Settings;
+import cmanager.settings.SettingsKey;
 import cmanager.util.ObjectHelper;
 import java.awt.Dimension;
 import java.beans.PropertyVetoException;
@@ -139,7 +140,7 @@ public class CacheListController {
             persistenceInfos.add(top.getPersistenceInfo());
         }
 
-        Settings.setSerialized(Settings.Key.CLC_LIST, persistenceInfos);
+        Settings.setSerialized(SettingsKey.CLC_LIST, persistenceInfos);
     }
 
     /**
@@ -162,7 +163,7 @@ public class CacheListController {
         // Load the data.
         List<PersistenceInfo> persistenceInfoList;
         try {
-            persistenceInfoList = Settings.getSerialized(Settings.Key.CLC_LIST);
+            persistenceInfoList = Settings.getSerialized(SettingsKey.CLC_LIST);
             if (persistenceInfoList == null) {
                 return;
             }

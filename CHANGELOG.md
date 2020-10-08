@@ -1,8 +1,10 @@
 # Development version
 
 * More deterministic handling of empty searches by using a fixed age of 6 months.
+* Exclude own caches when searching for duplicates.
 * Add missing Javadoc comments.
 * Switch from Travis CI to GitHub Actions.
+* Some internal refactoring for inner classes and enumerations.
 
 # Version 0.5.3 - 2020-08-05
 

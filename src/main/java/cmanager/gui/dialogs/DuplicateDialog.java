@@ -11,6 +11,7 @@ import cmanager.oc.OutputInterface;
 import cmanager.oc.ShadowList;
 import cmanager.okapi.User;
 import cmanager.settings.Settings;
+import cmanager.settings.SettingsKey;
 import cmanager.util.DesktopUtil;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -320,7 +321,7 @@ public class DuplicateDialog extends JFrame {
             rootNode.removeAllChildren();
 
             // Perform the actual sorting.
-            final String gcUsername = Settings.getString(Settings.Key.GC_USERNAME);
+            final String gcUsername = Settings.getString(SettingsKey.GC_USERNAME);
             while (!list.isEmpty()) {
                 DefaultMutableTreeNode next = null;
 

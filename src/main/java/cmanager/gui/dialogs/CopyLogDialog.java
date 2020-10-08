@@ -16,6 +16,7 @@ import cmanager.oc.ShadowList;
 import cmanager.okapi.Okapi;
 import cmanager.okapi.User;
 import cmanager.settings.Settings;
+import cmanager.settings.SettingsKey;
 import cmanager.util.DesktopUtil;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -125,7 +126,7 @@ public class CopyLogDialog extends JFrame {
             }
 
             // Skip logs where the GC user is not the author of.
-            final String gcUsername = Settings.getString(Settings.Key.GC_USERNAME);
+            final String gcUsername = Settings.getString(SettingsKey.GC_USERNAME);
             if (!log.isAuthor(gcUsername)) {
                 continue;
             }

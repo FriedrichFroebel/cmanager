@@ -2,6 +2,7 @@ package cmanager.list.filter;
 
 import cmanager.geo.Geocache;
 import cmanager.geo.Location;
+import cmanager.list.CacheListFilterType;
 
 /** Filter geocaches by the distance from the given location. */
 public class DistanceFilter extends FilterModel {
@@ -16,7 +17,7 @@ public class DistanceFilter extends FilterModel {
 
     /** Create a new instance of the filter. */
     public DistanceFilter() {
-        super(FILTER_TYPE.SINGLE_FILTER_VALUE);
+        super(CacheListFilterType.SINGLE_FILTER_VALUE);
         labelLeft2.setText("Maximum distance to location (km): ");
         runDoModelUpdateNow = () -> distanceMax = Double.valueOf(textField.getText());
     }

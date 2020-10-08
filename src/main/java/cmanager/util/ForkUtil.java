@@ -2,6 +2,7 @@ package cmanager.util;
 
 import cmanager.Main;
 import cmanager.settings.Settings;
+import cmanager.settings.SettingsKey;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.JOptionPane;
@@ -74,7 +75,7 @@ public class ForkUtil {
         }
 
         // Read settings.
-        final String heapSizeString = Settings.getString(Settings.Key.HEAP_SIZE);
+        final String heapSizeString = Settings.getString(SettingsKey.HEAP_SIZE);
         Integer heapSizeInteger = null;
         try {
             heapSizeInteger = Integer.valueOf(heapSizeString);

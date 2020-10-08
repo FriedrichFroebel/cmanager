@@ -1,7 +1,6 @@
 package cmanager.gui.components;
 
 import cmanager.geo.Geocache;
-import cmanager.geo.GeocacheType;
 import cmanager.global.Compatibility;
 import cmanager.global.Constants;
 import cmanager.gui.interfaces.RunLocationDialogInterface;
@@ -12,7 +11,6 @@ import cmanager.list.filter.FilterModel;
 import cmanager.osm.PersistentTileCache;
 import cmanager.util.DesktopUtil;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -42,7 +40,6 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
-import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.DefaultMapController;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
@@ -443,60 +440,8 @@ public class CacheListView extends JInternalFrame {
      * @param geocache The geocache to add a marker for.
      */
     private void addMapMarker(final Geocache geocache) {
-        final MapMarkerDot mapMarkerDot = new MapMarkerCache(geocache);
+        final MapMarkerDot mapMarkerDot = new MapMarkerGeocache(geocache);
         mapViewer.addMapMarker(mapMarkerDot);
-    }
-
-    /** Map marker for a geocache. */
-    // TODO: Move to own class.
-    private static class MapMarkerCache extends MapMarkerDot {
-
-        /** The geocache instance for this marker. */
-        private final Geocache geocache;
-
-        /**
-         * Create a new marker for the given geocache.
-         *
-         * @param geocache The geocache to create the marker for.
-         */
-        public MapMarkerCache(final Geocache geocache) {
-            super(
-                    new Coordinate(
-                            geocache.getCoordinate().getLatitude(),
-                            geocache.getCoordinate().getLongitude()));
-            this.geocache = geocache;
-
-            setName("");
-
-            if (geocache.getType().equals(GeocacheType.getTradiType())) {
-                setColor(new Color(0x009900));
-            } else if (geocache.getType().equals(GeocacheType.getMultiType())) {
-                setColor(new Color(0xFFCC00));
-            } else if (geocache.getType().equals(GeocacheType.getMysteryType())) {
-                setColor(new Color(0x0066FF));
-            } else {
-                setColor(Color.GRAY);
-            }
-        }
-
-        /**
-         * Set the given color for the marker.
-         *
-         * @param color The color to set.
-         */
-        public void setColor(final Color color) {
-            super.setColor(Color.BLACK);
-            super.setBackColor(color);
-        }
-
-        /**
-         * Get the geocache instance for this marker.
-         *
-         * @return The associated geocache instance.
-         */
-        public Geocache getCache() {
-            return geocache;
-        }
     }
 
     /**
@@ -518,7 +463,7 @@ public class CacheListView extends JInternalFrame {
         final int y2 = Math.max(point1.y, point2.y);
 
         for (final MapMarker mapMarker : mapViewer.getMapMarkerList()) {
-            final MapMarkerCache mapMarkerCache = (MapMarkerCache) mapMarker;
+            final MapMarkerGeocache mapMarkerCache = (MapMarkerGeocache) mapMarker;
             final Point markerPosition =
                     mapViewer.getMapPosition(mapMarker.getLat(), mapMarker.getLon());
 
@@ -626,7 +571,7 @@ public class CacheListView extends JInternalFrame {
         final List<MapMarker> mapMarkers = mapViewer.getMapMarkerList();
 
         for (final MapMarker marker : mapMarkers) {
-            final MapMarkerCache mapMarkerCache = (MapMarkerCache) marker;
+            final MapMarkerGeocache mapMarkerCache = (MapMarkerGeocache) marker;
 
             final Point MarkerPosition =
                     mapViewer.getMapPosition(mapMarkerCache.getLat(), mapMarkerCache.getLon());

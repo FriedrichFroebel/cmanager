@@ -9,8 +9,10 @@ import java.time.ZonedDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+/** Test the date and time specific utilities. */
 public class DateTimeUtilTest {
 
+    /** Test the month-based invalidation with up-to-date data. */
     @Test
     @DisplayName("Test month-based invalidation with up-to-date datetimes")
     public void testMonthInvalidationUpToDate() {
@@ -23,6 +25,7 @@ public class DateTimeUtilTest {
                         LocalDateTime.now().minusMonths(3).plusMinutes(5), 3));
     }
 
+    /** Test the month-based invalidation with old data. */
     @Test
     @DisplayName("Test month-based invalidation with outdated datetimes")
     public void testMonthInvalidationOutdated() {
@@ -32,6 +35,7 @@ public class DateTimeUtilTest {
         assertTrue(DateTimeUtil.isTooOldWithMonths(LocalDateTime.now().minusMonths(4), 3));
     }
 
+    /** Test the ISO datetime parser with the different formats we experience during execution. */
     @Test
     @DisplayName("Test the ISO datetime parser")
     public void testParseIsoDateTime() {
@@ -42,6 +46,7 @@ public class DateTimeUtilTest {
         assertEquals(dateTimeOpencachingDe, dateTimeGeocachingCom);
     }
 
+    /** Test the day range checker with dates being close enough to each other. */
     @Test
     @DisplayName("Test day range check with dates close enough")
     public void testIsInDayRangeInside() {
@@ -52,6 +57,7 @@ public class DateTimeUtilTest {
         assertTrue(DateTimeUtil.isInDayRange(older, newer, 1));
     }
 
+    /** Test the day range checker with dates being about half a year apart. */
     @Test
     @DisplayName("Test day range check with dates too much apart")
     public void testIsInDayRangeOutside() {

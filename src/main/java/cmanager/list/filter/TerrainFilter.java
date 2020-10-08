@@ -1,6 +1,7 @@
 package cmanager.list.filter;
 
 import cmanager.geo.Geocache;
+import cmanager.list.CacheListFilterType;
 
 /** Filter geocaches by terrain rating. */
 public class TerrainFilter extends FilterModel {
@@ -15,7 +16,7 @@ public class TerrainFilter extends FilterModel {
 
     /** Create a new instance of the filter. */
     public TerrainFilter() {
-        super(FILTER_TYPE.BETWEEN_ONE_AND_FIVE_FILTER_VALUE);
+        super(CacheListFilterType.BETWEEN_ONE_AND_FIVE_FILTER_VALUE);
         getLabelLeft().setText("min Terrain:");
         getLabelRight().setText("max Terrain:");
 

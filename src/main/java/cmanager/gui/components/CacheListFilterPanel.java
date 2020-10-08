@@ -1,5 +1,6 @@
 package cmanager.gui.components;
 
+import cmanager.list.CacheListFilterType;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.FlowLayout;
@@ -17,16 +18,6 @@ import javax.swing.JToggleButton;
 
 /** Panel for one filter. */
 public abstract class CacheListFilterPanel extends JPanel {
-
-    /** The available filter types. */
-    // TODO: Move this to own file?
-    protected enum FILTER_TYPE {
-        /** A filter with a value range of 1.0 to 5.0. */
-        BETWEEN_ONE_AND_FIVE_FILTER_VALUE,
-
-        /** A filter with a single values. */
-        SINGLE_FILTER_VALUE
-    }
 
     private static final long serialVersionUID = -6181151635761995945L;
 
@@ -87,7 +78,7 @@ public abstract class CacheListFilterPanel extends JPanel {
      *
      * @param filterType The type of the filter to use for this panel.
      */
-    public CacheListFilterPanel(FILTER_TYPE filterType) {
+    public CacheListFilterPanel(CacheListFilterType filterType) {
         // Handle entering ENTER like clicking the update button.
         final KeyAdapter keyEnterUpdate =
                 new KeyAdapter() {
@@ -154,7 +145,7 @@ public abstract class CacheListFilterPanel extends JPanel {
         panel.add(panel4, BorderLayout.CENTER);
         panel4.setLayout(new BoxLayout(panel4, BoxLayout.Y_AXIS));
 
-        if (filterType == FILTER_TYPE.SINGLE_FILTER_VALUE) {
+        if (filterType == CacheListFilterType.SINGLE_FILTER_VALUE) {
             // Initialize the panel.
             panel2 = new JPanel();
             panel4.add(panel2);
@@ -168,7 +159,7 @@ public abstract class CacheListFilterPanel extends JPanel {
             textField = new JTextField();
             panel2.add(textField, BorderLayout.CENTER);
             textField.addKeyListener(keyEnterUpdate);
-        } else if (filterType == FILTER_TYPE.BETWEEN_ONE_AND_FIVE_FILTER_VALUE) {
+        } else if (filterType == CacheListFilterType.BETWEEN_ONE_AND_FIVE_FILTER_VALUE) {
             // The values to use.
             final Double[] values = {1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0};
 

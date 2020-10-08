@@ -6,6 +6,7 @@ import cmanager.okapi.Okapi;
 import cmanager.okapi.RequestAuthorizationCallbackInterface;
 import cmanager.okapi.User;
 import cmanager.settings.Settings;
+import cmanager.settings.SettingsKey;
 import cmanager.util.DesktopUtil;
 import cmanager.util.ForkUtil;
 import java.awt.BorderLayout;
@@ -133,7 +134,7 @@ public class SettingsDialog extends JDialog {
         springLayoutPanelOc.putConstraint(
                 SpringLayout.EAST, labelUsernameOc, -31, SpringLayout.EAST, panelOc);
         labelUsernameOc.setHorizontalAlignment(SwingConstants.LEFT);
-        labelUsernameOc.setText(Settings.getString(Settings.Key.OC_USERNAME));
+        labelUsernameOc.setText(Settings.getString(SettingsKey.OC_USERNAME));
         panelOc.add(labelUsernameOc);
 
         // GC tab.
@@ -168,7 +169,7 @@ public class SettingsDialog extends JDialog {
 
         // Load the data from the settings.
         displayOkapiTokenStatus();
-        textUsernameGc.setText(Settings.getString(Settings.Key.GC_USERNAME));
+        textUsernameGc.setText(Settings.getString(SettingsKey.GC_USERNAME));
 
         // General settings tab.
         final JPanel panelGeneral = new JPanel();
@@ -226,7 +227,7 @@ public class SettingsDialog extends JDialog {
         gbcTextHeapSize.fill = GridBagConstraints.HORIZONTAL;
         panelGeneral.add(textHeapSize, gbcTextHeapSize);
         textHeapSize.setColumns(10);
-        textHeapSize.setText(Settings.getString(Settings.Key.HEAP_SIZE));
+        textHeapSize.setText(Settings.getString(SettingsKey.HEAP_SIZE));
 
         final JLabel labelHeapSizeText = new JLabel("Heap size* (MB):");
         labelHeapSizeText.setHorizontalAlignment(SwingConstants.CENTER);
@@ -263,7 +264,7 @@ public class SettingsDialog extends JDialog {
                 buttonRequestNewToken.setVisible(false);
 
                 final String username = Okapi.getUsername(user);
-                Settings.set(Settings.Key.OC_USERNAME, username);
+                Settings.set(SettingsKey.OC_USERNAME, username);
                 labelUsernameOc.setText(username);
             }
         } catch (Exception ignored) {
@@ -276,15 +277,15 @@ public class SettingsDialog extends JDialog {
 
         // Check if a restart is required due to a changed heap size.
         final String newHeapSize = textHeapSize.getText();
-        final String oldHeapSize = Settings.getString(Settings.Key.HEAP_SIZE);
+        final String oldHeapSize = Settings.getString(SettingsKey.HEAP_SIZE);
         if ((oldHeapSize != null && !oldHeapSize.equals(newHeapSize))
                 || (oldHeapSize == null && newHeapSize.length() > 0)) {
             changesWhichNeedRestart = true;
         }
 
         // Save the non-OC settings.
-        Settings.set(Settings.Key.GC_USERNAME, textUsernameGc.getText());
-        Settings.set(Settings.Key.HEAP_SIZE, newHeapSize);
+        Settings.set(SettingsKey.GC_USERNAME, textUsernameGc.getText());
+        Settings.set(SettingsKey.HEAP_SIZE, newHeapSize);
 
         // Request a restart.
         if (changesWhichNeedRestart) {

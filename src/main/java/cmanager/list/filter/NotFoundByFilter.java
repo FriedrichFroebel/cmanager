@@ -2,6 +2,7 @@ package cmanager.list.filter;
 
 import cmanager.geo.Geocache;
 import cmanager.geo.GeocacheLog;
+import cmanager.list.CacheListFilterType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class NotFoundByFilter extends FilterModel {
 
     /** Create a new instance of the filter. */
     public NotFoundByFilter() {
-        super(FILTER_TYPE.SINGLE_FILTER_VALUE);
+        super(CacheListFilterType.SINGLE_FILTER_VALUE);
         labelLeft2.setText("Not Found by: ");
         runDoModelUpdateNow = this::retrieveUsernames;
     }

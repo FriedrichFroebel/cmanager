@@ -2,6 +2,7 @@ package cmanager.okapi.helper;
 
 import cmanager.oc.SupportedSite;
 
+/** Handle OKAPI website configuration values. */
 public class SiteHelper {
 
     /** The currently selected site. */
@@ -12,7 +13,7 @@ public class SiteHelper {
      *
      * @param site The site to set.
      */
-    public static void setSite(SupportedSite site) {
+    public static void setSite(final SupportedSite site) {
         selectedSite = site;
     }
 
