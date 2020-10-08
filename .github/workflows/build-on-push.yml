@@ -186,11 +186,11 @@ jobs:
       # Please note that we cannot use `git rev-parse --short HEAD` for the short commit hash here, as we do not checkout
       # the code in this job.
       - name: Retrieve Long Commit Hash
-        run: echo ::set-env name=LONG_HASH::$(echo $GITHUB_SHA)
+        run: echo "LONG_HASH=$(echo $GITHUB_SHA)" >> $GITHUB_ENV
       - name: Retrieve Short Commit Hash
-        run: echo ::set-env name=SHORT_HASH::$(echo $GITHUB_SHA | cut -c 1-7)
+        run: echo "SHORT_HASH=$(echo $GITHUB_SHA | cut -c 1-7)" >> $GITHUB_ENV
       - name: Retrieve Timestamp
-        run: echo ::set-env name=TIMESTAMP::$(date +'%F %T %Z')
+        run: echo "TIMESTAMP=$(date +'%F %T %Z')" >> $GITHUB_ENV
 
       # Create the pre-release.
       - name: Create Release
