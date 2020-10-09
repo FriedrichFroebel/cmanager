@@ -121,7 +121,7 @@ jobs:
       # See https://github.com/sormuras/download-jdk
       # We have to use the `master` branch here as the required fix has been introduced after the first release.
       - name: Download JDK
-        uses: sormuras/download-jdk@master
+        uses: sormuras/download-jdk@v1
         id: jdk
         with:
           feature: ${{ matrix.java }}
