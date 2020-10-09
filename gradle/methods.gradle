@@ -7,6 +7,21 @@ ext.isCi = { ->
     return (System.getenv('CI') == 'true')
 }
 
+// Check if this a pull request.
+ext.isPullRequest = { ->
+    def githubEventName = System.getenv('GITHUB_EVENT_NAME')
+    def travis = System.getenv('TRAVIS')
+
+    if (githubEventName != null && githubEventName == 'pull_request') return true;
+
+    if (travis != null) {
+        def travisPullRequest = System.getenv('TRAVIS_PULL_REQUEST')
+        if (travis == 'true' && travisPullRequest != null && travisPullRequest != 'false') return true;
+    }
+
+    return false;
+}
+
 // Retrieve the system string for indicating the package content.
 ext.getSystemString = { ->
     def osName = System.getProperty('os.name').toLowerCase()
