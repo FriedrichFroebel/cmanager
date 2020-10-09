@@ -188,10 +188,7 @@ public class OkapiRealInteractionTest {
         Okapi.updateFoundStatus(testClient, geocache);
         assertFalse(geocache.getIsFound());
 
-        // As this functionality is not available from within the GUI for now, the OKAPI class does
-        // not handle this for now. Nevertheless the functionality works in theory, which can be
-        // verified with the following lines.
-        /*// Set the correct log password.
+        // Set the correct log password.
         log.setPassword("cmanagerTest");
 
         // Post the log, using the correct log password this time.
@@ -203,6 +200,6 @@ public class OkapiRealInteractionTest {
         assertNotNull(logUuid);
         Okapi.deleteLog(testClient, logUuid);
         Okapi.updateFoundStatus(testClient, geocache);
-        assertFalse(geocache.getIsFound());*/
+        assertFalse(geocache.getIsFound());
     }
 }

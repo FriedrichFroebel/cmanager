@@ -188,10 +188,10 @@ class OkapiUrlBuilder {
                         .addParameter("when", log.getDateStrIso8601NoTime());
 
         // The GUI does not yet provide this functionality, so we keep it disabled for now.
-        /*final Boolean doesRequirePassword = opencache.doesRequirePassword();
+        final Boolean doesRequirePassword = opencache.doesRequirePassword();
         if (doesRequirePassword != null && doesRequirePassword) {
             builder.addParameter("password", log.getPassword());
-        }*/
+        }
 
         return builder.toString();
     }

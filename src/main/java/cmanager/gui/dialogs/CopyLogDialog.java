@@ -9,6 +9,7 @@ import cmanager.gui.GuiUtils;
 import cmanager.gui.MainWindow;
 import cmanager.gui.components.CacheListView;
 import cmanager.gui.components.CachePanel;
+import cmanager.gui.components.HintedTextField;
 import cmanager.gui.components.LogPanel;
 import cmanager.gui.components.Logo;
 import cmanager.oc.OcUtil;
@@ -53,6 +54,9 @@ public class CopyLogDialog extends JFrame {
 
     /** The scroll container for the log entries (right column). */
     private final JScrollPane scrollPane;
+
+    /** The hinted text field for the log password. */
+    private HintedTextField textFieldPassword = null;
 
     /**
      * Create the dialog.
@@ -135,6 +139,18 @@ public class CopyLogDialog extends JFrame {
             final LogPanel logPanel = new LogPanel(log);
             panelLogs.add(logPanel, gbc);
             gbc.gridy++;
+
+            // Add the password field if required.
+            if (oc.doesRequirePassword() != null && oc.doesRequirePassword()) {
+                final GridBagConstraints gbcPassword = (GridBagConstraints) gbc.clone();
+                gbcPassword.weighty = 0;
+                gbcPassword.fill = 1;
+                gbcPassword.insets = new Insets(0, 10, 10, 0);
+
+                textFieldPassword = new HintedTextField("Log password");
+                panelLogs.add(textFieldPassword, gbcPassword);
+                gbc.gridy++;
+            }
 
             final GridBagConstraints gbcButton = (GridBagConstraints) gbc.clone();
             gbcButton.weighty = 0;
@@ -234,6 +250,17 @@ public class CopyLogDialog extends JFrame {
 
             // Retrieve the new log text.
             log.setText(logPanel.getLogText());
+
+            // Retrieve the log password.
+            // NOTE: We might want to save the password inside the personal note for this geocache
+            // later, see https://www.opencaching.de/okapi/services/caches/save_personal_notes.html
+            // For now the current approach should be sufficient, as duplicates requiring log
+            // passwords might be rather uncommon anyway.
+            if (textFieldPassword != null
+                    && oc.doesRequirePassword() != null
+                    && oc.doesRequirePassword()) {
+                log.setPassword(textFieldPassword.getText());
+            }
 
             // Copy the log and determine its URL.
             final String logId = Okapi.postLog(User.getOkapiUser(), oc, log, true);

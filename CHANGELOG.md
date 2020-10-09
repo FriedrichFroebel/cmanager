@@ -2,6 +2,7 @@
 
 * More deterministic handling of empty searches by using a fixed age of 6 months.
 * Exclude own caches when searching for duplicates.
+* Add log password field if the geocache requires one.
 * Add missing Javadoc comments.
 * Switch from Travis CI to GitHub Actions.
 * Some internal refactoring for inner classes and enumerations.
