@@ -1,5 +1,7 @@
 # Development version
 
+# Version 0.6.0 - 2020-10-14
+
 * More deterministic handling of empty searches by using a fixed age of 6 months.
 * Exclude own caches when searching for duplicates.
 * Add log password field if the geocache requires one.
