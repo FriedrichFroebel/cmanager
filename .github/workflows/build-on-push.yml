@@ -85,7 +85,7 @@ jobs:
 
       # Upload the artifact to access it for deployment.
       - name: Upload Artifact
-        if: ${{ matrix.java == '14' }}
+        if: ${{ matrix.java == '15' }}
         uses: actions/upload-artifact@v2
         with:
           name: cm-ci.jar
@@ -104,10 +104,10 @@ jobs:
     # The format checker requires at least Java 11, while Java 14 and 15 are more recent.
     # Please note that we still support Java versions starting with Java 8, but we cannot compile our
     # code with Java 8 as they miss the newer APIs we reference inside the `Compatibility.java` file.
-    # NOTE: We only use Java 14 here, as this should be enough for now.
+    # NOTE: We only use Java 15 here, as this should be enough for now.
     strategy:
       matrix:
-        java: [14] # , 11, 15]
+        java: [15] # , 11, 14]
 
     # Use a better name.
     name: Windows Build with Java ${{ matrix.java }}

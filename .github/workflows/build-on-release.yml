@@ -73,7 +73,7 @@ jobs:
 
       # Upload the artifact to access it for deployment.
       - name: Upload Artifact
-        if: ${{ matrix.java == '14' && !github.event.release.prerelease }}
+        if: ${{ matrix.java == '15' && !github.event.release.prerelease }}
         uses: actions/upload-artifact@v2
         with:
           name: cm-ci.jar
