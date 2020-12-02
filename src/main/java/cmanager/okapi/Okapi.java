@@ -385,7 +385,7 @@ public class Okapi {
         // Deserialize the JSON data.
         final CachesSearchNearestDocument document =
                 new Gson().fromJson(responseBody, CachesSearchNearestDocument.class);
-        if (document == null) {
+        if (document == null || document.getResults() == null) {
             return null;
         }
 
