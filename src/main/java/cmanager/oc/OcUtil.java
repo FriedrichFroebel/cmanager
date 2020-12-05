@@ -149,6 +149,12 @@ public class OcUtil {
             final double searchRadius = geocache.hasVolatileStart() ? 1 : 0.05;
             final List<Geocache> similar =
                     Okapi.getCachesAround(user, uuid, geocache, searchRadius, OKAPI_RUNTIME_CACHE);
+
+            if (similar == null) {
+                LOGGER.info(MessageFormat.format("Found no candidates for {1}." geocache.getCode()));
+                SearchCache.setEmptySearch(geocache, uuid);
+                return;
+            }
             LOGGER.info(
                     MessageFormat.format(
                             "Found {0} candidates for {1}.", similar.size(), geocache.getCode()));
