@@ -26,10 +26,13 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -42,6 +45,11 @@ import javax.swing.border.EmptyBorder;
 public class CopyLogDialog extends JFrame {
 
     private static final long serialVersionUID = 363313395887255591L;
+
+    /**
+     * Save the bounds.
+     */
+    private static Rectangle savedBounds = new Rectangle(100, 100, 850, 500);
 
     /** The current instance. */
     private final CopyLogDialog THIS = this;
@@ -77,7 +85,7 @@ public class CopyLogDialog extends JFrame {
         Logo.setLogo(this);
 
         setTitle("Copy Logs");
-        setBounds(100, 100, 850, 500);
+        setBounds(savedBounds);
         getContentPane().setLayout(new BorderLayout());
 
         final JPanel contentPanel = new JPanel();
@@ -210,7 +218,18 @@ public class CopyLogDialog extends JFrame {
 
         final JButton buttonReturn = new JButton("Return");
         buttonPane.add(buttonReturn);
-        buttonReturn.addActionListener(actionEvent -> THIS.setVisible(false));
+        buttonReturn.addActionListener(actionEvent -> {
+            THIS.dispatchEvent(new WindowEvent(THIS, WindowEvent.WINDOW_CLOSING));
+        });
+
+        // Handle close events.
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent windowEvent) {
+                savedBounds = THIS.getBounds();
+                super.windowClosing(windowEvent);
+            }
+        });
 
         // Fix the split panes on initialization and when resizing the window.
         THIS.addComponentListener(
