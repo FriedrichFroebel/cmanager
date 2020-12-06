@@ -46,9 +46,7 @@ public class CopyLogDialog extends JFrame {
 
     private static final long serialVersionUID = 363313395887255591L;
 
-    /**
-     * Save the bounds.
-     */
+    /** Save the bounds. */
     private static Rectangle savedBounds = new Rectangle(100, 100, 850, 500);
 
     /** The current instance. */
@@ -218,18 +216,20 @@ public class CopyLogDialog extends JFrame {
 
         final JButton buttonReturn = new JButton("Return");
         buttonPane.add(buttonReturn);
-        buttonReturn.addActionListener(actionEvent -> {
-            THIS.dispatchEvent(new WindowEvent(THIS, WindowEvent.WINDOW_CLOSING));
-        });
+        buttonReturn.addActionListener(
+                actionEvent -> {
+                    THIS.dispatchEvent(new WindowEvent(THIS, WindowEvent.WINDOW_CLOSING));
+                });
 
         // Handle close events.
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent windowEvent) {
-                savedBounds = THIS.getBounds();
-                super.windowClosing(windowEvent);
-            }
-        });
+        addWindowListener(
+                new WindowAdapter() {
+                    @Override
+                    public void windowClosing(WindowEvent windowEvent) {
+                        savedBounds = THIS.getBounds();
+                        super.windowClosing(windowEvent);
+                    }
+                });
 
         // Fix the split panes on initialization and when resizing the window.
         THIS.addComponentListener(
