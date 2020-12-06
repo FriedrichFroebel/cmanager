@@ -49,6 +49,7 @@ dependencies {
     // Use JUnit test framework.
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.7.0'
     testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.7.0'
+    testImplementation group: 'org.mockito', name: 'mockito-inline', version: '3.6.28'
 }
 
 // Define the main class for the application.
@@ -61,7 +62,7 @@ targetCompatibility = 1.8
 version = '0.6.0'
 
 wrapper {
-    gradleVersion = '6.7'
+    gradleVersion = '6.7.1'
 }
 
 // Use JUnit 5 for testing.

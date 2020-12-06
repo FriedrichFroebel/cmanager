@@ -122,7 +122,9 @@ public class OcUtil {
 
         try {
             // Set the current progress data.
-            outputInterface.setProgress(count.get(), cacheListModel.getList().size());
+            if (outputInterface != null && cacheListModel != null) {
+                outputInterface.setProgress(count.get(), cacheListModel.getList().size());
+            }
             count.getAndIncrement();
 
             // Use the search cache for empty searches for speed improvements.
@@ -153,7 +155,10 @@ public class OcUtil {
             if (similar == null) {
                 LOGGER.info(
                         MessageFormat.format("Found no candidates for {0}.", geocache.getCode()));
-                SearchCache.setEmptySearch(geocache, uuid);
+                if (outputInterface != null) {
+                    // Avoid setting empty searches from within tests.
+                    SearchCache.setEmptySearch(geocache, uuid);
+                }
                 return null;
             }
             LOGGER.info(
@@ -166,13 +171,16 @@ public class OcUtil {
                 // multiple runs without closing the application in between.
                 if (GeocacheComparator.areSimilar(opencache.getBasicCopy(), geocache)) {
                     Okapi.completeCacheDetails(opencache);
-                    outputInterface.match(geocache, opencache);
+                    if (outputInterface != null) {
+                        outputInterface.match(geocache, opencache);
+                    }
                     match = true;
                 }
             }
 
             // If there is no match, remember that this is the case.
-            if (!match) {
+            // The second condition avoids setting empty searches from within tests.
+            if (!match && outputInterface != null) {
                 SearchCache.setEmptySearch(geocache, uuid);
             }
         } catch (Throwable throwable) {
