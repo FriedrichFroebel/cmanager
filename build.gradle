@@ -47,9 +47,9 @@ dependencies {
     implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
 
     // Use JUnit test framework.
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.7.0'
-    testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.7.0'
-    testImplementation group: 'org.mockito', name: 'mockito-inline', version: '3.6.28'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.7.1'
+    testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.7.1'
+    testImplementation group: 'org.mockito', name: 'mockito-inline', version: '3.7.7'
 }
 
 // Define the main class for the application.
@@ -62,7 +62,7 @@ targetCompatibility = 1.8
 version = '0.6.0'
 
 wrapper {
-    gradleVersion = '6.7.1'
+    gradleVersion = '6.8.2'
 }
 
 // Use JUnit 5 for testing.

@@ -1,5 +1,9 @@
 # Development version
 
+* Remember the bounds of the log copy dialog during the active session.
+* Fix some NullPointerExceptions.
+* Build the actual releases with OpenJDK 15.
+
 # Version 0.6.0 - 2020-10-14
 
 * More deterministic handling of empty searches by using a fixed age of 6 months.
