@@ -24,9 +24,9 @@ public class Compatibility {
         }
 
         System.out.println(
-                "Falling back to the deprecated getMenuShortcutKeyMask() method."
-                        + "This compatibility function will probably get removed in a later version."
-                        + "Please consider upgrading to the latest Java version if possible."
+                "Falling back to the deprecated getMenuShortcutKeyMask() method. "
+                        + "This compatibility function will probably get removed in a later version. "
+                        + "Please consider upgrading to the latest Java version if possible. "
                         + "(At the moment Java 10 should be sufficient, but may lacks security updates.)");
         return Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
     }
