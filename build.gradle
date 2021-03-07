@@ -1,12 +1,12 @@
 plugins {
     // Apply the versions plugin to check for module dependency updates.
-    id 'com.github.ben-manes.versions' version '0.36.0'
+    id 'com.github.ben-manes.versions' version '0.38.0'
 
     // Apply the Google Java formatter plugin for automatically reformatting files.
     id 'com.github.sherter.google-java-format' version '0.9'
 
     // Create runtime images.
-    id 'org.beryx.runtime' version '1.12.1'
+    id 'org.beryx.runtime' version '1.12.2'
 }
 
 // Apply the java plugin to add support for Java.
@@ -49,7 +49,7 @@ dependencies {
     // Use JUnit test framework.
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.7.1'
     testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.7.1'
-    testImplementation group: 'org.mockito', name: 'mockito-inline', version: '3.7.7'
+    testImplementation group: 'org.mockito', name: 'mockito-inline', version: '3.8.0'
 }
 
 // Define the main class for the application.
@@ -62,7 +62,7 @@ targetCompatibility = 1.8
 version = '0.6.0'
 
 wrapper {
-    gradleVersion = '6.8.2'
+    gradleVersion = '6.8.3'
 }
 
 // Use JUnit 5 for testing.
