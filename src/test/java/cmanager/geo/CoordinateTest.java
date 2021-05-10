@@ -22,9 +22,11 @@ public class CoordinateTest {
         assertEquals(4.56, coordinate1.getLongitude(), 0.0);
 
         final Coordinate coordinate2 = new Coordinate(1.23, 4.56);
+        final String[] coordinate2Parts = coordinate2.toString().split(",");
         assertEquals(1.23, coordinate2.getLatitude(), 0.0);
         assertEquals(4.56, coordinate2.getLongitude(), 0.0);
-        assertEquals("1.23, 4.56", coordinate2.toString());
+        assertEquals(1.23, Double.parseDouble(coordinate2Parts[0]), 0.01);
+        assertEquals(4.56, Double.parseDouble(coordinate2Parts[1]), 0.01);
 
         assertTrue(coordinate1.equals(coordinate2)); // assertEquals will fail.
         assertEquals(0, coordinate1.distanceHaversine(coordinate2), 0);
@@ -33,6 +35,14 @@ public class CoordinateTest {
         assertFalse(coordinate1.equals(coordinate3)); // assertEquals will fail.
         assertEquals(778.1851, coordinate1.distanceHaversine(coordinate3), 0.00009);
         assertEquals(778.185, coordinate1.distanceHaversineRounded(coordinate3), 0);
+    }
+
+    /** Test the string conversion with small coordinate values (see issue #44). */
+    @Test
+    @DisplayName("Test string conversion with small values")
+    public void testToStringWithSmallValues() {
+        final Coordinate coordinate = new Coordinate(0.00000383, 0.00005);
+        assertFalse(coordinate.toString().contains("E"));
     }
 
     /** Test the distance calculation. */

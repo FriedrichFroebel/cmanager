@@ -128,13 +128,26 @@ public class Coordinate implements Serializable {
     }
 
     /**
+     * Convert the given double value to a string, while avoiding any scientific notation.
+     *
+     * <p>See issue #44 for more information.
+     *
+     * @param value The value to convert to a string.
+     * @return The value in non-scientific notation, even if it is rather small.
+     */
+    private String doubleToString(final double value) {
+        final BigDecimal bigDecimal = new BigDecimal(value);
+        return bigDecimal.toPlainString();
+    }
+
+    /**
      * Get the given coordinate as a string, by concatenating the latitude and longitude values
      * using `, `.
      *
      * @return The string representation of the coordinate.
      */
     public String toString() {
-        return Double.valueOf(latitude).toString() + ", " + Double.valueOf(longitude).toString();
+        return doubleToString(latitude) + ", " + doubleToString(longitude);
     }
 
     /**
