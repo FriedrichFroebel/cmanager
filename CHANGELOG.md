@@ -1,8 +1,14 @@
 # Development version
 
+
+
+# Version 0.6.1 - 2021-05-10
+
 * Remember the bounds of the log copy dialog during the active session.
+* Fix OKAPI requests with small coordinate values near zero which have been serialized in scientific notation before.
 * Fix some NullPointerExceptions.
 * Build the actual releases with OpenJDK 15.
+* Update some libraries.
 
 # Version 0.6.0 - 2020-10-14
 
