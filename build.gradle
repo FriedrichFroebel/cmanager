@@ -40,7 +40,7 @@ repositories {
 dependencies {
     implementation group: 'commons-codec', name: 'commons-codec', version: '1.15'
     implementation group: 'org.apache.commons', name: 'commons-text', version: '1.9'
-    implementation group: 'com.github.scribejava', name: 'scribejava-core', version: '8.3.0'
+    implementation group: 'com.github.scribejava', name: 'scribejava-core', version: '8.3.1'
     implementation group: 'org.openstreetmap.jmapviewer', name: 'jmapviewer', version: '2.15'
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.6'
     implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
@@ -48,7 +48,7 @@ dependencies {
     // Use JUnit test framework.
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.7.1'
     testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.7.1'
-    testImplementation group: 'org.mockito', name: 'mockito-inline', version: '3.9.0'
+    testImplementation group: 'org.mockito', name: 'mockito-inline', version: '3.10.0'
 }
 
 // Define the main class for the application.
