@@ -3,7 +3,6 @@ package cmanager.oc;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.times;
 
 import cmanager.geo.Coordinate;
 import cmanager.geo.Geocache;
@@ -64,10 +63,8 @@ public class OcUtilTest {
                     throwableAtomicReference);
             assertNull(throwableAtomicReference.get());
             okapiMockedStatic.verify(
-                    times(1),
                     () -> Okapi.getCachesAround(null, null, geocache, 0.05, okapiRuntimeCache));
-            searchCacheMockedStatic.verify(
-                    times(1), () -> SearchCache.isEmptySearch(geocache, null));
+            searchCacheMockedStatic.verify(() -> SearchCache.isEmptySearch(geocache, null));
         }
     }
 }
