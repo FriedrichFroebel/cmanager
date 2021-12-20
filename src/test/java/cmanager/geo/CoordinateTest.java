@@ -2,6 +2,7 @@ package cmanager.geo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -42,7 +43,8 @@ public class CoordinateTest {
     @DisplayName("Test string conversion with small values")
     public void testToStringWithSmallValues() {
         final Coordinate coordinate = new Coordinate(0.00000383, 0.00005);
-        assertFalse(coordinate.toString().contains("E"));
+        assertEquals("3.83E-6, 5.0E-5", coordinate.toShortString());
+        assertNotEquals(coordinate.toShortString(), coordinate.toString());
     }
 
     /** Test the distance calculation. */

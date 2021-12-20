@@ -151,6 +151,16 @@ public class Coordinate implements Serializable {
     }
 
     /**
+     * Get the given coordinate as a short string. This might use scientific notation for small
+     * values, so it should only be used internally, but not for the OKAPI.
+     *
+     * @return The short string representation of the coordinate.
+     */
+    String toShortString() {
+        return Double.toString(latitude) + ", " + Double.toString(longitude);
+    }
+
+    /**
      * Calculate the haversine distance between the given coordinate and the current instance.
      *
      * <p>The haversine distance is the shortest distance over the earth's surface, while ignoring

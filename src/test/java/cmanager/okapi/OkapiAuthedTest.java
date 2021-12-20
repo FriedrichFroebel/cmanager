@@ -1,6 +1,7 @@
 package cmanager.okapi;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -50,7 +51,7 @@ public class OkapiAuthedTest {
         final List<Geocache> caches =
                 Okapi.getCachesAround(null, null, 53.01952, 008.53440, 1.0, new ArrayList<>());
         assertNotNull(caches);
-        assertTrue(caches.size() >= 3);
+        assertTrue(caches.size() >= 3, Integer.toString(caches.size()));
     }
 
     /**
@@ -67,9 +68,8 @@ public class OkapiAuthedTest {
 
         boolean containsCache = false;
         for (final Geocache geocache : caches) {
-            if (geocache.toString()
-                    .equals(
-                            "1.0/5.0 OC13A45 (Tradi) -- 0.216667, 0.616667 -- cmanager TEST cache")) {
+            if (geocache.getCode().equals("OC13A45")
+                    && geocache.getName().equals("cmanager TEST cache")) {
                 containsCache = true;
                 break;
             }
@@ -84,10 +84,12 @@ public class OkapiAuthedTest {
     @Test
     @DisplayName("Test getting the caches around with a user filter")
     public void testGetCachesAroundWithUserFilter() throws Exception {
+        // Determine corresponding UUID:
+        // https://www.opencaching.de/okapi/services/users/by_username?username=cmanagerTestÄccount&consumer_key=XXXX&fields=uuid
         final List<Geocache> caches =
                 Okapi.getCachesAround(
                         testClient,
-                        Okapi.getUuid(testClient),
+                        "a912cccd-1c60-11e7-8e90-86c6a7325f31",
                         00.21667,
                         000.61667,
                         1.0,
@@ -96,16 +98,14 @@ public class OkapiAuthedTest {
 
         boolean containsCache = false;
         for (final Geocache geocache : caches) {
-            if (geocache.toString()
-                    .equals(
-                            "1.0/5.0 OC13A45 (Tradi) -- 0.216667, 0.616667 -- cmanager TEST cache")) {
+            if (geocache.getCode().equals("OC13A45")
+                    && geocache.getName().equals("cmanager TEST cache")) {
                 containsCache = true;
                 break;
             }
         }
-        assertTrue(containsCache);
-        // The old version does not work as the used account has not logged this cache.
-        // assertFalse(containsCache);
+        // The account has logged the cache.
+        assertFalse(containsCache);
     }
 
     /** Test getting the UUID of the test user. */

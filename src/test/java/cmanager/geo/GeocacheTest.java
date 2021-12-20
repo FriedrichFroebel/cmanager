@@ -140,4 +140,19 @@ public class GeocacheTest {
         final Geocache geocache2 = ObjectHelper.copy(geocache1);
         assertNotNull(geocache2);
     }
+
+    @Test
+    @DisplayName("Test the string representation")
+    public void testToString() {
+        final Geocache geocache =
+                new Geocache(
+                        "OC1234",
+                        "test name",
+                        new Coordinate(00.21667, 000.61667),
+                        1.0,
+                        2.5,
+                        "Tradi");
+        assertEquals(
+                "1.0/2.5 OC1234 (Tradi) -- 0.21667, 0.61667 -- test name", geocache.toString());
+    }
 }

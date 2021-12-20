@@ -202,7 +202,7 @@ public class Geocache implements Serializable, Comparable<String> {
                 + " ("
                 + type.asNiceType()
                 + ") -- "
-                + coordinate.toString()
+                + coordinate.toShortString()
                 + " -- "
                 + name;
     }
