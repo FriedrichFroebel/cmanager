@@ -65,7 +65,7 @@ public class Updates {
      * Find the name of the latest release.
      *
      * <p>This requires parsing the XML for all entries, starting with the latest, and checking the
-     * title as Travis might introduce pre-releases.
+     * title as CI might introduce pre-releases.
      *
      * @param root The root element of the XML file.
      * @return The latest version number.
