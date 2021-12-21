@@ -15,7 +15,7 @@ public class Http {
     /**
      * Perform a HTTP GET request.
      *
-     * <p>This will use up to 3 connectionnection attempts.
+     * <p>This will use up to 3 connection attempts.
      *
      * @param url The URL to perform the request against.
      * @return The connection of the response.
