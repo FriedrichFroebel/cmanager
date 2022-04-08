@@ -151,14 +151,14 @@ tasks.withType(JavaCompile) {
 
 // Formatter options.
 googleJavaFormat {
-    // Use the Android style which uses 4 spaces for indentation.
-    // The default Google style would use 2 spaces which is too small in my opinion.
-    options style: 'AOSP'
-    
     // Use a recent version which supports JDK >= 16 as well.
     // Corresponding issue: https://github.com/sherter/google-java-format-gradle-plugin/issues/68
     // Releases: https://github.com/google/google-java-format/releases
     toolVersion = '1.15.0'
+
+    // Use the Android style which uses 4 spaces for indentation.
+    // The default Google style would use 2 spaces which is too small in my opinion.
+    options style: 'AOSP'
 }
 
 // Package generation options.
