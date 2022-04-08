@@ -66,10 +66,6 @@ jobs:
         run: chmod +x gradlew
       - name: Clean Build Area
         run: ./gradlew clean
-      - name: Fix Code Format
-        run: ./gradlew --stacktrace goJF
-      - name: Show difference
-        run: git diff
       - name: Verify Code Format
         run: ./gradlew verifyGoogleJavaFormat
       - name: Build JAR
