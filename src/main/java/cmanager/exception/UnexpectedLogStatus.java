@@ -8,7 +8,9 @@ public class UnexpectedLogStatus extends Exception {
     /** The user message from the log submission. */
     private final String responseMessage;
 
-    /** @param responseMessage The user message from the log submission. */
+    /**
+     * @param responseMessage The user message from the log submission.
+     */
     public UnexpectedLogStatus(String responseMessage) {
         super("Unexpected log status");
         this.responseMessage = responseMessage;
