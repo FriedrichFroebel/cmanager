@@ -67,7 +67,7 @@ jobs:
       - name: Clean Build Area
         run: ./gradlew clean
       - name: Fix Code Format
-        run: ./gradlew goJF
+        run: ./gradlew --stacktrace goJF
       - name: Show difference
         run: git diff
       - name: Verify Code Format
