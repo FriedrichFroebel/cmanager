@@ -67,6 +67,6 @@ jobs:
       - name: Clean Build Area
         run: ./gradlew clean
       - name: Verify Code Format
-        run: ./gradlew verifyGoogleJavaFormat
+        run: ./gradlew --stacktrace verifyGoogleJavaFormat
       - name: Build JAR
         run: ./gradlew jar
