@@ -61,7 +61,7 @@ targetCompatibility = 1.8
 version = '0.6.1'
 
 wrapper {
-    gradleVersion = '7.3.3'
+    gradleVersion = '7.4.2'
 }
 
 // Use JUnit 5 for testing.
