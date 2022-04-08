@@ -1,6 +1,7 @@
 # Development version
 
-
+* Update some libraries.
+* Test on OpenJDK >= 16 as well.
 
 # Version 0.6.1 - 2021-05-10
 

@@ -23,13 +23,13 @@ jobs:
       OC_OKAPI_DE_CONSUMER_KEY: ${{ secrets.OC_OKAPI_DE_CONSUMER_KEY }}
       OC_OKAPI_DE_CONSUMER_SECRET: ${{ secrets.OC_OKAPI_DE_CONSUMER_SECRET }}
 
-    # Run compilation tests using the OpenJDK in version 11, 14 and 15.
-    # The format checker requires at least Java 11, while Java 14 and 15 are more recent.
+    # Run compilation tests using the OpenJDK in version 11 and 14 to 18.
+    # The format checker requires at least Java 11, while the other ones are more recent.
     # Please note that we still support Java versions starting with Java 8, but we cannot compile our
     # code with Java 8 as they miss the newer APIs we reference inside the `Compatibility.java` file.
     strategy:
       matrix:
-        java: [11, 14, 15]
+        java: [11, 14, 15, 16, 17, 18]
 
     # Use a better name.
     name: Linux Build with Java ${{ matrix.java }}
@@ -100,14 +100,14 @@ jobs:
       OC_OKAPI_DE_CONSUMER_KEY: ${{ secrets.OC_OKAPI_DE_CONSUMER_KEY }}
       OC_OKAPI_DE_CONSUMER_SECRET: ${{ secrets.OC_OKAPI_DE_CONSUMER_SECRET }}
 
-    # Run compilation tests using the OpenJDK in version 11, 14 and 15.
-    # The format checker requires at least Java 11, while Java 14 and 15 are more recent.
+    # Run compilation tests.
+    # The format checker requires at least Java 11.
     # Please note that we still support Java versions starting with Java 8, but we cannot compile our
     # code with Java 8 as they miss the newer APIs we reference inside the `Compatibility.java` file.
     # NOTE: We only use Java 15 here, as this should be enough for now.
     strategy:
       matrix:
-        java: [15] # , 11, 14]
+        java: [15]
 
     # Use a better name.
     name: Windows Build with Java ${{ matrix.java }}
