@@ -47,6 +47,16 @@ public class CoordinateTest {
         assertNotEquals(coordinate.toShortString(), coordinate.toString());
     }
 
+    /** Test the string conversion with a custom delimiter (see issue #44). */
+    @Test
+    @DisplayName("Test string conversion with custom delimiter")
+    public void testToStringWithDelimiter() {
+        final Coordinate coordinate = new Coordinate(0.00000383, 0.00005);
+        final String result = coordinate.toString("|");
+        assertTrue(result.startsWith("0.0000038299"), result);
+        assertTrue(result.contains("|0.00005000"), result);
+    }
+
     /** Test the distance calculation. */
     @Test
     @DisplayName("Test distance calculation")

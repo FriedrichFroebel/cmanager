@@ -144,10 +144,21 @@ public class Coordinate implements Serializable {
      * Get the given coordinate as a string, by concatenating the latitude and longitude values
      * using `, `.
      *
+     * @param delimiter The delimiter to use for separating the latitude and longitude value.
+     * @return The string representation of the coordinate.
+     */
+    public String toString(final String delimiter) {
+        return doubleToString(latitude) + delimiter + doubleToString(longitude);
+    }
+
+    /**
+     * Get the given coordinate as a string, by concatenating the latitude and longitude values
+     * using `, `.
+     *
      * @return The string representation of the coordinate.
      */
     public String toString() {
-        return doubleToString(latitude) + ", " + doubleToString(longitude);
+        return toString(", ");
     }
 
     /**

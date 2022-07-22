@@ -1,6 +1,5 @@
 package cmanager.gui.dialogs;
 
-import cmanager.global.Constants;
 import cmanager.gui.ExceptionPanel;
 import cmanager.okapi.Okapi;
 import cmanager.okapi.RequestAuthorizationCallbackInterface;
@@ -8,15 +7,12 @@ import cmanager.okapi.User;
 import cmanager.settings.Settings;
 import cmanager.settings.SettingsKey;
 import cmanager.util.DesktopUtil;
-import cmanager.util.ForkUtil;
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -48,9 +44,6 @@ public class SettingsDialog extends JDialog {
 
     /** The text field for the username on GC. */
     private final JTextField textUsernameGc;
-
-    /** The text field for the heap size. */
-    private final JTextField textHeapSize;
 
     /**
      * Create the dialog.
@@ -170,81 +163,6 @@ public class SettingsDialog extends JDialog {
         // Load the data from the settings.
         displayOkapiTokenStatus();
         textUsernameGc.setText(Settings.getString(SettingsKey.GC_USERNAME));
-
-        // General settings tab.
-        final JPanel panelGeneral = new JPanel();
-        panelGeneral.setBorder(new EmptyBorder(10, 10, 10, 10));
-        tabbedPane.addTab("General", null, panelGeneral, null);
-        final GridBagLayout gblPanelGeneral = new GridBagLayout();
-        gblPanelGeneral.rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 0.0};
-        gblPanelGeneral.columnWeights = new double[] {1.0, 1.0, 0.0};
-        panelGeneral.setLayout(gblPanelGeneral);
-
-        final Component verticalStrut1 = Box.createVerticalStrut(20);
-        final GridBagConstraints gbcVerticalStrut1 = new GridBagConstraints();
-        gbcVerticalStrut1.weighty = 0.1;
-        gbcVerticalStrut1.insets = new Insets(0, 0, 5, 5);
-        gbcVerticalStrut1.gridx = 0;
-        gbcVerticalStrut1.gridy = 0;
-        panelGeneral.add(verticalStrut1, gbcVerticalStrut1);
-
-        final JLabel labelCurrentHeapSize = new JLabel("$size");
-        final GridBagConstraints gbcLabelCurrentHeapSize = new GridBagConstraints();
-        gbcLabelCurrentHeapSize.insets = new Insets(0, 0, 5, 5);
-        gbcLabelCurrentHeapSize.gridx = 1;
-        gbcLabelCurrentHeapSize.gridy = 1;
-        panelGeneral.add(labelCurrentHeapSize, gbcLabelCurrentHeapSize);
-        labelCurrentHeapSize.setText(
-                Long.valueOf(Runtime.getRuntime().maxMemory() / 1024 / 1024).toString());
-
-        final Component verticalStrut = Box.createVerticalStrut(20);
-        final GridBagConstraints gbcVerticalStrut = new GridBagConstraints();
-        gbcVerticalStrut.weighty = 0.5;
-        gbcVerticalStrut.insets = new Insets(0, 0, 5, 5);
-        gbcVerticalStrut.gridx = 0;
-        gbcVerticalStrut.gridy = 3;
-        panelGeneral.add(verticalStrut, gbcVerticalStrut);
-
-        final JLabel labelApplicationRestartRequired =
-                new JLabel("(*) Application restart required.");
-        labelApplicationRestartRequired.setFont(new Font("Dialog", Font.PLAIN, 11));
-        final GridBagConstraints gbcLabelApplicationRestartRequired = new GridBagConstraints();
-        gbcLabelApplicationRestartRequired.gridwidth = 3;
-        gbcLabelApplicationRestartRequired.anchor = GridBagConstraints.ABOVE_BASELINE;
-        gbcLabelApplicationRestartRequired.gridx = 0;
-        gbcLabelApplicationRestartRequired.gridy = 4;
-        panelGeneral.add(labelApplicationRestartRequired, gbcLabelApplicationRestartRequired);
-
-        textHeapSize = new JTextField();
-        textHeapSize.setHorizontalAlignment(SwingConstants.CENTER);
-        final GridBagConstraints gbcTextHeapSize = new GridBagConstraints();
-        gbcTextHeapSize.insets = new Insets(0, 0, 5, 0);
-        gbcTextHeapSize.gridwidth = 2;
-        gbcTextHeapSize.weightx = 1.0;
-        gbcTextHeapSize.anchor = GridBagConstraints.NORTHWEST;
-        gbcTextHeapSize.gridx = 1;
-        gbcTextHeapSize.gridy = 2;
-        gbcTextHeapSize.fill = GridBagConstraints.HORIZONTAL;
-        panelGeneral.add(textHeapSize, gbcTextHeapSize);
-        textHeapSize.setColumns(10);
-        textHeapSize.setText(Settings.getString(SettingsKey.HEAP_SIZE));
-
-        final JLabel labelHeapSizeText = new JLabel("Heap size* (MB):");
-        labelHeapSizeText.setHorizontalAlignment(SwingConstants.CENTER);
-        final GridBagConstraints gbcLabelHeapSizeText = new GridBagConstraints();
-        gbcLabelHeapSizeText.insets = new Insets(0, 0, 5, 5);
-        gbcLabelHeapSizeText.anchor = GridBagConstraints.NORTHWEST;
-        gbcLabelHeapSizeText.gridy = 2;
-        gbcLabelHeapSizeText.gridx = 0;
-        gbcLabelHeapSizeText.fill = GridBagConstraints.HORIZONTAL;
-        panelGeneral.add(labelHeapSizeText, gbcLabelHeapSizeText);
-
-        final JLabel labelCurrentHeapSizeText = new JLabel("Current heap size (MB):");
-        final GridBagConstraints gbcLabelCurrentHeapSizeText = new GridBagConstraints();
-        gbcLabelCurrentHeapSizeText.insets = new Insets(0, 0, 5, 5);
-        gbcLabelCurrentHeapSizeText.gridx = 0;
-        gbcLabelCurrentHeapSizeText.gridy = 1;
-        panelGeneral.add(labelCurrentHeapSizeText, gbcLabelCurrentHeapSizeText);
     }
 
     /** Display the OKAPI token status. */
@@ -273,42 +191,8 @@ public class SettingsDialog extends JDialog {
 
     /** Apply the changes to the settings. */
     private void applyChanges() {
-        boolean changesWhichNeedRestart = false;
-
-        // Check if a restart is required due to a changed heap size.
-        final String newHeapSize = textHeapSize.getText();
-        final String oldHeapSize = Settings.getString(SettingsKey.HEAP_SIZE);
-        if ((oldHeapSize != null && !oldHeapSize.equals(newHeapSize))
-                || (oldHeapSize == null && newHeapSize.length() > 0)) {
-            changesWhichNeedRestart = true;
-        }
-
         // Save the non-OC settings.
         Settings.set(SettingsKey.GC_USERNAME, textUsernameGc.getText());
-        Settings.set(SettingsKey.HEAP_SIZE, newHeapSize);
-
-        // Request a restart.
-        if (changesWhichNeedRestart) {
-            final String message =
-                    "You have made changes which need cmanager to restart in order be applied.\n"
-                            + "Do you want to restart "
-                            + Constants.APP_NAME
-                            + " now?";
-            final int dialogResult =
-                    JOptionPane.showConfirmDialog(
-                            THIS,
-                            message,
-                            "Restart " + Constants.APP_NAME + " now?",
-                            JOptionPane.YES_NO_OPTION);
-            if (dialogResult == JOptionPane.YES_OPTION) {
-                try {
-                    ForkUtil.runCopyAndExit();
-                } catch (Throwable throwable) {
-                    ExceptionPanel.showErrorDialog(THIS, throwable);
-                }
-            }
-        }
-
         THIS.setVisible(false);
     }
 

@@ -2,9 +2,6 @@ package cmanager.settings;
 
 /** The available settings. */
 public enum SettingsKey {
-    /** The size of the heap to use (in MB). */
-    HEAP_SIZE("javaHeapSize", null),
-
     /** The username for GC. */
     GC_USERNAME("gcUsername", ""),
 

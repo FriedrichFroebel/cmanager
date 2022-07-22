@@ -1,6 +1,9 @@
 # Development version
 
+* Fix OKAPI requests with small coordinate values near zero which have been serialized in scientific notation before.
+* Remove own heap management.
 * Update some libraries.
+* Ignore pre-releases in library update checks.
 * Test on OpenJDK >= 16 as well.
 
 # Version 0.6.1 - 2021-05-10

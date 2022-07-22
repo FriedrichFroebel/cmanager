@@ -1,0 +1,16 @@
+/**
+ * Versioning utilities.
+ *
+ * Used for improving the output of the `gradle-versions-plugin`.
+ */
+
+// Check if the given version is considered stable.
+// Based upon the original example from the documentation at
+// https://github.com/ben-manes/gradle-versions-plugin/. 
+ext.isNonStable = { String version ->
+    def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any {
+        it -> version.toUpperCase().contains(it)
+    }
+    def regex = /^[0-9,.v-]+(-r)?$/
+    return !stableKeyword && !(version ==~ regex)
+}

@@ -1,5 +1,6 @@
 package cmanager.okapi;
 
+import cmanager.geo.Coordinate;
 import cmanager.geo.Geocache;
 import cmanager.geo.GeocacheLog;
 import cmanager.oc.OcSite;
@@ -107,10 +108,11 @@ class OkapiUrlBuilder {
             final Double longitude,
             final Double searchRadius)
             throws URISyntaxException {
+        final Coordinate coordinate = new Coordinate(latitude, longitude);
         final URIBuilder builder =
                 getBase()
                         .setPath("okapi/services/caches/search/nearest")
-                        .addParameter("center", latitude.toString() + "|" + longitude.toString())
+                        .addParameter("center", coordinate.toString("|"))
                         .addParameter("radius", searchRadius.toString())
                         .addParameter("status", "Available|Temporarily unavailable|Archived")
                         .addParameter("limit", String.valueOf(500));

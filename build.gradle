@@ -26,6 +26,7 @@ apply plugin: 'com.github.sherter.google-java-format'
 // Use definitions from external files.
 apply from: 'gradle/methods.gradle'
 apply from: 'gradle/keyHelper.gradle'
+apply from: 'gradle/versionUtils.gradle'
 
 // In this section you declare where to find the dependencies of your project.
 repositories {
@@ -45,10 +46,10 @@ dependencies {
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
     implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
 
-    // Use JUnit test framework.
+    // Use the JUnit testing framework.
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.8.2'
     testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.8.2'
-    testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.4.0'
+    testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.6.1'
 }
 
 // Define the main class for the application.
@@ -61,7 +62,7 @@ targetCompatibility = 1.8
 version = '0.6.1'
 
 wrapper {
-    gradleVersion = '7.4.2'
+    gradleVersion = '7.5'
 }
 
 // Use JUnit 5 for testing.
@@ -159,6 +160,14 @@ googleJavaFormat {
     // Use the Android style which uses 4 spaces for indentation.
     // The default Google style would use 2 spaces which is too small in my opinion.
     options style: 'AOSP'
+}
+
+// Make sure to not include pre-releases in the suggestions if are not yet using a pre-release for
+// this package.
+tasks.named("dependencyUpdates").configure {
+    rejectVersionIf {
+        project.isNonStable(it.candidate.version) && !project.isNonStable(it.currentVersion)
+    }
 }
 
 // Package generation options.
