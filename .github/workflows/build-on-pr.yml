@@ -23,7 +23,7 @@ jobs:
     # code with Java 8 as they miss the newer APIs we reference inside the `Compatibility.java` file.
     strategy:
       matrix:
-        java: [11, 16, 17, 18]
+        java: [11, 16, 17, 18, GA, EA]
 
     # Use a better name.
     name: Linux Build with Java ${{ matrix.java }}
@@ -43,13 +43,13 @@ jobs:
         with:
           website: jdk.java.net
           release: ${{ matrix.java }}
-        if: ${{ matrix.java == 18 }}
+        if: ${{ contains(fromJson('["GA", "EA"]'), matrix.java) }}
       - name: Download JDK (Eclipse)
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
-        if: ${{ matrix.java != 18 }}
+        if: ${{ !contains(fromJson('["GA", "EA"]'), matrix.java) }}
       - name: Display Java Version
         run: java --version
 
