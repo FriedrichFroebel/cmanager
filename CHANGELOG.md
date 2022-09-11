@@ -5,6 +5,7 @@
 * Update some libraries.
 * Ignore pre-releases in library update checks.
 * Test on OpenJDK >= 16 as well.
+* Fix CI build due to outdated GitHub action.
 
 # Version 0.6.1 - 2021-05-10
 
