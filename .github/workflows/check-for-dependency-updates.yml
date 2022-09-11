@@ -17,31 +17,27 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # Use OpenJDK from https://jdk.java.net/.
-      # See https://github.com/sormuras/download-jdk
+      # See https://github.com/oracle-actions/setup-java.
       - name: Download JDK
-        uses: sormuras/download-jdk@v1
+        uses: oracle-actions/setup-java@v1
         id: jdk
         with:
-          feature: 18
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: ${{ steps.jdk.outputs.version }}
-          jdkFile: ${{ steps.jdk.outputs.file }}
+          website: jdk.java.net
+          release: GA
       - name: Display Java Version
         run: java --version
 
       # Cache some Gradle files.
       - name: Cache Gradle Wrapper
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
       - name: Cache Gradle Packages
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}

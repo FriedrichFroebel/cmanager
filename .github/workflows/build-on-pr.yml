@@ -17,13 +17,13 @@ jobs:
       OC_OKAPI_DE_CONSUMER_KEY: REPLACE_ME
       OC_OKAPI_DE_CONSUMER_SECRET: REPLACE_ME
 
-    # Run compilation tests using the OpenJDK in version 11 and 14 to 18.
+    # Run compilation tests using the OpenJDK.
     # The format checker requires at least Java 11, while the other ones are more recent.
     # Please note that we still support Java versions starting with Java 8, but we cannot compile our
     # code with Java 8 as they miss the newer APIs we reference inside the `Compatibility.java` file.
     strategy:
       matrix:
-        java: [11, 14, 15, 16, 17, 18]
+        java: [11, 16, 17, 18, GA, EA]
 
     # Use a better name.
     name: Linux Build with Java ${{ matrix.java }}
@@ -31,31 +31,36 @@ jobs:
     # The actual build process.
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # Use OpenJDK from https://jdk.java.net/.
-      # See https://github.com/sormuras/download-jdk
-      - name: Download JDK
-        uses: sormuras/download-jdk@v1
+      # See https://github.com/oracle-actions/setup-java.
+      # This action only supports the latest release, see https://github.com/oracle-actions/setup-java/issues/14.
+      # For this reason, all other builds happen with the https://github.com/actions/setup-java action.
+      - name: Download JDK (jdk.java.net)
+        uses: oracle-actions/setup-java@v1
         id: jdk
         with:
-          feature: ${{ matrix.java }}
-      - name: Set up JDK
-        uses: actions/setup-java@v1
+          website: jdk.java.net
+          release: ${{ matrix.java }}
+        if: ${{ contains(fromJson('["GA", "EA"]'), matrix.java) }}
+      - name: Download JDK (Eclipse)
+        uses: actions/setup-java@v3
         with:
-          java-version: ${{ steps.jdk.outputs.version }}
-          jdkFile: ${{ steps.jdk.outputs.file }}
+          distribution: 'temurin'
+          java-version: ${{ matrix.java }}
+        if: ${{ !contains(fromJson('["GA", "EA"]'), matrix.java) }}
       - name: Display Java Version
         run: java --version
 
       # Cache some Gradle files.
       - name: Cache Gradle Wrapper
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
       - name: Cache Gradle Packages
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
