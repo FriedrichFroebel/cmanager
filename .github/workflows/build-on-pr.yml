@@ -23,7 +23,7 @@ jobs:
     # code with Java 8 as they miss the newer APIs we reference inside the `Compatibility.java` file.
     strategy:
       matrix:
-        java: [11, 14, 15, 16, 17, 18]
+        java: [11, 16, 17, 18]
 
     # Use a better name.
     name: Linux Build with Java ${{ matrix.java }}
