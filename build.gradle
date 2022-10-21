@@ -1,6 +1,6 @@
 plugins {
     // Apply the versions plugin to check for module dependency updates.
-    id 'com.github.ben-manes.versions' version '0.42.0'
+    id 'com.github.ben-manes.versions' version '0.43.0'
 
     // Apply the Google Java formatter plugin for automatically reformatting files.
     id 'com.github.sherter.google-java-format' version '0.9'
@@ -40,16 +40,16 @@ repositories {
 
 dependencies {
     implementation group: 'commons-codec', name: 'commons-codec', version: '1.15'
-    implementation group: 'org.apache.commons', name: 'commons-text', version: '1.9'
-    implementation group: 'com.github.scribejava', name: 'scribejava-core', version: '8.3.1'
+    implementation group: 'org.apache.commons', name: 'commons-text', version: '1.10.0'
+    implementation group: 'com.github.scribejava', name: 'scribejava-core', version: '8.3.2'
     implementation group: 'org.openstreetmap.jmapviewer', name: 'jmapviewer', version: '2.16'
-    implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.1'
     implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
 
     // Use the JUnit testing framework.
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.8.2'
-    testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.8.2'
-    testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.6.1'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.9.1'
+    testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.9.1'
+    testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.8.0'
 }
 
 // Define the main class for the application.
