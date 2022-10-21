@@ -30,6 +30,10 @@ jobs:
     strategy:
       matrix:
         java: [11, 16, 17, 18, GA, EA]
+      # Make sure to always run for all Java versions to sort out possible incompatibilities.
+      # Example: Gradle does not yet support the GA/EA releases, as indicated by
+      # https://docs.gradle.org/current/userguide/compatibility.html
+      fail-fast: false
 
     # Use a better name.
     name: Linux Build with Java ${{ matrix.java }}
