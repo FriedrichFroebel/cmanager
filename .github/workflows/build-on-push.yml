@@ -29,7 +29,7 @@ jobs:
     # code with Java 8 as they miss the newer APIs we reference inside the `Compatibility.java` file.
     strategy:
       matrix:
-        java: [11, 16, 17, 18, GA, EA]
+        java: [11, 16, 17, 18, 19, GA]
       # Make sure to always run for all Java versions to sort out possible incompatibilities.
       # Example: Gradle does not yet support the GA/EA releases, as indicated by
       # https://docs.gradle.org/current/userguide/compatibility.html
