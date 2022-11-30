@@ -98,20 +98,29 @@ jobs:
 
     # Perform the deployment.
     steps:
-      # Download the artifact.
+      # Download the artifact and rename it.
       - name: Download Artifact
         uses: actions/download-artifact@v3
         with:
           name: cm-ci.jar
           path: artifacts/
+      - name: Rename Artifact
+        run:
+          mv artifacts/cm-ci.jar artifacts/cm-${{ github.event.release.name }}.jar
 
       # Upload the asset.
+      # https://github.com/ncipollo/release-action
+      # As the release exists already, we have to set some more options to keep the existing properties.
       - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
+        uses: ncipollo/release-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: artifacts/cm-ci.jar
-          asset_name: cm-${{ github.event.release.name }}.jar        
-          asset_content_type: application/x-java-archive
+          tag: ${{ github.event.release.name }}
+          artifacts: artifacts/cm-${{ github.event.release.name }}.jar
+          artifactContentType: application/x-java-archive
+          omitBodyDuringUpdate: true
+          omitDraftDuringUpdate: true
+          omitNameDuringUpdate: true
+          omitPrereleaseDuringUpdate: true
+          allowUpdates: true
