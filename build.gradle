@@ -60,7 +60,7 @@ project.ext.ocOkapiPropertiesFile = projectDir.getPath() + "${File.separator}oc_
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-version = '0.6.1'
+version = '0.7.0'
 
 wrapper {
     gradleVersion = '7.6'
