@@ -1,5 +1,7 @@
 # Development version
 
+# Version 0.7 - 2023-03-13
+
 * Fix OKAPI requests with small coordinate values near zero which have been serialized in scientific notation before.
 * Remove own heap management.
 * Update some libraries.
