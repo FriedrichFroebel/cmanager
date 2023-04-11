@@ -1,6 +1,6 @@
 plugins {
     // Apply the versions plugin to check for module dependency updates.
-    id 'com.github.ben-manes.versions' version '0.45.0'
+    id 'com.github.ben-manes.versions' version '0.46.0'
 
     // Apply the Google Java formatter plugin for automatically reformatting files.
     id 'com.github.sherter.google-java-format' version '0.9'
@@ -50,7 +50,7 @@ dependencies {
     // Use the JUnit testing framework.
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.9.2'
     testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.9.2'
-    testImplementation group: 'org.mockito', name: 'mockito-inline', version: '5.1.1'
+    testImplementation group: 'org.mockito', name: 'mockito-inline', version: '5.2.0'
 }
 
 // Define the main class for the application.
@@ -63,7 +63,7 @@ targetCompatibility = 1.8
 version = '0.7.0'
 
 wrapper {
-    gradleVersion = '7.6'
+    gradleVersion = '8.0.2'
 }
 
 // Use JUnit 5 for testing.
