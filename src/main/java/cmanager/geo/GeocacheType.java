@@ -34,6 +34,7 @@ public class GeocacheType implements Serializable {
         TYPE.add("Wherigo", "Wherigo Cache", null);
         TYPE.add("GPS AE", "GPS Adventures Exhibit", null);
         TYPE.add("Project Ape", "Project Ape Cache", null);
+        TYPE.add("Community Celebration", "Community Celebration Event", null);
     }
 
     /**
