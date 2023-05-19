@@ -184,6 +184,7 @@ public class ExceptionPanel extends JPanel {
 
         final String title = exceptionError.getClass().getName();
 
+        exceptionError.printStackTrace();
         showErrorDialog(parent, errorMessage, title);
 
         if (exceptionError instanceof OutOfMemoryError) {
