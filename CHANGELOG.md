@@ -1,5 +1,7 @@
 # Development version
 
+* Migrate Apache HttpClient from version 4 to 5 ([documentation](https://hc.apache.org/httpcomponents-client-5.2.x/migration-guide/index.html)).
+
 # Version 0.7 - 2023-03-13
 
 * Fix OKAPI requests with small coordinate values near zero which have been serialized in scientific notation before.

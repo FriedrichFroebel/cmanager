@@ -45,11 +45,12 @@ dependencies {
     // https://josm.openstreetmap.de/browser/osm/applications/viewer/jmapviewer
     implementation group: 'org.openstreetmap.jmapviewer', name: 'jmapviewer', version: '2.16'
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
-    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.14'
+    implementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.2.1'
+    implementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.7'
 
     // Use the JUnit testing framework.
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.9.2'
-    testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.9.2'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.9.3'
+    testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.9.3'
     testImplementation group: 'org.mockito', name: 'mockito-inline', version: '5.2.0'
 }
 

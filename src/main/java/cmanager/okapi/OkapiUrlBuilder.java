@@ -6,7 +6,7 @@ import cmanager.geo.GeocacheLog;
 import cmanager.oc.OcSite;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.net.URIBuilder;
 
 /**
  * Build the URLs for OKAPI requests.

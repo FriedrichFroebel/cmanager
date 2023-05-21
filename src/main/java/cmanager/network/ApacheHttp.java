@@ -6,16 +6,16 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpHost;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.routing.DefaultProxyRoutePlanner;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.NameValuePair;
 
 /** Simple wrapper around the Apache HTTP functionality. */
 public class ApacheHttp {
@@ -50,10 +50,14 @@ public class ApacheHttp {
         // Perform the request with our custom user agent.
         final HttpGet httpGet = new HttpGet(url);
         httpGet.setHeader(HttpHeaders.USER_AGENT, Constants.HTTP_USER_AGENT);
-        final CloseableHttpResponse response = httpClient.execute(httpGet);
+        final HttpResponse httpResponse =
+                httpClient.execute(
+                        httpGet,
+                        response -> {
+                            return handleResponse(response);
+                        });
 
-        // Read the response.
-        return handleResponse(response);
+        return httpResponse;
     }
 
     /**
@@ -70,11 +74,15 @@ public class ApacheHttp {
         // The parameters will be encoded using UTF-8.
         final HttpPost httpPost = new HttpPost(url);
         httpPost.setHeader(HttpHeaders.USER_AGENT, Constants.HTTP_USER_AGENT);
-        httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
-        final CloseableHttpResponse response = httpClient.execute(httpPost);
+        httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, StandardCharsets.UTF_8));
+        final HttpResponse httpResponse =
+                httpClient.execute(
+                        httpPost,
+                        response -> {
+                            return handleResponse(response);
+                        });
 
-        // Read the response.
-        return handleResponse(response);
+        return httpResponse;
     }
 
     /**
@@ -86,11 +94,11 @@ public class ApacheHttp {
      * @return The "parsed" response.
      * @throws IOException Something went wrong with the handling.
      */
-    private HttpResponse handleResponse(CloseableHttpResponse response) throws IOException {
+    private HttpResponse handleResponse(ClassicHttpResponse response) throws IOException {
         int statusCode;
         final StringBuilder http = new StringBuilder();
         try {
-            statusCode = response.getStatusLine().getStatusCode();
+            statusCode = response.getCode();
 
             BufferedReader bufferedReader =
                     new BufferedReader(
