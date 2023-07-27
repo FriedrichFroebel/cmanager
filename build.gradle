@@ -1,6 +1,6 @@
 plugins {
     // Apply the versions plugin to check for module dependency updates.
-    id 'com.github.ben-manes.versions' version '0.46.0'
+    id 'com.github.ben-manes.versions' version '0.47.0'
 
     // Apply the Google Java formatter plugin for automatically reformatting files.
     id 'com.github.sherter.google-java-format' version '0.9'
@@ -39,7 +39,7 @@ repositories {
 }
 
 dependencies {
-    implementation group: 'commons-codec', name: 'commons-codec', version: '1.15'
+    implementation group: 'commons-codec', name: 'commons-codec', version: '1.16.0'
     implementation group: 'org.apache.commons', name: 'commons-text', version: '1.10.0'
     implementation group: 'com.github.scribejava', name: 'scribejava-core', version: '8.3.3'
     // https://josm.openstreetmap.de/browser/osm/applications/viewer/jmapviewer
