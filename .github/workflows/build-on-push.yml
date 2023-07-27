@@ -29,7 +29,7 @@ jobs:
     # code with Java 8 as they miss the newer APIs we reference inside the `Compatibility.java` file.
     strategy:
       matrix:
-        java: [11, 16, 17, 18, 19, GA]
+        java: [11, 16, 17, 18, 19, 20, GA]
       # Make sure to always run for all Java versions to sort out possible incompatibilities.
       # Example: Gradle does not yet support the GA/EA releases, as indicated by
       # https://docs.gradle.org/current/userguide/compatibility.html
@@ -124,7 +124,7 @@ jobs:
     # The actual build process.
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # Use OpenJDK from https://jdk.java.net/.
       # See https://github.com/oracle-actions/setup-java.
