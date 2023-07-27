@@ -121,7 +121,6 @@ task Version(type: Copy) {
     into 'src/main/java/cmanager/global'
 }
 
-verifyGoogleJavaFormat.dependsOn OcOkapiKeys, Version
 compileJava.dependsOn OcOkapiKeys, Version
 compileTestJava.dependsOn OcTestClientLogin
 
