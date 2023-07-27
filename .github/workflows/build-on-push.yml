@@ -182,7 +182,7 @@ jobs:
       # Delete the old pre-release.
       # https://github.com/marketplace/actions/rollback-release
       - name: Delete old Pre-Release
-        uses: author/action-rollback@stable
+        uses: author/action-rollback@master
         with:
           tag: prerelease
         env:
