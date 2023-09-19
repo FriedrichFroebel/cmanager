@@ -46,7 +46,7 @@ dependencies {
     implementation group: 'org.openstreetmap.jmapviewer', name: 'jmapviewer', version: '2.16'
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
     implementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.2.1'
-    implementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.7'
+    implementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.9'
 
     // Use the JUnit testing framework.
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.9.3'
