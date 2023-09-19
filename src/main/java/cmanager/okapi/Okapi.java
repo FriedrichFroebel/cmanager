@@ -317,7 +317,10 @@ public class Okapi {
             final Geocache geocache,
             final double searchRadius,
             final List<Geocache> okapiRuntimeCache)
-            throws IOException, UnexpectedStatusCode, URISyntaxException, InterruptedException,
+            throws IOException,
+                    UnexpectedStatusCode,
+                    URISyntaxException,
+                    InterruptedException,
                     ExecutionException {
         // Retrieve the position.
         final Coordinate coordinate = geocache.getCoordinate();
@@ -358,7 +361,10 @@ public class Okapi {
             final Double longitude,
             final Double searchRadius,
             final List<Geocache> okapiCacheDetailsCache)
-            throws IOException, UnexpectedStatusCode, URISyntaxException, InterruptedException,
+            throws IOException,
+                    UnexpectedStatusCode,
+                    URISyntaxException,
+                    InterruptedException,
                     ExecutionException {
         // Determine whether we need to use OAuth due to excluding geocaches found by the given
         // user.
@@ -509,8 +515,12 @@ public class Okapi {
             final Geocache cache,
             final GeocacheLog log,
             final boolean returnInternalIdInsteadOfUuid)
-            throws InterruptedException, ExecutionException, IOException, UnexpectedLogStatus,
-                    UnexpectedStatusCode, URISyntaxException {
+            throws InterruptedException,
+                    ExecutionException,
+                    IOException,
+                    UnexpectedLogStatus,
+                    UnexpectedStatusCode,
+                    URISyntaxException {
         String url = OkapiUrlBuilder.getLogSubmissionUrl(cache, log);
 
         // Perform the request.
@@ -556,8 +566,11 @@ public class Okapi {
      * @throws CoordinateUnparsableException The coordinates could not be parsed.
      */
     public static Coordinate getHomeCoordinates(final TokenProviderInterface tokenProvider)
-            throws CoordinateUnparsableException, IOException, InterruptedException,
-                    ExecutionException, URISyntaxException {
+            throws CoordinateUnparsableException,
+                    IOException,
+                    InterruptedException,
+                    ExecutionException,
+                    URISyntaxException {
         final String uuid = getUuid(tokenProvider);
 
         // Perform the request.
@@ -618,7 +631,10 @@ public class Okapi {
      *     response.
      */
     public static void deleteLog(TokenProviderInterface tokenProvider, String logUuid)
-            throws IOException, ExecutionException, InterruptedException, UnexpectedLogStatus,
+            throws IOException,
+                    ExecutionException,
+                    InterruptedException,
+                    UnexpectedLogStatus,
                     URISyntaxException {
         String url = OkapiUrlBuilder.getLogDeletionUrl(logUuid);
 
