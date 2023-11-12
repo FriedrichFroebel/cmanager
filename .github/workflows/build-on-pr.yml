@@ -17,13 +17,18 @@ jobs:
       OC_OKAPI_DE_CONSUMER_KEY: REPLACE_ME
       OC_OKAPI_DE_CONSUMER_SECRET: REPLACE_ME
 
-    # Run compilation tests using the OpenJDK.
+    # Run compilation tests.
+    # EOL: https://adoptium.net/support/ and https://endoflife.date/oracle-jdk
     # The format checker requires at least Java 11, while the other ones are more recent.
     # Please note that we still support Java versions starting with Java 8, but we cannot compile our
     # code with Java 8 as they miss the newer APIs we reference inside the `Compatibility.java` file.
     strategy:
       matrix:
-        java: [11, 16, 17, 18, 19, 20, GA]
+        java: [11, 17, 21, GA]
+      # Make sure to always run for all Java versions to sort out possible incompatibilities.
+      # Example: Gradle might not yet support the GA/EA releases, as indicated by
+      # https://docs.gradle.org/current/userguide/compatibility.html
+      fail-fast: false
 
     # Use a better name.
     name: Linux Build with Java ${{ matrix.java }}
