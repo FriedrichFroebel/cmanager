@@ -96,7 +96,7 @@ jobs:
       # Upload the artifact to access it for deployment.
       - name: Upload Artifact
         if: ${{ matrix.java == 'GA' }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: cm-ci.jar
           path: build/libs/cm-ci.jar
