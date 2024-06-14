@@ -39,7 +39,7 @@ repositories {
 }
 
 dependencies {
-    implementation group: 'commons-codec', name: 'commons-codec', version: '1.16.1'
+    implementation group: 'commons-codec', name: 'commons-codec', version: '1.17.0'
     implementation group: 'org.apache.commons', name: 'commons-text', version: '1.12.0'
     implementation group: 'com.github.scribejava', name: 'scribejava-core', version: '8.3.3'
     // https://josm.openstreetmap.de/browser/osm/applications/viewer/jmapviewer
