@@ -181,7 +181,8 @@ jobs:
     # Allow modifying tags itself.
     # https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions#permissions
     # https://docs.github.com/en/rest/authentication/permissions-required-for-github-apps?apiVersion=2022-11-28#repository-permissions-for-contents
-    permissions: write-contents
+    permissions:
+      contents: write
 
     # Perform the deployment.
     steps:
