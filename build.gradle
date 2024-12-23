@@ -34,7 +34,7 @@ repositories {
     mavenCentral()
 
     maven {
-        url 'https://josm.openstreetmap.de/nexus/content/groups/public/'
+        url = 'https://josm.openstreetmap.de/nexus/content/groups/public/'
     }
 }
 
@@ -69,7 +69,7 @@ java {
 version = '0.7.0'
 
 wrapper {
-    gradleVersion = '8.8'
+    gradleVersion = '8.12'
 }
 
 // Use JUnit 5 for testing.
