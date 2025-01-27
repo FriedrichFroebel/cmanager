@@ -1,6 +1,6 @@
 plugins {
     // Apply the versions plugin to check for module dependency updates.
-    id 'com.github.ben-manes.versions' version '0.51.0'
+    id 'com.github.ben-manes.versions' version '0.52.0'
 
     // Apply the Google Java formatter plugin for automatically reformatting files.
     id 'com.github.sherter.google-java-format' version '0.9'
