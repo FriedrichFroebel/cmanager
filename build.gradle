@@ -34,7 +34,7 @@ repositories {
     mavenCentral()
 
     maven {
-        url = 'https://josm.openstreetmap.de/nexus/content/groups/public/'
+        url = 'https://josm.openstreetmap.de/repository/public/'
     }
 }
 
