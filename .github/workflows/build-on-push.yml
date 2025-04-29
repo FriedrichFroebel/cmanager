@@ -84,6 +84,7 @@ jobs:
         run: ./gradlew clean
       - name: Verify Code Format
         run: ./gradlew verifyGoogleJavaFormat
+        if: matrix.java != '11'
       - name: Build JAR
         run: ./gradlew jar
 
