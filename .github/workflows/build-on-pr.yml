@@ -36,7 +36,7 @@ jobs:
     # The actual build process.
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # Use OpenJDK from https://jdk.java.net/.
       # See https://github.com/oracle-actions/setup-java.
