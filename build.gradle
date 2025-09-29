@@ -69,7 +69,7 @@ java {
 version = '0.7.0'
 
 wrapper {
-    gradleVersion = '8.14'
+    gradleVersion = '9.1.0'
 }
 
 // Use JUnit 5 for testing.
