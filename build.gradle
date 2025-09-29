@@ -45,7 +45,7 @@ dependencies {
     // https://josm.openstreetmap.de/browser/osm/applications/viewer/jmapviewer
     implementation 'org.openstreetmap.jmapviewer:jmapviewer:2.25'
     implementation 'com.google.code.gson:gson:2.13.2'
-    implementation 'org.apache.httpcomponents.client5:httpclient5:5.5'
+    implementation 'org.apache.httpcomponents.client5:httpclient5:5.5.1'
     implementation 'org.slf4j:slf4j-simple:2.0.17'
 
     // Use the JUnit testing framework.
