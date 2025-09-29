@@ -39,19 +39,19 @@ repositories {
 }
 
 dependencies {
-    implementation group: 'commons-codec', name: 'commons-codec', version: '1.19.0'
-    implementation group: 'org.apache.commons', name: 'commons-text', version: '1.14.0'
-    implementation group: 'com.github.scribejava', name: 'scribejava-core', version: '8.3.3'
+    implementation 'commons-codec:commons-codec:1.19.0'
+    implementation 'org.apache.commons:commons-text:1.14.0'
+    implementation 'com.github.scribejava:scribejava-core:8.3.3'
     // https://josm.openstreetmap.de/browser/osm/applications/viewer/jmapviewer
-    implementation group: 'org.openstreetmap.jmapviewer', name: 'jmapviewer', version: '2.25'
-    implementation group: 'com.google.code.gson', name: 'gson', version: '2.13.2'
-    implementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.5'
-    implementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.17'
+    implementation 'org.openstreetmap.jmapviewer:jmapviewer:2.25'
+    implementation 'com.google.code.gson:gson:2.13.2'
+    implementation 'org.apache.httpcomponents.client5:httpclient5:5.5'
+    implementation 'org.slf4j:slf4j-simple:2.0.17'
 
     // Use the JUnit testing framework.
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.13.4'
-    testRuntimeOnly group: 'org.junit.platform', name: 'junit-platform-launcher', version: '1.13.4'
-    testImplementation group: 'org.mockito', name: 'mockito-inline', version: '5.2.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.13.4'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.13.4'
+    testImplementation 'org.mockito:mockito-inline:5.2.0'
 }
 
 application {
@@ -162,7 +162,7 @@ googleJavaFormat {
     // Use a recent version which supports JDK >= 16 as well.
     // Corresponding issue: https://github.com/sherter/google-java-format-gradle-plugin/issues/68
     // Releases: https://github.com/google/google-java-format/releases
-    toolVersion = '1.26.0'
+    toolVersion = '1.28.0'
 
     // Use the Android style which uses 4 spaces for indentation.
     // The default Google style would use 2 spaces which is too small in my opinion.
