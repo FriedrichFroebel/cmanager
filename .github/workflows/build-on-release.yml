@@ -105,7 +105,7 @@ jobs:
     steps:
       # Download the artifact and rename it.
       - name: Download Artifact
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: cm-ci.jar
           path: artifacts/
