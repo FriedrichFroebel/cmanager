@@ -59,19 +59,15 @@ public class DesktopUtil {
         // Retrieve the name of the operating system.
         final String os = System.getProperty("os.name").toLowerCase();
 
-        // Get the runtime in which the application is running. This is needed for executing the
-        // commands.
-        Runtime runtime = Runtime.getRuntime();
-
         // Handle each operating system separately.
         if (os.contains("windows")) {
             // Try to use the corresponding DLL.
-            runtime.exec("rundll32 url.dll,FileProtocolHandler \"" + uriString + "\"");
+            new ProcessBuilder("rundll32", "url.dll,FileProtocolHandler", uriString).start();
         } else if (os.contains("mac")) {
-            runtime.exec("open \"" + uriString + "\"");
+            new ProcessBuilder("open", uriString).start();
         } else if (os.contains("nix") || os.contains("nux")) {
             // Try to use the `xdg-open` command from `xdg-utils`.
-            runtime.exec("xdg-open \"" + uriString + "\"");
+            new ProcessBuilder("xdg-open", uriString).start();
         } else {
             // This is an operating system where we do not know how to open an URL.
             throw new UnsupportedOperationException("Unknown operating system: '" + os + "'.");
