@@ -50,7 +50,7 @@ dependencies {
 
     // Use the JUnit testing framework.
     testImplementation 'org.junit.jupiter:junit-jupiter:6.0.1'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:6.0.0'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:6.0.1'
     testImplementation 'org.mockito:mockito-inline:5.2.0'
 }
 
