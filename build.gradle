@@ -6,7 +6,7 @@ plugins {
     id 'com.github.sherter.google-java-format' version '0.9'
 
     // Create runtime images.
-    id 'org.beryx.runtime' version '2.0.0'
+    id 'org.beryx.runtime' version '2.0.1'
 }
 
 // Apply the java plugin to add support for Java.
