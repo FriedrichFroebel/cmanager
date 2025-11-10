@@ -39,7 +39,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'commons-codec:commons-codec:1.19.0'
+    implementation 'commons-codec:commons-codec:1.20.0'
     implementation 'org.apache.commons:commons-text:1.14.0'
     implementation 'com.github.scribejava:scribejava-core:8.3.3'
     // https://josm.openstreetmap.de/browser/osm/applications/viewer/jmapviewer
