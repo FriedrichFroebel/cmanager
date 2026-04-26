@@ -219,7 +219,7 @@ jobs:
       # Create the pre-release with the artifact.
       # https://github.com/ncipollo/release-action
       - name: Create Release
-        uses: ncipollo/release-action@v1
+        uses: ncipollo/release-action@v1.21.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
