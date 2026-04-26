@@ -117,7 +117,7 @@ jobs:
       # https://github.com/ncipollo/release-action
       # As the release exists already, we have to set some more options to keep the existing properties.
       - name: Upload Release Asset
-        uses: ncipollo/release-action@v1
+        uses: ncipollo/release-action@v1.21.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
