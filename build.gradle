@@ -44,7 +44,7 @@ dependencies {
     implementation 'com.github.scribejava:scribejava-core:8.3.3'
     // https://josm.openstreetmap.de/browser/osm/applications/viewer/jmapviewer
     implementation 'org.openstreetmap.jmapviewer:jmapviewer:2.25'
-    implementation 'com.google.code.gson:gson:2.13.2'
+    implementation 'com.google.code.gson:gson:2.14.0'
     implementation 'org.apache.httpcomponents.client5:httpclient5:5.6.1'
     implementation 'org.slf4j:slf4j-simple:2.0.17'
 
