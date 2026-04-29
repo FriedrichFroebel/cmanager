@@ -12,6 +12,11 @@ on:
     branches:
       - master
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
 
 jobs:
   # The Ubuntu-based build job.
@@ -42,21 +47,23 @@ jobs:
     # The actual build process.
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          persist-credentials: false
 
       # Use OpenJDK from https://jdk.java.net/.
       # See https://github.com/oracle-actions/setup-java.
       # This action only supports the latest release, see https://github.com/oracle-actions/setup-java/issues/14.
       # For this reason, all other builds happen with the https://github.com/actions/setup-java action.
       - name: Download JDK (jdk.java.net)
-        uses: oracle-actions/setup-java@v1
+        uses: oracle-actions/setup-java@fff43251af9936a0e6a4d5d0946e14f1680e9b6b  # v1.5.0
         id: jdk
         with:
           website: jdk.java.net
           release: ${{ matrix.java }}
         if: ${{ contains(fromJson('["GA", "EA"]'), matrix.java) }}
       - name: Download JDK (Eclipse)
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654  # v5.2.0
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
@@ -66,12 +73,12 @@ jobs:
 
       # Cache some Gradle files.
       - name: Cache Gradle Wrapper
-        uses: actions/cache@v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae  # v5.0.5
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
       - name: Cache Gradle Packages
-        uses: actions/cache@v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae  # v5.0.5
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
@@ -97,7 +104,7 @@ jobs:
       # Upload the artifact to access it for deployment.
       - name: Upload Artifact
         if: ${{ matrix.java == 'GA' }}
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
         with:
           name: cm-ci.jar
           path: build/libs/cm-ci.jar
@@ -126,14 +133,16 @@ jobs:
     # The actual build process.
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          persist-credentials: false
 
       # Use OpenJDK from https://jdk.java.net/.
       # See https://github.com/oracle-actions/setup-java.
       # This action only supports the latest release, see https://github.com/oracle-actions/setup-java/issues/14.
       # For this reason, all other builds happen with the https://github.com/actions/setup-java action.
       - name: Download JDK (jdk.java.net)
-        uses: oracle-actions/setup-java@v1
+        uses: oracle-actions/setup-java@fff43251af9936a0e6a4d5d0946e14f1680e9b6b  # v1.5.0
         id: jdk
         with:
           website: jdk.java.net
@@ -143,12 +152,12 @@ jobs:
 
       # Cache some Gradle files.
       - name: Cache Gradle Wrapper
-        uses: actions/cache@v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae  # v5.0.5
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
       - name: Cache Gradle Packages
-        uses: actions/cache@v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae  # v5.0.5
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
@@ -190,7 +199,7 @@ jobs:
       # Delete the old pre-release.
       # https://github.com/marketplace/actions/rollback-release
       - name: Delete old Pre-Release
-        uses: author/action-rollback@master
+        uses: author/action-rollback@f4473931b1155b601092ec00eb1fa4882b80219f  # 1.0.4
         with:
           tag: prerelease
         env:
@@ -208,26 +217,25 @@ jobs:
 
       # Download the artifact and rename it.
       - name: Download Artifact
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
         with:
           name: cm-ci.jar
           path: artifacts/
       - name: Rename Artifact
         run:
-          mv artifacts/cm-ci.jar artifacts/cm-${{ env.SHORT_HASH }}.jar
+          mv artifacts/cm-ci.jar artifacts/cm-${SHORT_HASH}.jar
 
       # Create the pre-release with the artifact.
       # https://github.com/ncipollo/release-action
       - name: Create Release
-        uses: ncipollo/release-action@v1.21.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag: prerelease
-          name: Development build
-          body: |
-            Automated build of the master branch (commit ${{ env.LONG_HASH }}) using GitHub Actions on ${{ env.TIMESTAMP }}.
-          draft: false
-          prerelease: true
-          artifacts: artifacts/cm-${{ env.SHORT_HASH }}.jar
-          artifactContentType: application/x-java-archive
+        run: |
+          TAG="prerelease"
+          FILE="artifacts/cm-${SHORT_HASH}.jar"
+
+          gh release create "$TAG" "$FILE" \
+            --title "Development build" \
+            --notes "Automated build of the master branch (commit ${LONG_HASH}) using GitHub Actions on ${TIMESTAMP}." \
+            --prerelease \
+            --repo "$GITHUB_REPOSITORY"
