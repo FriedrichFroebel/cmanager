@@ -90,7 +90,7 @@ jobs:
       - name: Clean Build Area
         run: ./gradlew clean
       - name: Verify Code Format
-        run: ./gradlew verifyGoogleJavaFormat
+        run: ./gradlew spotlessCheck
         if: matrix.java != '11'
       - name: Build JAR
         run: ./gradlew jar
@@ -167,7 +167,7 @@ jobs:
       - name: Clean Build Area
         run: ./gradlew clean
       - name: Verify Code Format
-        run: ./gradlew verifyGoogleJavaFormat
+        run: ./gradlew spotlessCheck
       - name: Build JAR
         run: ./gradlew jar
 

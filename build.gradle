@@ -3,7 +3,7 @@ plugins {
     id 'io.github.ben-manes.versions' version '0.64.0'
 
     // Apply the Google Java formatter plugin for automatically reformatting files.
-    id 'com.github.sherter.google-java-format' version '0.9'
+    id 'com.diffplug.spotless' version '8.10.4'
 
     // Create runtime images.
     id 'org.beryx.runtime' version '2.0.1'
@@ -17,11 +17,11 @@ apply plugin: 'application'
 
 // Apply the versions plugin.
 // Use it with the `dependencyUpdates` task.
-apply plugin: 'com.github.ben-manes.versions'
+apply plugin: 'io.github.ben-manes.versions'
 
 // Apply the auto formatter plugin.
-// Use it with the `googleJavaFormat` and `verifyGoogleJavaFormat` tasks.
-apply plugin: 'com.github.sherter.google-java-format'
+// Use it with the `spotlessApply` and `spotlessCheck` tasks.
+apply plugin: 'com.diffplug.spotless'
 
 // Use definitions from external files.
 apply from: 'gradle/methods.gradle'
@@ -158,15 +158,12 @@ tasks.withType(JavaCompile) {
 }
 
 // Formatter options.
-googleJavaFormat {
-    // Use a recent version which supports JDK >= 16 as well.
-    // Corresponding issue: https://github.com/sherter/google-java-format-gradle-plugin/issues/68
-    // Releases: https://github.com/google/google-java-format/releases
-    toolVersion = '1.28.0'
-
-    // Use the Android style which uses 4 spaces for indentation.
-    // The default Google style would use 2 spaces which is too small in my opinion.
-    options style: 'AOSP'
+spotless {
+    java {
+        // Use the Android style which uses 4 spaces for indentation.
+        // The default Google style would use 2 spaces which is too small in my opinion.
+        googleJavaFormat().aosp()
+    }
 }
 
 // Make sure to not include pre-releases in the suggestions if are not yet using a pre-release for
