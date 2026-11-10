@@ -216,10 +216,9 @@ public class CopyLogDialog extends JFrame {
 
         final JButton buttonReturn = new JButton("Return");
         buttonPane.add(buttonReturn);
-        buttonReturn.addActionListener(
-                actionEvent -> {
-                    THIS.dispatchEvent(new WindowEvent(THIS, WindowEvent.WINDOW_CLOSING));
-                });
+        buttonReturn.addActionListener(actionEvent -> {
+            THIS.dispatchEvent(new WindowEvent(THIS, WindowEvent.WINDOW_CLOSING));
+        });
 
         // Handle close events.
         addWindowListener(

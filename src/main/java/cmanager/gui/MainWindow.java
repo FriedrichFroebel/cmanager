@@ -119,18 +119,16 @@ public class MainWindow extends JFrame {
         menu.add(menuItemOpen);
 
         final JMenuItem menuItemExit = new JMenuItem("Exit");
-        menuItemExit.addActionListener(
-                actionEvent ->
-                        THIS.dispatchEvent(new WindowEvent(THIS, WindowEvent.WINDOW_CLOSING)));
+        menuItemExit.addActionListener(actionEvent ->
+                THIS.dispatchEvent(new WindowEvent(THIS, WindowEvent.WINDOW_CLOSING)));
 
         final JMenuItem menuItemSettings = new JMenuItem("Settings");
-        menuItemSettings.addActionListener(
-                actionEvent -> {
-                    final SettingsDialog settingsDialog = new SettingsDialog(THIS);
-                    settingsDialog.setModalityType(ModalityType.APPLICATION_MODAL);
-                    settingsDialog.setLocationRelativeTo(THIS);
-                    settingsDialog.setVisible(true);
-                });
+        menuItemSettings.addActionListener(actionEvent -> {
+            final SettingsDialog settingsDialog = new SettingsDialog(THIS);
+            settingsDialog.setModalityType(ModalityType.APPLICATION_MODAL);
+            settingsDialog.setLocationRelativeTo(THIS);
+            settingsDialog.setVisible(true);
+        });
 
         final JMenuItem menuItemSave = new JMenuItem("Save");
         menuItemSave.setAccelerator(KeyStroke.getKeyStroke('S', Compatibility.SHORTCUT_KEY_MASK));
@@ -388,10 +386,8 @@ public class MainWindow extends JFrame {
         buttonUpdate.setBorderPainted(false);
         buttonUpdate.setOpaque(false);
         buttonUpdate.setContentAreaFilled(false);
-        buttonUpdate.addActionListener(
-                actionEvent ->
-                        DesktopUtil.openUrl(
-                                "https://github.com/FriedrichFroebel/cmanager/releases"));
+        buttonUpdate.addActionListener(actionEvent ->
+                DesktopUtil.openUrl("https://github.com/FriedrichFroebel/cmanager/releases"));
         panelUpdate.add(buttonUpdate);
 
         checkForUpdates(buttonUpdate);
@@ -424,22 +420,21 @@ public class MainWindow extends JFrame {
 
         handleWindowCloseEvents();
 
-        SwingUtilities.invokeLater(
-                () ->
-                        actionWithWaitDialog(
-                                () -> {
-                                    try {
-                                        CacheListController.reopenPersistentCacheListControllers(
-                                                desktopPane,
-                                                menuWindows,
-                                                (Location) comboBox.getSelectedItem(),
-                                                this::openLocationDialog);
-                                    } catch (ClassNotFoundException exception) {
-                                        System.out.println("Error loading opened cache lists.");
-                                        exception.printStackTrace();
-                                    }
-                                },
-                                THIS));
+        SwingUtilities.invokeLater(() ->
+                actionWithWaitDialog(
+                        () -> {
+                            try {
+                                CacheListController.reopenPersistentCacheListControllers(
+                                        desktopPane,
+                                        menuWindows,
+                                        (Location) comboBox.getSelectedItem(),
+                                        this::openLocationDialog);
+                            } catch (ClassNotFoundException exception) {
+                                System.out.println("Error loading opened cache lists.");
+                                exception.printStackTrace();
+                            }
+                        },
+                        THIS));
     }
 
     /** Update the available locations. */

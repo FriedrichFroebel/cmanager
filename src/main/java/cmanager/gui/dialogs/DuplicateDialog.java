@@ -137,12 +137,11 @@ public class DuplicateDialog extends JFrame {
         buttonUrl.setBorderPainted(false);
         buttonUrl.setOpaque(false);
         buttonUrl.setContentAreaFilled(false);
-        buttonUrl.addActionListener(
-                actionEvent -> {
-                    if (selectedUrl != null) {
-                        DesktopUtil.openUrl(selectedUrl);
-                    }
-                });
+        buttonUrl.addActionListener(actionEvent -> {
+            if (selectedUrl != null) {
+                DesktopUtil.openUrl(selectedUrl);
+            }
+        });
         panelUrl.add(buttonUrl);
 
         final JPanel panelClipboard = new JPanel();
@@ -190,14 +189,13 @@ public class DuplicateDialog extends JFrame {
         final JButton buttonOk = new JButton("Dismiss");
         panelButtonOk.add(buttonOk);
         buttonOk.setHorizontalAlignment(SwingConstants.RIGHT);
-        buttonOk.addActionListener(
-                actionEvent -> {
-                    THIS.setVisible(false);
-                    if (backgroundThread != null) {
-                        stopBackgroundThread.set(true);
-                    }
-                    THIS.dispose();
-                });
+        buttonOk.addActionListener(actionEvent -> {
+            THIS.setVisible(false);
+            if (backgroundThread != null) {
+                stopBackgroundThread.set(true);
+            }
+            THIS.dispose();
+        });
         getRootPane().setDefaultButton(buttonOk);
 
         final JPanel panelDuplicateCount = new JPanel();

@@ -41,10 +41,8 @@ public class OcUtilTest {
                         mockStatic(SearchCache.class)) {
             final List<Geocache> okapiRuntimeCache = OcUtil.OKAPI_RUNTIME_CACHE;
             okapiMockedStatic
-                    .when(
-                            () ->
-                                    Okapi.getCachesAround(
-                                            null, null, geocache, 0.05, okapiRuntimeCache))
+                    .when(() ->
+                            Okapi.getCachesAround(null, null, geocache, 0.05, okapiRuntimeCache))
                     .thenReturn(null);
             searchCacheMockedStatic
                     .when(() -> SearchCache.isEmptySearch(geocache, null))

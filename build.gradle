@@ -3,7 +3,7 @@ plugins {
     id 'io.github.ben-manes.versions' version '0.66.0'
 
     // Apply the Google Java formatter plugin for automatically reformatting files.
-    id 'com.diffplug.spotless' version '8.10.4'
+    id 'com.diffplug.spotless' version '8.11.0'
 
     // Create runtime images.
     id 'org.beryx.runtime' version '2.0.1'

@@ -336,11 +336,10 @@ public class Parser {
 
         // Remove unused children.
         element.getChildren()
-                .removeIf(
-                        child ->
-                                child.getUnescapedBody() == null
-                                        && child.getAttributes().size() == 0
-                                        && child.getChildren().size() == 0);
+                .removeIf(child ->
+                        child.getUnescapedBody() == null
+                                && child.getAttributes().size() == 0
+                                && child.getChildren().size() == 0);
     }
 
     /**

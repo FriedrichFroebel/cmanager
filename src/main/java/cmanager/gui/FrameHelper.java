@@ -57,20 +57,19 @@ public class FrameHelper {
         newFrame.toFront();
 
         Thread thread =
-                new Thread(
-                        () -> {
-                            while (newFrame.isVisible() || !isFirstInQueue(owner)) {
-                                try {
-                                    Thread.sleep(200);
-                                } catch (InterruptedException ignored) {
-                                }
-                            }
+                new Thread(() -> {
+                    while (newFrame.isVisible() || !isFirstInQueue(owner)) {
+                        try {
+                            Thread.sleep(200);
+                        } catch (InterruptedException ignored) {
+                        }
+                    }
 
-                            owner.setVisible(true);
-                            owner.setEnabled(true);
-                            owner.toFront();
-                            removeFromQueue(owner);
-                        });
+                    owner.setVisible(true);
+                    owner.setEnabled(true);
+                    owner.toFront();
+                    removeFromQueue(owner);
+                });
         thread.start();
     }
 }

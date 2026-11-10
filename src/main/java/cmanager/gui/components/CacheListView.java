@@ -94,11 +94,10 @@ public class CacheListView extends JInternalFrame {
         table.setRowSelectionAllowed(true);
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         table.getSelectionModel()
-                .addListSelectionListener(
-                        listSelectionEvent -> {
-                            updateCachePanelToSelection();
-                            updateMapMarkers();
-                        });
+                .addListSelectionListener(listSelectionEvent -> {
+                    updateCachePanelToSelection();
+                    updateMapMarkers();
+                });
         table.setAutoCreateRowSorter(true);
 
         // Add the table columns.
@@ -304,45 +303,41 @@ public class CacheListView extends JInternalFrame {
         panelSelectedLabel.add(labelSelectedText);
 
         table.getSelectionModel()
-                .addListSelectionListener(
-                        listSelectionEvent -> {
-                            final int selected = table.getSelectedRowCount();
-                            if (selected == 0) {
-                                panelSelected.setVisible(false);
-                            } else {
-                                labelSelected.setText(Integer.valueOf(selected).toString());
-                                panelSelected.setVisible(true);
-                            }
-                        });
+                .addListSelectionListener(listSelectionEvent -> {
+                    final int selected = table.getSelectedRowCount();
+                    if (selected == 0) {
+                        panelSelected.setVisible(false);
+                    } else {
+                        labelSelected.setText(Integer.valueOf(selected).toString());
+                        panelSelected.setVisible(true);
+                    }
+                });
 
         // Add the buttons for toggling the three main list views.
         final JPanel panelButtons = new JPanel();
         panelBar.add(panelButtons, BorderLayout.WEST);
 
         final JToggleButton toggleButtonList = new JToggleButton("List");
-        toggleButtonList.addActionListener(
-                actionEvent -> {
-                    scrollPane.setVisible(toggleButtonList.isSelected());
-                    fixSplitPanes(splitPane1, splitPane2);
-                });
+        toggleButtonList.addActionListener(actionEvent -> {
+            scrollPane.setVisible(toggleButtonList.isSelected());
+            fixSplitPanes(splitPane1, splitPane2);
+        });
         toggleButtonList.setSelected(true);
         panelButtons.add(toggleButtonList);
 
         final JToggleButton toggleButtonMap = new JToggleButton("Map");
-        toggleButtonMap.addActionListener(
-                actionEvent -> {
-                    panelMap.setVisible(toggleButtonMap.isSelected());
-                    fixSplitPanes(splitPane1, splitPane2);
+        toggleButtonMap.addActionListener(actionEvent -> {
+            panelMap.setVisible(toggleButtonMap.isSelected());
+            fixSplitPanes(splitPane1, splitPane2);
 
-                    SwingUtilities.invokeLater(() -> getMapViewer().setDisplayToFitMapMarkers());
-                });
+            SwingUtilities.invokeLater(() -> getMapViewer().setDisplayToFitMapMarkers());
+        });
 
         final JToggleButton toggleButtonCache = new JToggleButton("Cache");
-        toggleButtonCache.addActionListener(
-                actionEvent -> {
-                    cachePanel.setVisible(toggleButtonCache.isSelected());
-                    fixSplitPanes(splitPane1, splitPane2);
-                });
+        toggleButtonCache.addActionListener(actionEvent -> {
+            cachePanel.setVisible(toggleButtonCache.isSelected());
+            fixSplitPanes(splitPane1, splitPane2);
+        });
         panelButtons.add(toggleButtonCache);
         panelButtons.add(toggleButtonMap);
 
@@ -358,13 +353,12 @@ public class CacheListView extends JInternalFrame {
         table.setComponentPopupMenu(popupMenu);
 
         final JMenuItem menuLocationDialog = new JMenuItem("Add as Location");
-        menuLocationDialog.addActionListener(
-                actionEvent -> {
-                    final int row = table.rowAtPoint(popupPoint);
-                    final CacheListTableModel model = (CacheListTableModel) table.getModel();
-                    final Geocache geocache = model.getObject(table.convertRowIndexToModel(row));
-                    runLocationDialog.openDialog(geocache);
-                });
+        menuLocationDialog.addActionListener(actionEvent -> {
+            final int row = table.rowAtPoint(popupPoint);
+            final CacheListTableModel model = (CacheListTableModel) table.getModel();
+            final Geocache geocache = model.getObject(table.convertRowIndexToModel(row));
+            runLocationDialog.openDialog(geocache);
+        });
         popupMenu.add(menuLocationDialog);
 
         // Remove shortcut keys.
