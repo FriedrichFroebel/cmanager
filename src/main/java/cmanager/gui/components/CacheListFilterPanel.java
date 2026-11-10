@@ -106,35 +106,32 @@ public abstract class CacheListFilterPanel extends JPanel {
         panelButtons.add(panel3);
 
         buttonUpdate = new JButton("Update");
-        buttonUpdate.addActionListener(
-                actionEvent -> {
-                    runDoModelUpdateNow.run();
-                    for (final Runnable action : runOnFilterUpdate) {
-                        action.run();
-                    }
-                });
+        buttonUpdate.addActionListener(actionEvent -> {
+            runDoModelUpdateNow.run();
+            for (final Runnable action : runOnFilterUpdate) {
+                action.run();
+            }
+        });
 
         toggleButtonInvert = new JToggleButton("Invert");
-        toggleButtonInvert.addActionListener(
-                actionEvent -> {
-                    inverted = toggleButtonInvert.isSelected();
-                    runDoModelUpdateNow.run();
-                    for (final Runnable action : runOnFilterUpdate) {
-                        action.run();
-                    }
-                });
+        toggleButtonInvert.addActionListener(actionEvent -> {
+            inverted = toggleButtonInvert.isSelected();
+            runDoModelUpdateNow.run();
+            for (final Runnable action : runOnFilterUpdate) {
+                action.run();
+            }
+        });
 
         buttonRemove = new JButton("X");
-        buttonRemove.addActionListener(
-                actionEvent -> {
-                    final Container parent = THIS.getParent();
-                    parent.remove(THIS);
-                    parent.revalidate();
+        buttonRemove.addActionListener(actionEvent -> {
+            final Container parent = THIS.getParent();
+            parent.remove(THIS);
+            parent.revalidate();
 
-                    for (final Runnable action : runOnRemove) {
-                        action.run();
-                    }
-                });
+            for (final Runnable action : runOnRemove) {
+                action.run();
+            }
+        });
 
         panel3.add(toggleButtonInvert);
         panel3.add(buttonUpdate);
@@ -178,13 +175,12 @@ public abstract class CacheListFilterPanel extends JPanel {
 
             comboBoxLeft = new JComboBox<>(values);
             comboBoxLeft.setMaximumRowCount(values.length);
-            comboBoxLeft.addActionListener(
-                    actionEvent -> {
-                        runDoModelUpdateNow.run();
-                        for (final Runnable action : runOnFilterUpdate) {
-                            action.run();
-                        }
-                    });
+            comboBoxLeft.addActionListener(actionEvent -> {
+                runDoModelUpdateNow.run();
+                for (final Runnable action : runOnFilterUpdate) {
+                    action.run();
+                }
+            });
             panelLeft.add(comboBoxLeft, BorderLayout.EAST);
 
             // Add the maximum value settings.
@@ -198,13 +194,12 @@ public abstract class CacheListFilterPanel extends JPanel {
             comboBoxRight = new JComboBox<>(values);
             comboBoxRight.setMaximumRowCount(values.length);
             comboBoxRight.setSelectedIndex(values.length - 1);
-            comboBoxRight.addActionListener(
-                    actionEvent -> {
-                        runDoModelUpdateNow.run();
-                        for (final Runnable action : runOnFilterUpdate) {
-                            action.run();
-                        }
-                    });
+            comboBoxRight.addActionListener(actionEvent -> {
+                runDoModelUpdateNow.run();
+                for (final Runnable action : runOnFilterUpdate) {
+                    action.run();
+                }
+            });
             panelRight.add(comboBoxRight, BorderLayout.EAST);
         }
     }
